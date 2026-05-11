@@ -1,0 +1,266 @@
+---
+import type { Lang } from '../i18n/translations';
+import { t } from '../i18n/translations';
+import { apps } from '../i18n/apps';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const tr = t(lang);
+---
+
+<!-- Hero Section -->
+<section class="hero">
+  <div class="container">
+    <h1>{tr.heroTitle}</h1>
+    <p>{tr.heroSubtitle}</p>
+  </div>
+</section>
+
+<!-- Apps Section -->
+<section class="apps" id="apps">
+  <div class="container">
+    <h2>{tr.appsTitle}</h2>
+    <p class="section-subtitle">{tr.appsSubtitle}</p>
+    <div class="apps-grid">
+      {apps.map((app) => (
+        <div class="app-card">
+          <div class="app-icon">{app.icon}</div>
+          <div class="app-info">
+            <span class="app-category">{tr.appCategories[app.category]}</span>
+            <h3>{app.name[lang]}</h3>
+            <p>{app.description[lang]}</p>
+            <div class="app-links">
+              {app.googlePlayUrl && (
+                <a href={app.googlePlayUrl} target="_blank" rel="noopener noreferrer" class="store-btn google-play">
+                  <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M3.609 1.814L13.792 12 3.61 22.186a.996.996 0 01-.61-.92V2.734a1 1 0 01.609-.92zm10.89 10.893l2.302 2.302-10.937 6.333 8.635-8.635zm3.199-1.4l2.545 1.473c.68.394.68 1.047 0 1.44l-2.545 1.474-2.535-2.535 2.535-2.535zM5.864 2.658L16.8 8.99l-2.302 2.302-8.634-8.634z"/></svg>
+                  {tr.googlePlay}
+                </a>
+              )}
+              {app.appStoreUrl && (
+                <a href={app.appStoreUrl} target="_blank" rel="noopener noreferrer" class="store-btn app-store">
+                  <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+                  {tr.appStore}
+                </a>
+              )}
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<!-- About Section -->
+<section class="about" id="about">
+  <div class="container">
+    <h2>{tr.aboutTitle}</h2>
+    <p>{tr.aboutDescription}</p>
+  </div>
+</section>
+
+<!-- Contact Section -->
+<section class="contact" id="contact">
+  <div class="container">
+    <h2>{tr.contactTitle}</h2>
+    <p>{tr.contactEmail}: <a href="mailto:contact@kokomasoft.com">contact@kokomasoft.com</a></p>
+  </div>
+</section>
+
+<style>
+  /* Hero */
+  .hero {
+    padding: 6rem 0 4rem;
+    text-align: center;
+    background: linear-gradient(135deg, #eff6ff 0%, #f0f9ff 100%);
+  }
+
+  .hero h1 {
+    font-size: 2.75rem;
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 1rem;
+    color: var(--color-text);
+  }
+
+  .hero p {
+    font-size: 1.15rem;
+    color: var(--color-text-muted);
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  /* Section common */
+  section h2 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 0.5rem;
+  }
+
+  .section-subtitle {
+    text-align: center;
+    color: var(--color-text-muted);
+    margin-bottom: 2.5rem;
+  }
+
+  /* Apps */
+  .apps {
+    padding: 5rem 0;
+  }
+
+  .apps-grid {
+    display: grid;
+    gap: 1.5rem;
+  }
+
+  .app-card {
+    display: flex;
+    gap: 1.5rem;
+    padding: 1.75rem;
+    border: 1px solid var(--color-border);
+    border-radius: 16px;
+    background: white;
+    transition: box-shadow 0.2s, transform 0.2s;
+  }
+
+  .app-card:hover {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+    transform: translateY(-2px);
+  }
+
+  .app-icon {
+    font-size: 2.5rem;
+    width: 64px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-bg-alt);
+    border-radius: 14px;
+    flex-shrink: 0;
+  }
+
+  .app-info {
+    flex: 1;
+  }
+
+  .app-category {
+    display: inline-block;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--color-primary);
+    background: #eff6ff;
+    padding: 0.2rem 0.6rem;
+    border-radius: 20px;
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+
+  .app-info h3 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 0.4rem;
+  }
+
+  .app-info p {
+    font-size: 0.9rem;
+    color: var(--color-text-muted);
+    margin-bottom: 1rem;
+    line-height: 1.5;
+  }
+
+  .app-links {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+
+  .store-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+
+  .store-btn.google-play {
+    background: #1e293b;
+    color: white;
+  }
+
+  .store-btn.google-play:hover {
+    background: #334155;
+  }
+
+  .store-btn.app-store {
+    background: var(--color-primary);
+    color: white;
+  }
+
+  .store-btn.app-store:hover {
+    background: var(--color-primary-dark);
+  }
+
+  /* About */
+  .about {
+    padding: 5rem 0;
+    background: var(--color-bg-alt);
+  }
+
+  .about p {
+    max-width: 700px;
+    margin: 1rem auto 0;
+    text-align: center;
+    color: var(--color-text-muted);
+    line-height: 1.8;
+  }
+
+  /* Contact */
+  .contact {
+    padding: 5rem 0;
+    text-align: center;
+  }
+
+  .contact p {
+    color: var(--color-text-muted);
+    margin-top: 1rem;
+  }
+
+  .contact a {
+    color: var(--color-primary);
+    text-decoration: none;
+    font-weight: 500;
+  }
+
+  .contact a:hover {
+    text-decoration: underline;
+  }
+
+  @media (max-width: 768px) {
+    .hero {
+      padding: 4rem 0 3rem;
+    }
+
+    .hero h1 {
+      font-size: 2rem;
+    }
+
+    .app-card {
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    .app-links {
+      justify-content: center;
+    }
+  }
+</style>

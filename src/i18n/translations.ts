@@ -1,0 +1,103 @@
+export const languages = {
+  ko: '한국어',
+  en: 'English',
+  zh: '中文',
+  ja: '日本語',
+} as const;
+
+export type Lang = keyof typeof languages;
+
+export const translations = {
+  ko: {
+    siteTitle: 'KokomaSoft',
+    siteDescription: '모바일 앱 개발 전문 기업',
+    heroTitle: '더 나은 모바일 경험을 만듭니다',
+    heroSubtitle: 'KokomaSoft는 사용자 중심의 혁신적인 모바일 애플리케이션을 개발합니다.',
+    appsTitle: '우리의 앱',
+    appsSubtitle: 'Google Play와 App Store에서 만나보세요',
+    downloadOn: '다운로드',
+    googlePlay: 'Google Play',
+    appStore: 'App Store',
+    aboutTitle: '회사 소개',
+    aboutDescription: 'KokomaSoft는 모바일 앱 개발 전문 기업으로, 사용자에게 최고의 경험을 제공하기 위해 끊임없이 노력합니다. 최신 기술과 세심한 UX 디자인을 결합하여, 일상을 더 편리하게 만드는 앱을 개발합니다.',
+    contactTitle: '문의하기',
+    contactEmail: '이메일',
+    footerRights: '© 2026 KokomaSoft. All rights reserved.',
+    appCategories: {
+      productivity: '생산성',
+      lifestyle: '라이프스타일',
+      utility: '유틸리티',
+      entertainment: '엔터테인먼트',
+    },
+  },
+  en: {
+    siteTitle: 'KokomaSoft',
+    siteDescription: 'Mobile App Development Company',
+    heroTitle: 'Creating Better Mobile Experiences',
+    heroSubtitle: 'KokomaSoft develops innovative, user-centered mobile applications.',
+    appsTitle: 'Our Apps',
+    appsSubtitle: 'Available on Google Play and App Store',
+    downloadOn: 'Download on',
+    googlePlay: 'Google Play',
+    appStore: 'App Store',
+    aboutTitle: 'About Us',
+    aboutDescription: 'KokomaSoft is a mobile app development company dedicated to delivering the best user experiences. We combine cutting-edge technology with thoughtful UX design to build apps that make everyday life more convenient.',
+    contactTitle: 'Contact Us',
+    contactEmail: 'Email',
+    footerRights: '© 2026 KokomaSoft. All rights reserved.',
+    appCategories: {
+      productivity: 'Productivity',
+      lifestyle: 'Lifestyle',
+      utility: 'Utility',
+      entertainment: 'Entertainment',
+    },
+  },
+  zh: {
+    siteTitle: 'KokomaSoft',
+    siteDescription: '移动应用开发公司',
+    heroTitle: '创造更好的移动体验',
+    heroSubtitle: 'KokomaSoft 开发以用户为中心的创新移动应用。',
+    appsTitle: '我们的应用',
+    appsSubtitle: '在 Google Play 和 App Store 上下载',
+    downloadOn: '下载',
+    googlePlay: 'Google Play',
+    appStore: 'App Store',
+    aboutTitle: '关于我们',
+    aboutDescription: 'KokomaSoft 是一家专注于移动应用开发的公司，致力于为用户提供最佳体验。我们将前沿技术与精心的用户体验设计相结合，打造让日常生活更便捷的应用。',
+    contactTitle: '联系我们',
+    contactEmail: '邮箱',
+    footerRights: '© 2026 KokomaSoft. 保留所有权利。',
+    appCategories: {
+      productivity: '效率',
+      lifestyle: '生活',
+      utility: '工具',
+      entertainment: '娱乐',
+    },
+  },
+  ja: {
+    siteTitle: 'KokomaSoft',
+    siteDescription: 'モバイルアプリ開発会社',
+    heroTitle: 'より良いモバイル体験を創造します',
+    heroSubtitle: 'KokomaSoftは、ユーザー中心の革新的なモバイルアプリケーションを開発しています。',
+    appsTitle: '私たちのアプリ',
+    appsSubtitle: 'Google PlayとApp Storeでご利用いただけます',
+    downloadOn: 'ダウンロード',
+    googlePlay: 'Google Play',
+    appStore: 'App Store',
+    aboutTitle: '会社概要',
+    aboutDescription: 'KokomaSoftは、モバイルアプリ開発専門企業として、ユーザーに最高の体験を提供するために努力しています。最新技術と丁寧なUXデザインを組み合わせ、日常をより便利にするアプリを開発しています。',
+    contactTitle: 'お問い合わせ',
+    contactEmail: 'メール',
+    footerRights: '© 2026 KokomaSoft. All rights reserved.',
+    appCategories: {
+      productivity: '仕事効率化',
+      lifestyle: 'ライフスタイル',
+      utility: 'ユーティリティ',
+      entertainment: 'エンターテインメント',
+    },
+  },
+} as const;
+
+export function t(lang: Lang) {
+  return translations[lang];
+}
