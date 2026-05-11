@@ -45,6 +45,9 @@ const tr = t(lang);
                   {tr.appStore}
                 </a>
               )}
+              <a href={`/${lang}/privacy/${app.id}/`} class="privacy-link">
+                {tr.privacyPolicy}
+              </a>
             </div>
           </div>
         </div>
@@ -198,6 +201,20 @@ const tr = t(lang);
 
   .store-btn.google-play:hover {
     background: #334155;
+  }
+
+  .privacy-link {
+    display: inline-flex;
+    align-items: center;
+    font-size: 0.8rem;
+    color: var(--color-text-muted);
+    text-decoration: none;
+    padding: 0.5rem 0;
+  }
+
+  .privacy-link:hover {
+    color: var(--color-primary);
+    text-decoration: underline;
   }
 
   .store-btn.app-store {

@@ -22,6 +22,7 @@ export const translations = {
     aboutDescription: 'KokomaSoft는 모바일 앱 개발 전문 기업으로, 사용자에게 최고의 경험을 제공하기 위해 끊임없이 노력합니다. 최신 기술과 세심한 UX 디자인을 결합하여, 일상을 더 편리하게 만드는 앱을 개발합니다.',
     contactTitle: '문의하기',
     contactEmail: '이메일',
+    privacyPolicy: '개인정보처리방침',
     footerRights: '© 2026 KokomaSoft. All rights reserved.',
     appCategories: {
       productivity: '생산성',
@@ -44,6 +45,7 @@ export const translations = {
     aboutDescription: 'KokomaSoft is a mobile app development company dedicated to delivering the best user experiences. We combine cutting-edge technology with thoughtful UX design to build apps that make everyday life more convenient.',
     contactTitle: 'Contact Us',
     contactEmail: 'Email',
+    privacyPolicy: 'Privacy Policy',
     footerRights: '© 2026 KokomaSoft. All rights reserved.',
     appCategories: {
       productivity: 'Productivity',
@@ -66,6 +68,7 @@ export const translations = {
     aboutDescription: 'KokomaSoft 是一家专注于移动应用开发的公司，致力于为用户提供最佳体验。我们将前沿技术与精心的用户体验设计相结合，打造让日常生活更便捷的应用。',
     contactTitle: '联系我们',
     contactEmail: '邮箱',
+    privacyPolicy: '隐私政策',
     footerRights: '© 2026 KokomaSoft. 保留所有权利。',
     appCategories: {
       productivity: '效率',
@@ -88,6 +91,7 @@ export const translations = {
     aboutDescription: 'KokomaSoftは、モバイルアプリ開発専門企業として、ユーザーに最高の体験を提供するために努力しています。最新技術と丁寧なUXデザインを組み合わせ、日常をより便利にするアプリを開発しています。',
     contactTitle: 'お問い合わせ',
     contactEmail: 'メール',
+    privacyPolicy: 'プライバシーポリシー',
     footerRights: '© 2026 KokomaSoft. All rights reserved.',
     appCategories: {
       productivity: '仕事効率化',
