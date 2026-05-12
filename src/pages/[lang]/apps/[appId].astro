@@ -1,0 +1,26 @@
+---
+import AppDetail from '../../../components/AppDetail.astro';
+import Layout from '../../../layouts/Layout.astro';
+import { apps, type AppInfo } from '../../../i18n/apps';
+import { languages, type Lang } from '../../../i18n/translations';
+
+interface Props {
+  app: AppInfo;
+  lang: Lang;
+}
+
+export function getStaticPaths() {
+  return Object.keys(languages).flatMap((lang) =>
+    apps.map((app) => ({
+      params: { lang, appId: app.id },
+      props: { app, lang },
+    })),
+  );
+}
+
+const { app, lang } = Astro.props;
+---
+
+<Layout lang={lang} title={`${app.name[lang]} - KokomaSoft`} description={app.tagline[lang]}>
+  <AppDetail app={app} lang={lang} />
+</Layout>

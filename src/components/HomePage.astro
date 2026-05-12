@@ -35,6 +35,9 @@ const tr = t(lang);
             <h3>{app.name[lang]}</h3>
             <p>{app.description[lang]}</p>
             <div class="app-links">
+              <a href={`/${lang}/apps/${app.id}/`} class="details-link">
+                {tr.learnMore}
+              </a>
               {app.googlePlayUrl && (
                 <a href={app.googlePlayUrl} target="_blank" rel="noopener noreferrer" class="store-btn google-play">
                   <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M3.609 1.814L13.792 12 3.61 22.186a.996.996 0 01-.61-.92V2.734a1 1 0 01.609-.92zm10.89 10.893l2.302 2.302-10.937 6.333 8.635-8.635zm3.199-1.4l2.545 1.473c.68.394.68 1.047 0 1.44l-2.545 1.474-2.535-2.535 2.535-2.535zM5.864 2.658L16.8 8.99l-2.302 2.302-8.634-8.634z"/></svg>
@@ -57,6 +60,22 @@ const tr = t(lang);
               )}
             </div>
           </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<!-- Support Section -->
+<section class="support" id="support">
+  <div class="container">
+    <h2>{tr.supportHubTitle}</h2>
+    <p class="section-subtitle">{tr.supportHubSubtitle}</p>
+    <div class="support-grid">
+      {tr.supportHighlights.map((item) => (
+        <div class="support-item">
+          <h3>{item.title}</h3>
+          <p>{item.description}</p>
         </div>
       ))}
     </div>
@@ -206,6 +225,24 @@ const tr = t(lang);
     transition: all 0.2s;
   }
 
+  .details-link {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.5rem 0.85rem;
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    color: var(--color-text);
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+
+  .details-link:hover {
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+  }
+
   .store-btn.google-play {
     background: #1e293b;
     color: white;
@@ -238,10 +275,40 @@ const tr = t(lang);
     background: var(--color-primary-dark);
   }
 
+  /* Support */
+  .support {
+    padding: 5rem 0;
+    background: var(--color-bg-alt);
+  }
+
+  .support-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1.25rem;
+  }
+
+  .support-item {
+    padding: 1.5rem;
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    background: white;
+  }
+
+  .support-item h3 {
+    font-size: 1rem;
+    margin-bottom: 0.55rem;
+  }
+
+  .support-item p {
+    color: var(--color-text-muted);
+    font-size: 0.9rem;
+    line-height: 1.6;
+  }
+
   /* About */
   .about {
     padding: 5rem 0;
-    background: var(--color-bg-alt);
+    background: white;
   }
 
   .about p {
@@ -290,6 +357,10 @@ const tr = t(lang);
 
     .app-links {
       justify-content: center;
+    }
+
+    .support-grid {
+      grid-template-columns: 1fr;
     }
   }
 </style>

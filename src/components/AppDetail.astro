@@ -1,0 +1,326 @@
+---
+import type { AppInfo } from '../i18n/apps';
+import type { Lang } from '../i18n/translations';
+import { t } from '../i18n/translations';
+
+interface Props {
+  app: AppInfo;
+  lang: Lang;
+}
+
+const { app, lang } = Astro.props;
+const tr = t(lang);
+const screenshots = app.screenshots?.[lang] ?? app.screenshots?.en ?? [];
+---
+
+<section class="app-hero">
+  <div class="container">
+    <a class="back-link" href={`/${lang}/#apps`}>{tr.backToApps}</a>
+    <div class="app-heading">
+      <img src={app.iconUrl} alt={`${app.name[lang]} icon`} width="96" height="96" />
+      <div>
+        <span class="app-category">{tr.appCategories[app.category]}</span>
+        <h1>{app.name[lang]}</h1>
+        <p>{app.tagline[lang]}</p>
+      </div>
+    </div>
+    <div class="store-actions">
+      {app.googlePlayUrl && (
+        <a href={app.googlePlayUrl} target="_blank" rel="noopener noreferrer" class="store-btn google-play">
+          {tr.googlePlay}
+        </a>
+      )}
+      {app.appStoreUrl && (
+        <a href={app.appStoreUrl} target="_blank" rel="noopener noreferrer" class="store-btn app-store">
+          {tr.appStore}
+        </a>
+      )}
+    </div>
+  </div>
+</section>
+
+{screenshots.length > 0 && (
+  <section class="screenshots-section">
+    <div class="container">
+      <h2>{tr.screenshotsTitle}</h2>
+      <div class="screenshots-row">
+        {screenshots.map((screenshot) => (
+          <figure class="screenshot">
+            <img src={screenshot.src} alt={`${app.name[lang]} - ${screenshot.caption[lang]}`} loading="lazy" />
+            <figcaption>{screenshot.caption[lang]}</figcaption>
+          </figure>
+        ))}
+      </div>
+    </div>
+  </section>
+)}
+
+<section class="detail-section">
+  <div class="container detail-grid">
+    <div>
+      <h2>{tr.keyFeaturesTitle}</h2>
+      <ul class="feature-list">
+        {app.features[lang].map((feature) => <li>{feature}</li>)}
+      </ul>
+    </div>
+    <div>
+      <h2>{tr.recommendedForTitle}</h2>
+      <ul class="feature-list">
+        {app.recommendedFor[lang].map((item) => <li>{item}</li>)}
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="support-section">
+  <div class="container support-layout">
+    <div>
+      <h2>{tr.supportAndPrivacyTitle}</h2>
+      <p>{app.supportNote[lang]}</p>
+    </div>
+    <div class="support-links">
+      <a href={`/${lang}/privacy/${app.id}/`}>{tr.privacyPolicy}</a>
+      {app.supportsAccountDeletion && (
+        <a href={`/${lang}/account-deletion/${app.id}/`}>{tr.accountDeletion}</a>
+      )}
+      <a href="mailto:kokomasoft@gmail.com">kokomasoft@gmail.com</a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .app-hero {
+    padding: 4rem 0 3rem;
+    background: linear-gradient(135deg, #f8fafc 0%, #eef2ff 100%);
+  }
+
+  .back-link {
+    display: inline-flex;
+    margin-bottom: 2rem;
+    color: var(--color-text-muted);
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .back-link:hover {
+    color: var(--color-primary);
+  }
+
+  .app-heading {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    max-width: 850px;
+  }
+
+  .app-heading img {
+    width: 96px;
+    height: 96px;
+    border-radius: 22px;
+    box-shadow: 0 12px 28px rgba(15, 23, 42, 0.14);
+    flex-shrink: 0;
+  }
+
+  .app-category {
+    display: inline-block;
+    color: var(--color-primary);
+    font-size: 0.78rem;
+    font-weight: 700;
+    margin-bottom: 0.45rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+
+  h1 {
+    font-size: 2.6rem;
+    line-height: 1.15;
+    margin-bottom: 0.75rem;
+  }
+
+  .app-heading p {
+    color: var(--color-text-muted);
+    font-size: 1.08rem;
+    max-width: 680px;
+  }
+
+  .store-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 2rem;
+  }
+
+  .store-btn,
+  .support-links a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 42px;
+    padding: 0.55rem 1rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .store-btn.google-play {
+    background: #1e293b;
+    color: white;
+  }
+
+  .store-btn.app-store {
+    background: var(--color-primary);
+    color: white;
+  }
+
+  .detail-section {
+    padding: 4.5rem 0;
+  }
+
+  .screenshots-section {
+    padding: 4.5rem 0 0;
+    background: white;
+  }
+
+  .screenshots-row {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1.25rem;
+    margin-top: 1.25rem;
+  }
+
+  .screenshot {
+    min-width: 0;
+  }
+
+  .screenshot img {
+    display: block;
+    width: 100%;
+    aspect-ratio: 9 / 16;
+    object-fit: cover;
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    background: var(--color-bg-alt);
+  }
+
+  .screenshot figcaption {
+    margin-top: 0.65rem;
+    color: var(--color-text-muted);
+    font-size: 0.88rem;
+    font-weight: 600;
+    text-align: center;
+  }
+
+  .detail-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 3rem;
+  }
+
+  h2 {
+    font-size: 1.45rem;
+    line-height: 1.25;
+    margin-bottom: 1rem;
+  }
+
+  .feature-list {
+    display: grid;
+    gap: 0.75rem;
+    list-style: none;
+  }
+
+  .feature-list li {
+    position: relative;
+    padding-left: 1.25rem;
+    color: var(--color-text-muted);
+    line-height: 1.65;
+  }
+
+  .feature-list li::before {
+    content: '';
+    position: absolute;
+    top: 0.68rem;
+    left: 0;
+    width: 0.45rem;
+    height: 0.45rem;
+    border-radius: 50%;
+    background: var(--color-primary);
+  }
+
+  .support-section {
+    padding: 4rem 0;
+    background: var(--color-bg-alt);
+  }
+
+  .support-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 2rem;
+    align-items: start;
+  }
+
+  .support-layout p {
+    color: var(--color-text-muted);
+    max-width: 720px;
+  }
+
+  .support-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    justify-content: flex-end;
+  }
+
+  .support-links a {
+    border: 1px solid var(--color-border);
+    background: white;
+    color: var(--color-text);
+  }
+
+  .support-links a:hover {
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+  }
+
+  @media (max-width: 768px) {
+    .app-hero {
+      padding: 3rem 0 2.5rem;
+    }
+
+    .app-heading,
+    .support-layout {
+      grid-template-columns: 1fr;
+      flex-direction: column;
+    }
+
+    h1 {
+      font-size: 2rem;
+    }
+
+    .detail-grid {
+      grid-template-columns: 1fr;
+      gap: 2.25rem;
+    }
+
+    .screenshots-row {
+      display: flex;
+      gap: 1rem;
+      margin-left: -1.5rem;
+      margin-right: -1.5rem;
+      overflow-x: auto;
+      padding: 0 1.5rem 0.5rem;
+      scroll-snap-type: x mandatory;
+    }
+
+    .screenshot {
+      width: min(72vw, 280px);
+      flex: 0 0 auto;
+      scroll-snap-align: start;
+    }
+
+    .support-links {
+      justify-content: flex-start;
+    }
+  }
+</style>

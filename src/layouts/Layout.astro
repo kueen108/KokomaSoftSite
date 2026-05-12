@@ -4,11 +4,14 @@ import { languages, t } from '../i18n/translations';
 
 interface Props {
   lang: Lang;
+  title?: string;
+  description?: string;
 }
 
-const { lang } = Astro.props;
+const { lang, title, description } = Astro.props;
 const tr = t(lang);
-const currentPath = Astro.url.pathname;
+const pageTitle = title ?? `${tr.siteTitle} - ${tr.siteDescription}`;
+const pageDescription = description ?? tr.siteDescription;
 ---
 
 <!doctype html>
@@ -16,8 +19,11 @@ const currentPath = Astro.url.pathname;
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content={tr.siteDescription} />
-    <title>{tr.siteTitle} - {tr.siteDescription}</title>
+    <meta name="description" content={pageDescription} />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={pageDescription} />
+    <meta property="og:type" content="website" />
+    <title>{pageTitle}</title>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -35,6 +41,7 @@ const currentPath = Astro.url.pathname;
         </a>
         <nav class="nav">
           <a href={`/${lang}/#apps`}>{tr.appsTitle}</a>
+          <a href={`/${lang}/#support`}>{tr.supportAndPrivacyTitle}</a>
           <a href={`/${lang}/#about`}>{tr.aboutTitle}</a>
           <a href={`/${lang}/#contact`}>{tr.contactTitle}</a>
           <div class="lang-switcher">
