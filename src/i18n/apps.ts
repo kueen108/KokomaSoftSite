@@ -2,7 +2,7 @@ import type { Lang } from './translations';
 
 export interface AppInfo {
   id: string;
-  icon: string;
+  iconUrl: string;
   name: Record<Lang, string>;
   description: Record<Lang, string>;
   category: 'productivity' | 'lifestyle' | 'utility' | 'entertainment';
@@ -14,7 +14,7 @@ export interface AppInfo {
 export const apps: AppInfo[] = [
   {
     id: 'lifelotto',
-    icon: '🎱',
+    iconUrl: '/app-icons/lifelotto.png',
     name: {
       ko: '인생로또 645',
       en: 'Life Lotto 645',
@@ -29,10 +29,11 @@ export const apps: AppInfo[] = [
     },
     category: 'entertainment',
     googlePlayUrl: 'https://play.google.com/store/apps/details?id=com.kokomasoft.lifelotto',
+    appStoreUrl: 'https://apps.apple.com/kr/app/%EC%9D%B8%EC%83%9D%EB%A1%9C%EB%98%90-645/id6752466063',
   },
   {
     id: 'mytube',
-    icon: '▶️',
+    iconUrl: '/app-icons/mytube.png',
     name: {
       ko: 'MyTube - Trending Videos Hub',
       en: 'MyTube - Trending Videos Hub',
@@ -47,10 +48,11 @@ export const apps: AppInfo[] = [
     },
     category: 'entertainment',
     googlePlayUrl: 'https://play.google.com/store/apps/details?id=com.kokomasoft.hottube',
+    appStoreUrl: 'https://apps.apple.com/kr/app/my-tube/id6738738608',
   },
   {
     id: 'onul',
-    icon: '🧘',
+    iconUrl: '/app-icons/onul.png',
     name: {
       ko: 'Onul',
       en: 'Onul',
@@ -69,7 +71,7 @@ export const apps: AppInfo[] = [
   },
   {
     id: 'ungyeol',
-    icon: '🔮',
+    iconUrl: '/app-icons/ungyeol.png',
     name: {
       ko: 'Ungyeol',
       en: 'Ungyeol',
