@@ -8,6 +8,7 @@ export interface AppInfo {
   category: 'productivity' | 'lifestyle' | 'utility' | 'entertainment';
   googlePlayUrl?: string;
   appStoreUrl?: string;
+  supportsAccountDeletion?: boolean;
 }
 
 export const apps: AppInfo[] = [
@@ -64,6 +65,7 @@ export const apps: AppInfo[] = [
     },
     category: 'lifestyle',
     googlePlayUrl: 'https://play.google.com/store/apps/details?id=com.kokomasoft.mindfulecho',
+    supportsAccountDeletion: true,
   },
   {
     id: 'ungyeol',

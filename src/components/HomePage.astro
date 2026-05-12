@@ -48,6 +48,11 @@ const tr = t(lang);
               <a href={`/${lang}/privacy/${app.id}/`} class="privacy-link">
                 {tr.privacyPolicy}
               </a>
+              {app.supportsAccountDeletion && (
+                <a href={`/${lang}/account-deletion/${app.id}/`} class="privacy-link">
+                  {tr.accountDeletion}
+                </a>
+              )}
             </div>
           </div>
         </div>

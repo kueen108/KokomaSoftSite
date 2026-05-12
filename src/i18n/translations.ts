@@ -23,6 +23,7 @@ export const translations = {
     contactTitle: '문의하기',
     contactEmail: '이메일',
     privacyPolicy: '개인정보처리방침',
+    accountDeletion: '계정/데이터 삭제',
     footerRights: '© 2026 KokomaSoft. All rights reserved.',
     appCategories: {
       productivity: '생산성',
@@ -46,6 +47,7 @@ export const translations = {
     contactTitle: 'Contact Us',
     contactEmail: 'Email',
     privacyPolicy: 'Privacy Policy',
+    accountDeletion: 'Account/Data Deletion',
     footerRights: '© 2026 KokomaSoft. All rights reserved.',
     appCategories: {
       productivity: 'Productivity',
@@ -69,6 +71,7 @@ export const translations = {
     contactTitle: '联系我们',
     contactEmail: '邮箱',
     privacyPolicy: '隐私政策',
+    accountDeletion: '账号/数据删除',
     footerRights: '© 2026 KokomaSoft. 保留所有权利。',
     appCategories: {
       productivity: '效率',
@@ -92,6 +95,7 @@ export const translations = {
     contactTitle: 'お問い合わせ',
     contactEmail: 'メール',
     privacyPolicy: 'プライバシーポリシー',
+    accountDeletion: 'アカウント/データ削除',
     footerRights: '© 2026 KokomaSoft. All rights reserved.',
     appCategories: {
       productivity: '仕事効率化',
