@@ -9,13 +9,42 @@ interface Props {
 
 const { lang } = Astro.props;
 const tr = t(lang);
+const heroScreenshots = apps
+  .flatMap((app) =>
+    (app.screenshots?.[lang] ?? app.screenshots?.en ?? [])
+      .slice(0, 1)
+      .map((screenshot) => ({ app, screenshot })),
+  )
+  .slice(0, 2);
 ---
 
 <!-- Hero Section -->
 <section class="hero">
-  <div class="container">
+  <div class="hero-media" aria-hidden="true">
+    <div class="hero-screens">
+      {heroScreenshots.map(({ screenshot }, index) => (
+        <img
+          class={`hero-screen hero-screen-${index + 1}`}
+          src={screenshot.src}
+          alt=""
+          loading="eager"
+        />
+      ))}
+    </div>
+    <div class="hero-icons">
+      {apps.map((app) => (
+        <img src={app.iconUrl} alt="" width="52" height="52" />
+      ))}
+    </div>
+  </div>
+  <div class="container hero-content">
+    <p class="eyebrow">KokomaSoft App Studio</p>
     <h1>{tr.heroTitle}</h1>
     <p>{tr.heroSubtitle}</p>
+    <div class="hero-actions">
+      <a href={`/${lang}/#apps`} class="hero-btn primary">{tr.appsTitle}</a>
+      <a href={`/${lang}/#support`} class="hero-btn secondary">{tr.supportAndPrivacyTitle}</a>
+    </div>
   </div>
 </section>
 
@@ -26,14 +55,19 @@ const tr = t(lang);
     <p class="section-subtitle">{tr.appsSubtitle}</p>
     <div class="apps-grid">
       {apps.map((app) => (
-        <div class="app-card">
-          <div class="app-icon">
-            <img src={app.iconUrl} alt={`${app.name[lang]} icon`} width="64" height="64" loading="lazy" />
+        <article class:list={['app-card', { 'has-screenshots': Boolean(app.screenshots) }]}>
+          <div class="app-card-head">
+            <div class="app-icon">
+              <img src={app.iconUrl} alt={`${app.name[lang]} icon`} width="64" height="64" loading="lazy" />
+            </div>
+            <span class="app-category">{tr.appCategories[app.category]}</span>
           </div>
           <div class="app-info">
-            <span class="app-category">{tr.appCategories[app.category]}</span>
             <h3>{app.name[lang]}</h3>
-            <p>{app.description[lang]}</p>
+            <p>{app.tagline[lang]}</p>
+            <ul class="feature-chips">
+              {app.features[lang].slice(0, 3).map((feature) => <li>{feature}</li>)}
+            </ul>
             <div class="app-links">
               <a href={`/${lang}/apps/${app.id}/`} class="details-link">
                 {tr.learnMore}
@@ -60,7 +94,7 @@ const tr = t(lang);
               )}
             </div>
           </div>
-        </div>
+        </article>
       ))}
     </div>
   </div>
@@ -73,10 +107,10 @@ const tr = t(lang);
     <p class="section-subtitle">{tr.supportHubSubtitle}</p>
     <div class="support-grid">
       {tr.supportHighlights.map((item) => (
-        <div class="support-item">
+        <article class="support-item">
           <h3>{item.title}</h3>
           <p>{item.description}</p>
-        </div>
+        </article>
       ))}
     </div>
   </div>
@@ -99,75 +133,239 @@ const tr = t(lang);
 </section>
 
 <style>
-  /* Hero */
   .hero {
-    padding: 6rem 0 4rem;
-    text-align: center;
-    background: linear-gradient(135deg, #eff6ff 0%, #f0f9ff 100%);
+    position: relative;
+    min-height: min(760px, calc(100svh - 64px));
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    background: #101827;
+    color: white;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(90deg, rgba(16, 24, 39, 0.96) 0%, rgba(16, 24, 39, 0.78) 46%, rgba(16, 24, 39, 0.36) 100%),
+      linear-gradient(180deg, rgba(245, 174, 84, 0.22), rgba(38, 166, 154, 0.16));
+    z-index: 1;
+  }
+
+  .hero::after {
+    content: '';
+    position: absolute;
+    inset: auto 0 0;
+    height: 26%;
+    background: linear-gradient(180deg, rgba(16, 24, 39, 0), var(--color-bg));
+    z-index: 2;
+    pointer-events: none;
+  }
+
+  .hero-media {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+  }
+
+  .hero-screens {
+    position: absolute;
+    top: 8%;
+    right: max(2rem, calc((100vw - var(--max-width)) / 2));
+    width: min(42vw, 520px);
+    height: 78%;
+  }
+
+  .hero-screen {
+    position: absolute;
+    width: min(240px, 42vw);
+    aspect-ratio: 9 / 16;
+    object-fit: cover;
+    border: 1px solid rgba(255, 255, 255, 0.26);
+    border-radius: 8px;
+    box-shadow: 0 28px 80px rgba(0, 0, 0, 0.4);
+  }
+
+  .hero-screen-1 {
+    right: 34%;
+    top: 9%;
+    transform: rotate(-7deg);
+  }
+
+  .hero-screen-2 {
+    right: 0;
+    top: 21%;
+    transform: rotate(6deg);
+  }
+
+  .hero-icons {
+    position: absolute;
+    right: max(1.5rem, calc((100vw - var(--max-width)) / 2));
+    bottom: 17%;
+    display: flex;
+    gap: 0.7rem;
+    padding: 0.6rem;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(18px);
+    box-shadow: 0 18px 60px rgba(0, 0, 0, 0.22);
+  }
+
+  .hero-icons img {
+    width: 52px;
+    height: 52px;
+    border-radius: 8px;
+  }
+
+  .hero-content {
+    position: relative;
+    z-index: 3;
+    padding-top: 5rem;
+    padding-bottom: 7rem;
+  }
+
+  .eyebrow {
+    width: fit-content;
+    margin-bottom: 1.2rem;
+    padding: 0.34rem 0.74rem;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.1);
+    color: #c7f9ea;
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
   }
 
   .hero h1 {
-    font-size: 2.75rem;
-    font-weight: 700;
-    line-height: 1.2;
-    margin-bottom: 1rem;
-    color: var(--color-text);
+    max-width: 780px;
+    margin-bottom: 1.15rem;
+    color: white;
+    font-size: clamp(3rem, 9vw, 6.8rem);
+    font-weight: 800;
+    line-height: 0.94;
   }
 
-  .hero p {
-    font-size: 1.15rem;
-    color: var(--color-text-muted);
-    max-width: 600px;
-    margin: 0 auto;
+  .hero-content > p:not(.eyebrow) {
+    max-width: 610px;
+    color: rgba(255, 255, 255, 0.78);
+    font-size: clamp(1rem, 2vw, 1.25rem);
+    line-height: 1.75;
   }
 
-  /* Section common */
+  .hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.85rem;
+    margin-top: 2rem;
+  }
+
+  .hero-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 46px;
+    padding: 0.68rem 1.05rem;
+    border-radius: 8px;
+    font-size: 0.92rem;
+    font-weight: 800;
+    text-decoration: none;
+  }
+
+  .hero-btn.primary {
+    background: #f5ae54;
+    color: #111827;
+  }
+
+  .hero-btn.secondary {
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    color: white;
+    background: rgba(255, 255, 255, 0.09);
+    backdrop-filter: blur(14px);
+  }
+
   section h2 {
-    font-size: 1.75rem;
-    font-weight: 700;
+    font-size: clamp(2.1rem, 4vw, 3.6rem);
+    font-weight: 800;
+    line-height: 1;
     text-align: center;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.75rem;
   }
 
   .section-subtitle {
     text-align: center;
     color: var(--color-text-muted);
-    margin-bottom: 2.5rem;
+    margin: 0 auto 2.75rem;
+    max-width: 660px;
+    font-size: 1.02rem;
   }
 
-  /* Apps */
   .apps {
-    padding: 5rem 0;
+    padding: 6rem 0;
   }
 
   .apps-grid {
     display: grid;
-    gap: 1.5rem;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: 1rem;
   }
 
   .app-card {
+    grid-column: span 6;
+    min-height: 360px;
     display: flex;
-    gap: 1.5rem;
-    padding: 1.75rem;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 1.35rem;
     border: 1px solid var(--color-border);
-    border-radius: 16px;
-    background: white;
-    transition: box-shadow 0.2s, transform 0.2s;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.82);
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.9) inset;
+    transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+  }
+
+  .app-card:nth-child(1) {
+    background: linear-gradient(135deg, #fff8e8 0%, #ffffff 52%, #e8f7f2 100%);
+  }
+
+  .app-card:nth-child(2) {
+    background: linear-gradient(135deg, #fff0eb 0%, #ffffff 54%, #eef4ff 100%);
+  }
+
+  .app-card:nth-child(3) {
+    grid-column: span 7;
+    background: linear-gradient(135deg, #e9fbf4 0%, #ffffff 56%, #f3f1ff 100%);
+  }
+
+  .app-card:nth-child(4) {
+    grid-column: span 5;
+    background: linear-gradient(135deg, #f4efff 0%, #ffffff 54%, #fff5dc 100%);
   }
 
   .app-card:hover {
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
-    transform: translateY(-2px);
+    border-color: rgba(15, 118, 110, 0.42);
+    box-shadow: var(--shadow-soft);
+    transform: translateY(-5px);
+  }
+
+  .app-card-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 2rem;
   }
 
   .app-icon {
-    width: 64px;
-    height: 64px;
-    border-radius: 14px;
+    width: 70px;
+    height: 70px;
+    border-radius: 8px;
     flex-shrink: 0;
     overflow: hidden;
     background: var(--color-bg-alt);
-    box-shadow: inset 0 0 0 1px rgba(15, 23, 42, 0.08);
+    box-shadow: 0 14px 38px rgba(15, 23, 42, 0.16);
   }
 
   .app-icon img {
@@ -184,27 +382,44 @@ const tr = t(lang);
   .app-category {
     display: inline-block;
     font-size: 0.75rem;
-    font-weight: 600;
+    font-weight: 800;
     color: var(--color-primary);
-    background: #eff6ff;
-    padding: 0.2rem 0.6rem;
-    border-radius: 20px;
-    margin-bottom: 0.5rem;
+    background: rgba(15, 118, 110, 0.1);
+    padding: 0.28rem 0.62rem;
+    border-radius: 999px;
     text-transform: uppercase;
-    letter-spacing: 0.03em;
   }
 
   .app-info h3 {
-    font-size: 1.2rem;
-    font-weight: 600;
-    margin-bottom: 0.4rem;
+    font-size: clamp(1.55rem, 2.6vw, 2.25rem);
+    font-weight: 800;
+    line-height: 1.08;
+    margin-bottom: 0.7rem;
   }
 
   .app-info p {
-    font-size: 0.9rem;
+    font-size: 0.98rem;
     color: var(--color-text-muted);
-    margin-bottom: 1rem;
-    line-height: 1.5;
+    margin-bottom: 1.2rem;
+    line-height: 1.68;
+  }
+
+  .feature-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1.35rem;
+    list-style: none;
+  }
+
+  .feature-chips li {
+    padding: 0.4rem 0.6rem;
+    border: 1px solid rgba(15, 23, 42, 0.08);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.62);
+    color: var(--color-ink-soft);
+    font-size: 0.78rem;
+    font-weight: 700;
   }
 
   .app-links {
@@ -244,7 +459,7 @@ const tr = t(lang);
   }
 
   .store-btn.google-play {
-    background: #1e293b;
+    background: var(--color-ink);
     color: white;
   }
 
@@ -275,10 +490,14 @@ const tr = t(lang);
     background: var(--color-primary-dark);
   }
 
-  /* Support */
   .support {
     padding: 5rem 0;
-    background: var(--color-bg-alt);
+    background: #101827;
+    color: white;
+  }
+
+  .support .section-subtitle {
+    color: rgba(255, 255, 255, 0.68);
   }
 
   .support-grid {
@@ -289,9 +508,10 @@ const tr = t(lang);
 
   .support-item {
     padding: 1.5rem;
-    border: 1px solid var(--color-border);
+    border: 1px solid rgba(255, 255, 255, 0.14);
     border-radius: 8px;
-    background: white;
+    background: rgba(255, 255, 255, 0.07);
+    backdrop-filter: blur(14px);
   }
 
   .support-item h3 {
@@ -300,15 +520,14 @@ const tr = t(lang);
   }
 
   .support-item p {
-    color: var(--color-text-muted);
+    color: rgba(255, 255, 255, 0.68);
     font-size: 0.9rem;
     line-height: 1.6;
   }
 
-  /* About */
   .about {
     padding: 5rem 0;
-    background: white;
+    background: var(--color-bg);
   }
 
   .about p {
@@ -319,10 +538,10 @@ const tr = t(lang);
     line-height: 1.8;
   }
 
-  /* Contact */
   .contact {
     padding: 5rem 0;
     text-align: center;
+    background: linear-gradient(180deg, var(--color-bg) 0%, #edf2ed 100%);
   }
 
   .contact p {
@@ -342,25 +561,76 @@ const tr = t(lang);
 
   @media (max-width: 768px) {
     .hero {
-      padding: 4rem 0 3rem;
+      min-height: 720px;
+      align-items: flex-start;
     }
 
-    .hero h1 {
-      font-size: 2rem;
+    .hero::before {
+      background:
+        linear-gradient(180deg, rgba(16, 24, 39, 0.96) 0%, rgba(16, 24, 39, 0.86) 54%, rgba(16, 24, 39, 0.52) 100%),
+        linear-gradient(180deg, rgba(245, 174, 84, 0.2), rgba(38, 166, 154, 0.14));
+    }
+
+    .hero-content {
+      padding-top: 4rem;
+      padding-bottom: 4rem;
+    }
+
+    .hero-screens {
+      top: auto;
+      right: 0;
+      bottom: 2.5rem;
+      width: 100%;
+      height: 270px;
+    }
+
+    .hero-screen {
+      width: 150px;
+    }
+
+    .hero-screen-1 {
+      right: 44%;
+      top: 0;
+    }
+
+    .hero-screen-2 {
+      right: 9%;
+      top: 38px;
+    }
+
+    .hero-icons {
+      right: auto;
+      left: 1.5rem;
+      bottom: 2rem;
+      gap: 0.45rem;
+    }
+
+    .hero-icons img {
+      width: 42px;
+      height: 42px;
+    }
+
+    .apps {
+      padding: 4.5rem 0;
+    }
+
+    .apps-grid,
+    .support-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .app-card,
+    .app-card:nth-child(3),
+    .app-card:nth-child(4) {
+      grid-column: auto;
     }
 
     .app-card {
-      flex-direction: column;
-      align-items: center;
-      text-align: center;
+      min-height: 0;
     }
 
     .app-links {
-      justify-content: center;
-    }
-
-    .support-grid {
-      grid-template-columns: 1fr;
+      align-items: flex-start;
     }
   }
 </style>

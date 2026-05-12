@@ -14,6 +14,11 @@ const screenshots = app.screenshots?.[lang] ?? app.screenshots?.en ?? [];
 ---
 
 <section class="app-hero">
+  <div class="detail-backdrop" aria-hidden="true">
+    {screenshots.slice(0, 2).map((screenshot, index) => (
+      <img class={`backdrop-shot backdrop-shot-${index + 1}`} src={screenshot.src} alt="" />
+    ))}
+  </div>
   <div class="container">
     <a class="back-link" href={`/${lang}/#apps`}>{tr.backToApps}</a>
     <div class="app-heading">
@@ -57,18 +62,18 @@ const screenshots = app.screenshots?.[lang] ?? app.screenshots?.en ?? [];
 
 <section class="detail-section">
   <div class="container detail-grid">
-    <div>
+    <article class="detail-panel">
       <h2>{tr.keyFeaturesTitle}</h2>
       <ul class="feature-list">
         {app.features[lang].map((feature) => <li>{feature}</li>)}
       </ul>
-    </div>
-    <div>
+    </article>
+    <article class="detail-panel">
       <h2>{tr.recommendedForTitle}</h2>
       <ul class="feature-list">
         {app.recommendedFor[lang].map((item) => <li>{item}</li>)}
       </ul>
-    </div>
+    </article>
   </div>
 </section>
 
@@ -90,21 +95,70 @@ const screenshots = app.screenshots?.[lang] ?? app.screenshots?.en ?? [];
 
 <style>
   .app-hero {
-    padding: 4rem 0 3rem;
-    background: linear-gradient(135deg, #f8fafc 0%, #eef2ff 100%);
+    position: relative;
+    min-height: 560px;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    background: #101827;
+    color: white;
+  }
+
+  .app-hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background:
+      linear-gradient(90deg, rgba(16, 24, 39, 0.96) 0%, rgba(16, 24, 39, 0.86) 46%, rgba(16, 24, 39, 0.36) 100%),
+      linear-gradient(180deg, rgba(245, 174, 84, 0.16), rgba(15, 118, 110, 0.2));
+  }
+
+  .detail-backdrop {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+  }
+
+  .backdrop-shot {
+    position: absolute;
+    width: min(235px, 38vw);
+    aspect-ratio: 9 / 16;
+    object-fit: cover;
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    border-radius: 8px;
+    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.42);
+  }
+
+  .backdrop-shot-1 {
+    right: max(9rem, calc((100vw - var(--max-width)) / 2 + 14rem));
+    top: 3.5rem;
+    transform: rotate(-7deg);
+  }
+
+  .backdrop-shot-2 {
+    right: max(2rem, calc((100vw - var(--max-width)) / 2));
+    top: 7rem;
+    transform: rotate(6deg);
+  }
+
+  .app-hero .container {
+    position: relative;
+    z-index: 2;
+    width: 100%;
   }
 
   .back-link {
     display: inline-flex;
     margin-bottom: 2rem;
-    color: var(--color-text-muted);
+    color: rgba(255, 255, 255, 0.72);
     font-size: 0.9rem;
-    font-weight: 600;
+    font-weight: 800;
     text-decoration: none;
   }
 
   .back-link:hover {
-    color: var(--color-primary);
+    color: white;
   }
 
   .app-heading {
@@ -117,30 +171,33 @@ const screenshots = app.screenshots?.[lang] ?? app.screenshots?.en ?? [];
   .app-heading img {
     width: 96px;
     height: 96px;
-    border-radius: 22px;
-    box-shadow: 0 12px 28px rgba(15, 23, 42, 0.14);
+    border-radius: 8px;
+    box-shadow: 0 18px 46px rgba(0, 0, 0, 0.32);
     flex-shrink: 0;
   }
 
   .app-category {
     display: inline-block;
-    color: var(--color-primary);
+    color: #c7f9ea;
     font-size: 0.78rem;
     font-weight: 700;
     margin-bottom: 0.45rem;
     text-transform: uppercase;
-    letter-spacing: 0.03em;
   }
 
   h1 {
-    font-size: 2.6rem;
-    line-height: 1.15;
+    max-width: 760px;
+    color: white;
+    font-size: clamp(2.7rem, 7vw, 5.8rem);
+    font-weight: 800;
+    line-height: 0.96;
     margin-bottom: 0.75rem;
   }
 
   .app-heading p {
-    color: var(--color-text-muted);
-    font-size: 1.08rem;
+    color: rgba(255, 255, 255, 0.76);
+    font-size: clamp(1rem, 2vw, 1.18rem);
+    line-height: 1.7;
     max-width: 680px;
   }
 
@@ -165,29 +222,37 @@ const screenshots = app.screenshots?.[lang] ?? app.screenshots?.en ?? [];
   }
 
   .store-btn.google-play {
-    background: #1e293b;
-    color: white;
+    background: #f5ae54;
+    color: #111827;
+  }
+
+  .store-btn.google-play:hover,
+  .store-btn.app-store:hover {
+    transform: translateY(-2px);
   }
 
   .store-btn.app-store {
-    background: var(--color-primary);
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.22);
     color: white;
+    backdrop-filter: blur(14px);
   }
 
   .detail-section {
-    padding: 4.5rem 0;
+    padding: 5rem 0;
+    background: var(--color-bg);
   }
 
   .screenshots-section {
-    padding: 4.5rem 0 0;
-    background: white;
+    padding: 5rem 0 0;
+    background: var(--color-bg);
   }
 
   .screenshots-row {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 1.25rem;
-    margin-top: 1.25rem;
+    gap: 1rem;
+    margin-top: 1.5rem;
   }
 
   .screenshot {
@@ -201,7 +266,8 @@ const screenshots = app.screenshots?.[lang] ?? app.screenshots?.en ?? [];
     object-fit: cover;
     border: 1px solid var(--color-border);
     border-radius: 8px;
-    background: var(--color-bg-alt);
+    background: var(--color-surface);
+    box-shadow: var(--shadow-soft);
   }
 
   .screenshot figcaption {
@@ -215,13 +281,22 @@ const screenshots = app.screenshots?.[lang] ?? app.screenshots?.en ?? [];
   .detail-grid {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 3rem;
+    gap: 1rem;
+  }
+
+  .detail-panel {
+    padding: 1.6rem;
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.78);
   }
 
   h2 {
-    font-size: 1.45rem;
-    line-height: 1.25;
-    margin-bottom: 1rem;
+    color: var(--color-ink);
+    font-size: clamp(1.7rem, 3vw, 2.35rem);
+    font-weight: 800;
+    line-height: 1.05;
+    margin-bottom: 1.2rem;
   }
 
   .feature-list {
@@ -249,8 +324,13 @@ const screenshots = app.screenshots?.[lang] ?? app.screenshots?.en ?? [];
   }
 
   .support-section {
-    padding: 4rem 0;
-    background: var(--color-bg-alt);
+    padding: 4.5rem 0;
+    background: #101827;
+    color: white;
+  }
+
+  .support-section h2 {
+    color: white;
   }
 
   .support-layout {
@@ -261,7 +341,7 @@ const screenshots = app.screenshots?.[lang] ?? app.screenshots?.en ?? [];
   }
 
   .support-layout p {
-    color: var(--color-text-muted);
+    color: rgba(255, 255, 255, 0.7);
     max-width: 720px;
   }
 
@@ -273,19 +353,22 @@ const screenshots = app.screenshots?.[lang] ?? app.screenshots?.en ?? [];
   }
 
   .support-links a {
-    border: 1px solid var(--color-border);
-    background: white;
-    color: var(--color-text);
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    background: rgba(255, 255, 255, 0.08);
+    color: white;
   }
 
   .support-links a:hover {
-    border-color: var(--color-primary);
-    color: var(--color-primary);
+    border-color: rgba(255, 255, 255, 0.34);
+    background: rgba(255, 255, 255, 0.14);
+    color: white;
   }
 
   @media (max-width: 768px) {
     .app-hero {
-      padding: 3rem 0 2.5rem;
+      min-height: 680px;
+      align-items: flex-start;
+      padding-top: 3rem;
     }
 
     .app-heading,
@@ -294,13 +377,34 @@ const screenshots = app.screenshots?.[lang] ?? app.screenshots?.en ?? [];
       flex-direction: column;
     }
 
-    h1 {
-      font-size: 2rem;
+    .app-heading {
+      align-items: flex-start;
+    }
+
+    .app-heading img {
+      width: 74px;
+      height: 74px;
+    }
+
+    .backdrop-shot {
+      width: 150px;
+    }
+
+    .backdrop-shot-1 {
+      right: 42%;
+      top: auto;
+      bottom: 2.3rem;
+    }
+
+    .backdrop-shot-2 {
+      right: 8%;
+      top: auto;
+      bottom: 3.8rem;
     }
 
     .detail-grid {
       grid-template-columns: 1fr;
-      gap: 2.25rem;
+      gap: 1rem;
     }
 
     .screenshots-row {

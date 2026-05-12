@@ -92,14 +92,18 @@ const pageDescription = description ?? tr.siteDescription;
       }
 
       :root {
-        --color-primary: #2563eb;
-        --color-primary-dark: #1d4ed8;
-        --color-bg: #ffffff;
-        --color-bg-alt: #f8fafc;
-        --color-text: #1e293b;
-        --color-text-muted: #64748b;
-        --color-border: #e2e8f0;
-        --max-width: 1100px;
+        --color-primary: #0f766e;
+        --color-primary-dark: #115e59;
+        --color-bg: #f6f7f2;
+        --color-bg-alt: #edf2ed;
+        --color-surface: #ffffff;
+        --color-ink: #0f172a;
+        --color-ink-soft: #243044;
+        --color-text: #172033;
+        --color-text-muted: #647084;
+        --color-border: rgba(15, 23, 42, 0.12);
+        --shadow-soft: 0 24px 80px rgba(15, 23, 42, 0.12);
+        --max-width: 1180px;
       }
 
       html {
@@ -112,6 +116,7 @@ const pageDescription = description ?? tr.siteDescription;
         color: var(--color-text);
         background: var(--color-bg);
         line-height: 1.6;
+        text-rendering: optimizeLegibility;
       }
 
       .container {
@@ -124,9 +129,9 @@ const pageDescription = description ?? tr.siteDescription;
       .header {
         position: sticky;
         top: 0;
-        background: rgba(255, 255, 255, 0.95);
-        backdrop-filter: blur(10px);
-        border-bottom: 1px solid var(--color-border);
+        background: rgba(246, 247, 242, 0.82);
+        backdrop-filter: blur(18px);
+        border-bottom: 1px solid rgba(15, 23, 42, 0.08);
         z-index: 100;
       }
 
@@ -153,9 +158,9 @@ const pageDescription = description ?? tr.siteDescription;
         justify-content: center;
         width: 36px;
         height: 36px;
-        background: var(--color-primary);
+        background: var(--color-ink);
         color: white;
-        border-radius: 10px;
+        border-radius: 8px;
         font-weight: 700;
         font-size: 1.1rem;
       }
@@ -168,7 +173,7 @@ const pageDescription = description ?? tr.siteDescription;
 
       .nav a {
         text-decoration: none;
-        color: var(--color-text-muted);
+        color: var(--color-ink-soft);
         font-size: 0.9rem;
         font-weight: 500;
         transition: color 0.2s;
@@ -194,7 +199,7 @@ const pageDescription = description ?? tr.siteDescription;
       }
 
       .lang-link.active {
-        background: var(--color-primary);
+        background: var(--color-ink);
         color: white !important;
       }
 
@@ -232,7 +237,8 @@ const pageDescription = description ?? tr.siteDescription;
         text-align: center;
         color: var(--color-text-muted);
         font-size: 0.85rem;
-        border-top: 1px solid var(--color-border);
+        border-top: 1px solid rgba(15, 23, 42, 0.08);
+        background: #f0f2eb;
       }
 
       @media (max-width: 768px) {
