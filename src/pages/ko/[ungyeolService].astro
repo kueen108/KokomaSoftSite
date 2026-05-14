@@ -1,0 +1,52 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import UngyeolMiniService from '../../components/UngyeolMiniService.astro';
+import { ungyeolServices, type UngyeolServiceInfo } from '../../i18n/ungyeolServices';
+import { absoluteUrl, breadcrumbSchema } from '../../lib/seo';
+
+interface Props {
+  service: UngyeolServiceInfo;
+}
+
+export function getStaticPaths() {
+  return ungyeolServices.map((service) => ({
+    params: { ungyeolService: service.id },
+    props: { service },
+  }));
+}
+
+const { service } = Astro.props;
+const pageTitle = `${service.title} | 운결 - KokomaSoft`;
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebApplication',
+  name: `운결 ${service.navLabel}`,
+  description: service.description,
+  applicationCategory: 'LifestyleApplication',
+  operatingSystem: 'Web',
+  url: absoluteUrl(service.path),
+  publisher: {
+    '@type': 'Organization',
+    name: 'KokomaSoft',
+    url: 'https://kokomasoft.com',
+  },
+};
+---
+
+<Layout
+  lang="ko"
+  title={pageTitle}
+  description={service.description}
+  canonicalPath={service.path}
+  image="/app-icons/ungyeol.png"
+  structuredData={[
+    schema,
+    breadcrumbSchema([
+      { name: 'KokomaSoft', path: '/ko/' },
+      { name: '운결 미니서비스', path: '/ko/#ungyeol-tools' },
+      { name: service.navLabel, path: service.path },
+    ]),
+  ]}
+>
+  <UngyeolMiniService service={service} />
+</Layout>

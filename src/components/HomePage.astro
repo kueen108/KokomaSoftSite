@@ -2,6 +2,7 @@
 import type { Lang } from '../i18n/translations';
 import { t } from '../i18n/translations';
 import { apps } from '../i18n/apps';
+import { ungyeolServices } from '../i18n/ungyeolServices';
 
 interface Props {
   lang: Lang;
@@ -47,6 +48,29 @@ const heroScreenshots = apps
     </div>
   </div>
 </section>
+
+{lang === 'ko' && (
+  <section class="ungyeol-tools" id="ungyeol-tools">
+    <div class="container">
+      <div class="tools-head">
+        <p class="tools-eyebrow">Ungyeol Web Tools</p>
+        <h2>운결 무료 미니 풀이</h2>
+        <p class="section-subtitle">
+          앱 설치 전 운세, 타로, 꿈해몽, 답장 추천을 웹에서 짧게 체험해 보세요. 정밀 풀이와 히스토리는 앱에서 이어집니다.
+        </p>
+      </div>
+      <div class="tools-grid">
+        {ungyeolServices.map((service) => (
+          <a class="tool-card" href={service.path}>
+            <span>{service.eyebrow}</span>
+            <h3>{service.navLabel}</h3>
+            <p>{service.description}</p>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+)}
 
 <!-- Apps Section -->
 <section class="apps" id="apps">
@@ -304,6 +328,76 @@ const heroScreenshots = apps
 
   .apps {
     padding: 6rem 0;
+  }
+
+  .ungyeol-tools {
+    padding: 5.5rem 0;
+    background: #f0f2eb;
+  }
+
+  .tools-head {
+    text-align: center;
+  }
+
+  .tools-eyebrow {
+    width: fit-content;
+    margin: 0 auto 0.8rem;
+    padding: 0.3rem 0.72rem;
+    border-radius: 999px;
+    background: rgba(15, 118, 110, 0.1);
+    color: var(--color-primary);
+    font-size: 0.78rem;
+    font-weight: 850;
+  }
+
+  .tools-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 1rem;
+  }
+
+  .tool-card {
+    display: flex;
+    min-height: 210px;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 1.1rem;
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.82);
+    color: var(--color-text);
+    text-decoration: none;
+    transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
+  }
+
+  .tool-card:hover {
+    border-color: rgba(15, 118, 110, 0.42);
+    box-shadow: var(--shadow-soft);
+    transform: translateY(-4px);
+  }
+
+  .tool-card span {
+    width: fit-content;
+    padding: 0.25rem 0.58rem;
+    border-radius: 999px;
+    background: rgba(245, 174, 84, 0.18);
+    color: #8a4d0f;
+    font-size: 0.74rem;
+    font-weight: 850;
+  }
+
+  .tool-card h3 {
+    margin-top: 1.25rem;
+    color: var(--color-ink);
+    font-size: 1.25rem;
+    font-weight: 850;
+  }
+
+  .tool-card p {
+    margin-top: 0.65rem;
+    color: var(--color-text-muted);
+    font-size: 0.9rem;
+    line-height: 1.65;
   }
 
   .apps-grid {
@@ -615,7 +709,8 @@ const heroScreenshots = apps
     }
 
     .apps-grid,
-    .support-grid {
+    .support-grid,
+    .tools-grid {
       grid-template-columns: 1fr;
     }
 

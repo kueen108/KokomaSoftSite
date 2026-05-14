@@ -2,6 +2,7 @@
 import type { AppInfo } from '../i18n/apps';
 import type { Lang } from '../i18n/translations';
 import { t } from '../i18n/translations';
+import { ungyeolServices } from '../i18n/ungyeolServices';
 
 interface Props {
   app: AppInfo;
@@ -43,6 +44,26 @@ const screenshots = app.screenshots?.[lang] ?? app.screenshots?.en ?? [];
     </div>
   </div>
 </section>
+
+{app.id === 'ungyeol' && lang === 'ko' && (
+  <section class="mini-tools-section">
+    <div class="container">
+      <h2>웹에서 먼저 체험하기</h2>
+      <p class="mini-tools-subtitle">
+        운결의 주요 기능을 무료 미니 풀이로 짧게 확인하고, 더 자세한 AI 풀이와 히스토리는 앱에서 이어보세요.
+      </p>
+      <div class="mini-tools-grid">
+        {ungyeolServices.map((service) => (
+          <a class="mini-tool-link" href={service.path}>
+            <span>{service.eyebrow}</span>
+            <strong>{service.navLabel}</strong>
+            <p>{service.description}</p>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+)}
 
 {screenshots.length > 0 && (
   <section class="screenshots-section">
@@ -243,6 +264,66 @@ const screenshots = app.screenshots?.[lang] ?? app.screenshots?.en ?? [];
     background: var(--color-bg);
   }
 
+  .mini-tools-section {
+    padding: 5rem 0 0;
+    background: var(--color-bg);
+  }
+
+  .mini-tools-subtitle {
+    max-width: 720px;
+    margin: -0.4rem auto 1.5rem;
+    color: var(--color-text-muted);
+    text-align: center;
+    line-height: 1.72;
+  }
+
+  .mini-tools-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 1rem;
+  }
+
+  .mini-tool-link {
+    min-height: 190px;
+    padding: 1rem;
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.82);
+    color: var(--color-text);
+    text-decoration: none;
+    transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
+  }
+
+  .mini-tool-link:hover {
+    border-color: rgba(15, 118, 110, 0.42);
+    box-shadow: var(--shadow-soft);
+    transform: translateY(-4px);
+  }
+
+  .mini-tool-link span {
+    display: inline-flex;
+    margin-bottom: 1rem;
+    padding: 0.24rem 0.55rem;
+    border-radius: 999px;
+    background: rgba(15, 118, 110, 0.1);
+    color: var(--color-primary);
+    font-size: 0.74rem;
+    font-weight: 850;
+  }
+
+  .mini-tool-link strong {
+    display: block;
+    color: var(--color-ink);
+    font-size: 1.12rem;
+    margin-bottom: 0.55rem;
+  }
+
+  .mini-tool-link p {
+    color: var(--color-text-muted);
+    font-size: 0.88rem;
+    line-height: 1.62;
+  }
+
   .screenshots-section {
     padding: 5rem 0 0;
     background: var(--color-bg);
@@ -405,6 +486,10 @@ const screenshots = app.screenshots?.[lang] ?? app.screenshots?.en ?? [];
     .detail-grid {
       grid-template-columns: 1fr;
       gap: 1rem;
+    }
+
+    .mini-tools-grid {
+      grid-template-columns: 1fr;
     }
 
     .screenshots-row {
