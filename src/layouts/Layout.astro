@@ -1,17 +1,45 @@
 ---
 import type { Lang } from '../i18n/translations';
 import { languages, t } from '../i18n/translations';
+import { absoluteUrl, localeMap } from '../lib/seo';
+
+type StructuredData = Record<string, unknown>;
 
 interface Props {
   lang: Lang;
   title?: string;
   description?: string;
+  canonicalPath?: string;
+  alternates?: Partial<Record<Lang, string>>;
+  xDefaultPath?: string;
+  image?: string;
+  ogType?: 'website' | 'article';
+  structuredData?: StructuredData | StructuredData[];
 }
 
-const { lang, title, description } = Astro.props;
+const {
+  lang,
+  title,
+  description,
+  canonicalPath,
+  alternates,
+  xDefaultPath,
+  image,
+  ogType = 'website',
+  structuredData,
+} = Astro.props;
 const tr = t(lang);
 const pageTitle = title ?? `${tr.siteTitle} - ${tr.siteDescription}`;
 const pageDescription = description ?? tr.siteDescription;
+const pagePath = canonicalPath ?? Astro.url.pathname;
+const canonicalUrl = absoluteUrl(pagePath);
+const imageUrl = image ? absoluteUrl(image) : undefined;
+const alternateEntries = Object.entries(alternates ?? {}) as [Lang, string][];
+const structuredDataList = Array.isArray(structuredData)
+  ? structuredData
+  : structuredData
+    ? [structuredData]
+    : [];
 ---
 
 <!doctype html>
@@ -20,9 +48,28 @@ const pageDescription = description ?? tr.siteDescription;
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content={pageDescription} />
+    <meta name="robots" content="index, follow" />
+    <meta name="theme-color" content="#101827" />
+    <link rel="canonical" href={canonicalUrl} />
+    {alternateEntries.map(([code, path]) => (
+      <link rel="alternate" hreflang={code} href={absoluteUrl(path)} />
+    ))}
+    {xDefaultPath && <link rel="alternate" hreflang="x-default" href={absoluteUrl(xDefaultPath)} />}
     <meta property="og:title" content={pageTitle} />
     <meta property="og:description" content={pageDescription} />
-    <meta property="og:type" content="website" />
+    <meta property="og:type" content={ogType} />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:site_name" content="KokomaSoft" />
+    <meta property="og:locale" content={localeMap[lang]} />
+    {Object.entries(localeMap)
+      .filter(([code]) => code !== lang)
+      .map(([, locale]) => <meta property="og:locale:alternate" content={locale} />)}
+    {imageUrl && <meta property="og:image" content={imageUrl} />}
+    {imageUrl && <meta property="og:image:alt" content={pageTitle} />}
+    <meta name="twitter:card" content={imageUrl ? 'summary_large_image' : 'summary'} />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={pageDescription} />
+    {imageUrl && <meta name="twitter:image" content={imageUrl} />}
     <title>{pageTitle}</title>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -31,6 +78,9 @@ const pageDescription = description ?? tr.siteDescription;
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;700&family=Noto+Sans+JP:wght@400;500;700&family=Noto+Sans+SC:wght@400;500;700&display=swap"
       rel="stylesheet"
     />
+    {structuredDataList.map((schema) => (
+      <script type="application/ld+json" set:html={JSON.stringify(schema)} />
+    ))}
   </head>
   <body>
     <header class="header">
@@ -47,7 +97,7 @@ const pageDescription = description ?? tr.siteDescription;
           <div class="lang-switcher">
             {Object.entries(languages).map(([code, label]) => (
               <a
-                href={`/${code}/`}
+                href={alternates?.[code as Lang] ?? `/${code}/`}
                 class:list={['lang-link', { active: code === lang }]}
               >
                 {label}

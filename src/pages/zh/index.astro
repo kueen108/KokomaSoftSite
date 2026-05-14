@@ -1,8 +1,24 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import HomePage from '../../components/HomePage.astro';
+import {
+  homeAlternates,
+  homeDescription,
+  homeTitle,
+  organizationSchema,
+  websiteSchema,
+} from '../../lib/seo';
 ---
 
-<Layout lang="zh">
+<Layout
+  lang="zh"
+  title={homeTitle('zh')}
+  description={homeDescription('zh')}
+  canonicalPath="/zh/"
+  alternates={homeAlternates()}
+  xDefaultPath="/"
+  image="/app-icons/ungyeol.png"
+  structuredData={[organizationSchema('zh'), websiteSchema('zh')]}
+>
   <HomePage lang="zh" />
 </Layout>

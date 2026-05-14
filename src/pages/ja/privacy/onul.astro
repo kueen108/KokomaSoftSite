@@ -1,7 +1,18 @@
 ---
 import Layout from '../../../layouts/Layout.astro';
 import PrivacyPolicy from '../../../components/PrivacyPolicy.astro';
+import { privacyAlternates, privacyDescription, privacyTitle } from '../../../lib/seo';
+
+const appId = 'onul';
+const appName = 'Onul';
 ---
-<Layout lang="ja">
-  <PrivacyPolicy lang="ja" appName="Onul" />
+<Layout
+  lang="ja"
+  title={privacyTitle(appName, 'ja')}
+  description={privacyDescription(appName, 'ja')}
+  canonicalPath="/ja/privacy/onul/"
+  alternates={privacyAlternates(appId)}
+  xDefaultPath="/ko/privacy/onul/"
+>
+  <PrivacyPolicy lang="ja" appName={appName} />
 </Layout>

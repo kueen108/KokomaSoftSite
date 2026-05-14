@@ -1,8 +1,23 @@
 ---
 import Layout from '../../../layouts/Layout.astro';
 import AccountDeletion from '../../../components/AccountDeletion.astro';
+import {
+  accountDeletionAlternates,
+  accountDeletionDescription,
+  accountDeletionTitle,
+} from '../../../lib/seo';
+
+const appId = 'onul';
+const appName = 'Onul';
 ---
 
-<Layout lang="zh">
-  <AccountDeletion lang="zh" appName="Onul" />
+<Layout
+  lang="zh"
+  title={accountDeletionTitle(appName, 'zh')}
+  description={accountDeletionDescription(appName, 'zh')}
+  canonicalPath="/zh/account-deletion/onul/"
+  alternates={accountDeletionAlternates(appId)}
+  xDefaultPath="/ko/account-deletion/onul/"
+>
+  <AccountDeletion lang="zh" appName={appName} />
 </Layout>

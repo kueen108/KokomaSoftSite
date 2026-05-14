@@ -1,7 +1,18 @@
 ---
 import Layout from '../../../layouts/Layout.astro';
 import PrivacyPolicy from '../../../components/PrivacyPolicy.astro';
+import { privacyAlternates, privacyDescription, privacyTitle } from '../../../lib/seo';
+
+const appId = 'mytube';
+const appName = 'MyTube - 热门视频中心';
 ---
-<Layout lang="zh">
-  <PrivacyPolicy lang="zh" appName="MyTube - 热门视频中心" />
+<Layout
+  lang="zh"
+  title={privacyTitle(appName, 'zh')}
+  description={privacyDescription(appName, 'zh')}
+  canonicalPath="/zh/privacy/mytube/"
+  alternates={privacyAlternates(appId)}
+  xDefaultPath="/ko/privacy/mytube/"
+>
+  <PrivacyPolicy lang="zh" appName={appName} />
 </Layout>

@@ -1,7 +1,18 @@
 ---
 import Layout from '../../../layouts/Layout.astro';
 import PrivacyPolicy from '../../../components/PrivacyPolicy.astro';
+import { privacyAlternates, privacyDescription, privacyTitle } from '../../../lib/seo';
+
+const appId = 'lifelotto';
+const appName = '인생로또 645';
 ---
-<Layout lang="ko">
-  <PrivacyPolicy lang="ko" appName="인생로또 645" />
+<Layout
+  lang="ko"
+  title={privacyTitle(appName, 'ko')}
+  description={privacyDescription(appName, 'ko')}
+  canonicalPath="/ko/privacy/lifelotto/"
+  alternates={privacyAlternates(appId)}
+  xDefaultPath="/ko/privacy/lifelotto/"
+>
+  <PrivacyPolicy lang="ko" appName={appName} />
 </Layout>

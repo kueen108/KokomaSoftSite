@@ -3,6 +3,12 @@ import AppDetail from '../../../components/AppDetail.astro';
 import Layout from '../../../layouts/Layout.astro';
 import { apps, type AppInfo } from '../../../i18n/apps';
 import { languages, type Lang } from '../../../i18n/translations';
+import {
+  appAlternates,
+  appTitle,
+  breadcrumbSchema,
+  mobileApplicationSchema,
+} from '../../../lib/seo';
 
 interface Props {
   app: AppInfo;
@@ -21,6 +27,21 @@ export function getStaticPaths() {
 const { app, lang } = Astro.props;
 ---
 
-<Layout lang={lang} title={`${app.name[lang]} - KokomaSoft`} description={app.tagline[lang]}>
+<Layout
+  lang={lang}
+  title={appTitle(app, lang)}
+  description={app.description[lang]}
+  canonicalPath={`/${lang}/apps/${app.id}/`}
+  alternates={appAlternates(app.id)}
+  xDefaultPath={`/ko/apps/${app.id}/`}
+  image={app.iconUrl}
+  structuredData={[
+    mobileApplicationSchema(app, lang),
+    breadcrumbSchema([
+      { name: 'KokomaSoft', path: `/${lang}/` },
+      { name: app.name[lang], path: `/${lang}/apps/${app.id}/` },
+    ]),
+  ]}
+>
   <AppDetail app={app} lang={lang} />
 </Layout>
