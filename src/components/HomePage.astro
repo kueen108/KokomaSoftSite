@@ -2,7 +2,7 @@
 import type { Lang } from '../i18n/translations';
 import { t } from '../i18n/translations';
 import { apps } from '../i18n/apps';
-import { ungyeolServices } from '../i18n/ungyeolServices';
+import { getUngyeolLandingCopy, getUngyeolServices } from '../i18n/ungyeolServices';
 
 interface Props {
   lang: Lang;
@@ -10,6 +10,8 @@ interface Props {
 
 const { lang } = Astro.props;
 const tr = t(lang);
+const ungyeolServices = getUngyeolServices(lang);
+const ungyeolTools = getUngyeolLandingCopy(lang);
 const heroScreenshots = apps
   .flatMap((app) =>
     (app.screenshots?.[lang] ?? app.screenshots?.en ?? [])
@@ -49,28 +51,24 @@ const heroScreenshots = apps
   </div>
 </section>
 
-{lang === 'ko' && (
-  <section class="ungyeol-tools" id="ungyeol-tools">
-    <div class="container">
-      <div class="tools-head">
-        <p class="tools-eyebrow">Ungyeol Web Tools</p>
-        <h2>운결 무료 미니 풀이</h2>
-        <p class="section-subtitle">
-          앱 설치 전 운세, 타로, 꿈해몽, 답장 추천을 웹에서 짧게 체험해 보세요. 정밀 풀이와 히스토리는 앱에서 이어집니다.
-        </p>
-      </div>
-      <div class="tools-grid">
-        {ungyeolServices.map((service) => (
-          <a class="tool-card" href={service.path}>
-            <span>{service.eyebrow}</span>
-            <h3>{service.navLabel}</h3>
-            <p>{service.description}</p>
-          </a>
-        ))}
-      </div>
+<section class="ungyeol-tools" id="ungyeol-tools">
+  <div class="container">
+    <div class="tools-head">
+      <p class="tools-eyebrow">{ungyeolTools.eyebrow}</p>
+      <h2>{ungyeolTools.title}</h2>
+      <p class="section-subtitle">{ungyeolTools.subtitle}</p>
     </div>
-  </section>
-)}
+    <div class="tools-grid">
+      {ungyeolServices.map((service) => (
+        <a class="tool-card" href={service.path}>
+          <span>{service.eyebrow}</span>
+          <h3>{service.navLabel}</h3>
+          <p>{service.description}</p>
+        </a>
+      ))}
+    </div>
+  </div>
+</section>
 
 <!-- Apps Section -->
 <section class="apps" id="apps">

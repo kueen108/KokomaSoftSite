@@ -1,6 +1,6 @@
 import { apps } from '../i18n/apps';
 import type { Lang } from '../i18n/translations';
-import { ungyeolServices } from '../i18n/ungyeolServices';
+import { ungyeolServiceAlternates, ungyeolServiceIds, ungyeolServicePath } from '../i18n/ungyeolServices';
 import {
   absoluteUrl,
   accountDeletionAlternates,
@@ -74,13 +74,16 @@ export function GET() {
         priority: '0.8',
       }));
     }),
-    ...ungyeolServices.map((service) => ({
-      path: service.path,
-      alternates: { ko: service.path },
-      xDefaultPath: service.path,
-      changefreq: 'weekly' as const,
-      priority: '0.85',
-    })),
+    ...ungyeolServiceIds.flatMap((serviceId) => {
+      const paths = ungyeolServiceAlternates(serviceId);
+      return languageCodes.map((lang) => ({
+        path: ungyeolServicePath(lang, serviceId),
+        alternates: paths,
+        xDefaultPath: paths.ko,
+        changefreq: 'weekly' as const,
+        priority: lang === 'ko' ? '0.85' : '0.75',
+      }));
+    }),
     ...apps.flatMap((app) => {
       const paths = privacyAlternates(app.id);
       return languageCodes.map((lang) => ({

@@ -2,7 +2,7 @@
 import type { AppInfo } from '../i18n/apps';
 import type { Lang } from '../i18n/translations';
 import { t } from '../i18n/translations';
-import { ungyeolServices } from '../i18n/ungyeolServices';
+import { getUngyeolLandingCopy, getUngyeolServices } from '../i18n/ungyeolServices';
 
 interface Props {
   app: AppInfo;
@@ -12,6 +12,8 @@ interface Props {
 const { app, lang } = Astro.props;
 const tr = t(lang);
 const screenshots = app.screenshots?.[lang] ?? app.screenshots?.en ?? [];
+const ungyeolServices = getUngyeolServices(lang);
+const ungyeolTools = getUngyeolLandingCopy(lang);
 ---
 
 <section class="app-hero">
@@ -45,13 +47,11 @@ const screenshots = app.screenshots?.[lang] ?? app.screenshots?.en ?? [];
   </div>
 </section>
 
-{app.id === 'ungyeol' && lang === 'ko' && (
+{app.id === 'ungyeol' && (
   <section class="mini-tools-section">
     <div class="container">
-      <h2>웹에서 먼저 체험하기</h2>
-      <p class="mini-tools-subtitle">
-        운결의 주요 기능을 무료 미니 풀이로 짧게 확인하고, 더 자세한 AI 풀이와 히스토리는 앱에서 이어보세요.
-      </p>
+      <h2>{ungyeolTools.detailTitle}</h2>
+      <p class="mini-tools-subtitle">{ungyeolTools.detailSubtitle}</p>
       <div class="mini-tools-grid">
         {ungyeolServices.map((service) => (
           <a class="mini-tool-link" href={service.path}>

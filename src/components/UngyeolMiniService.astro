@@ -9,19 +9,20 @@ interface Props {
 const { service } = Astro.props;
 const ungyeol = apps.find((app) => app.id === 'ungyeol');
 const appUrl = ungyeol?.googlePlayUrl ?? 'https://play.google.com/store/apps/details?id=com.kokomasoft.ungyeol';
+const backHref = `/${service.lang}/#ungyeol-tools`;
 ---
 
 <section class="service-hero">
   <div class="container service-hero-layout">
     <div class="service-hero-copy">
-      <a class="back-link" href="/ko/#ungyeol-tools">운결 미니서비스</a>
+      <a class="back-link" href={backHref}>{service.ui.backLabel}</a>
       <p class="eyebrow">{service.eyebrow}</p>
       <h1>{service.title}</h1>
       <p>{service.lead}</p>
     </div>
     <aside class="service-note">
-      <h2>무료 웹 미니 풀이</h2>
-      <p>입력 내용은 브라우저 안에서만 처리됩니다. 정밀 AI 풀이, 히스토리 저장, 사진 기반 관상은 운결 앱에서 이용할 수 있습니다.</p>
+      <h2>{service.ui.noteTitle}</h2>
+      <p>{service.ui.noteText}</p>
     </aside>
   </div>
 </section>
@@ -59,15 +60,15 @@ const appUrl = ungyeol?.googlePlayUrl ?? 'https://play.google.com/store/apps/det
         </label>
       ))}
 
-      <button class="submit-button" type="submit">미니 풀이 보기</button>
-      <p class="form-disclaimer">엔터테인먼트 목적의 참고용 결과입니다. 중요한 결정은 현실의 정보와 본인의 판단을 함께 고려해 주세요.</p>
+      <button class="submit-button" type="submit">{service.ui.submitLabel}</button>
+      <p class="form-disclaimer">{service.ui.disclaimer}</p>
     </form>
 
     <div class="result-panel" data-result-panel aria-live="polite">
       <div class="empty-result">
         <p class="eyebrow">{service.resultTitle}</p>
-        <h2>입력 후 결과가 여기에 표시됩니다</h2>
-        <p>짧은 풀이를 확인한 뒤, 앱에서 더 자세한 해석으로 이어갈 수 있습니다.</p>
+        <h2>{service.ui.emptyTitle}</h2>
+        <p>{service.ui.emptyText}</p>
       </div>
     </div>
   </div>
@@ -76,11 +77,11 @@ const appUrl = ungyeol?.googlePlayUrl ?? 'https://play.google.com/store/apps/det
 <section class="app-cta">
   <div class="container app-cta-layout">
     <div>
-      <p class="eyebrow">Ungyeol App</p>
-      <h2>더 자세한 풀이는 앱에서 이어보세요</h2>
+      <p class="eyebrow">{service.ui.appEyebrow}</p>
+      <h2>{service.ui.appTitle}</h2>
       <p>{service.appPitch}</p>
     </div>
-    <a class="app-button" href={appUrl} target="_blank" rel="noopener noreferrer">Google Play에서 열기</a>
+    <a class="app-button" href={appUrl} target="_blank" rel="noopener noreferrer">{service.ui.appButtonLabel}</a>
   </div>
 </section>
 
@@ -92,40 +93,430 @@ const appUrl = ungyeol?.googlePlayUrl ?? 'https://play.google.com/store/apps/det
   const resultPanel = document.querySelector('[data-result-panel]');
   const service = JSON.parse(configElement?.textContent || '{}');
 
-  const cards = [
-    ['바보', '새로운 시작과 가벼운 용기'],
-    ['마법사', '상황을 바꿀 수 있는 주도권'],
-    ['여사제', '겉보다 속을 읽어야 하는 흐름'],
-    ['여제', '관계와 감정의 회복력'],
-    ['황제', '기준을 세우고 질서를 잡는 힘'],
-    ['교황', '조언과 원칙이 필요한 시기'],
-    ['연인', '끌림과 선택의 갈림길'],
-    ['전차', '밀고 나가도 되는 추진력'],
-    ['힘', '부드럽게 버티는 인내'],
-    ['은둔자', '혼자 정리해야 보이는 답'],
-    ['운명의 수레바퀴', '흐름이 바뀌는 전환점'],
-    ['정의', '균형과 책임을 맞춰야 하는 순간'],
-    ['매달린 사람', '속도를 늦추면 보이는 관점'],
-    ['죽음', '끝내야 새로 시작되는 변화'],
-    ['절제', '과하지 않게 섞어내는 조율'],
-    ['별', '작은 희망이 살아나는 징조'],
-    ['달', '불안과 착각을 구분해야 하는 밤'],
-    ['태양', '분명해지고 밝아지는 흐름'],
-    ['심판', '미뤄둔 결정을 다시 보는 때'],
-    ['세계', '한 단락을 마무리하는 완성감'],
-  ];
+  const copyByLang = {
+    ko: {
+      cards: [
+        ['바보', '새로운 시작과 가벼운 용기'],
+        ['마법사', '상황을 바꿀 수 있는 주도권'],
+        ['여사제', '겉보다 속을 읽어야 하는 흐름'],
+        ['여제', '관계와 감정의 회복력'],
+        ['황제', '기준을 세우고 질서를 잡는 힘'],
+        ['교황', '조언과 원칙이 필요한 시기'],
+        ['연인', '끌림과 선택의 갈림길'],
+        ['전차', '밀고 나가도 되는 추진력'],
+        ['힘', '부드럽게 버티는 인내'],
+        ['은둔자', '혼자 정리해야 보이는 답'],
+        ['운명의 수레바퀴', '흐름이 바뀌는 전환점'],
+        ['정의', '균형과 책임을 맞춰야 하는 순간'],
+        ['매달린 사람', '속도를 늦추면 보이는 관점'],
+        ['죽음', '끝내야 새로 시작되는 변화'],
+        ['절제', '과하지 않게 섞어내는 조율'],
+        ['별', '작은 희망이 살아나는 징조'],
+        ['달', '불안과 착각을 구분해야 하는 밤'],
+        ['태양', '분명해지고 밝아지는 흐름'],
+        ['심판', '미뤄둔 결정을 다시 보는 때'],
+        ['세계', '한 단락을 마무리하는 완성감'],
+      ],
+      moods: ['차분함', '기대감', '조심스러움', '회복', '정리', '전환'],
+      advice: [
+        '오늘은 결론을 서두르기보다 작은 확인부터 하는 편이 좋습니다.',
+        '상대나 상황을 단정하기 전에 한 번 더 맥락을 살피면 실수가 줄어듭니다.',
+        '말을 줄이고 행동을 분명히 하면 흐름이 더 안정됩니다.',
+        '기분에 끌려가기보다 오늘 할 수 있는 가장 작은 선택에 집중해 보세요.',
+        '관계에서는 강한 표현보다 여지를 남기는 말이 더 잘 통합니다.',
+        '미뤄둔 정리를 하나 끝내면 다음 흐름이 가벼워집니다.',
+      ],
+      strengths: ['관찰력', '회복력', '표현력', '직감', '균형감', '추진력'],
+      cautions: ['과한 해석', '성급한 답장', '감정 소모', '미룬 결정', '기대치 과잉', '혼자 결론내리기'],
+      inputFallback: '입력한 상황',
+      genericAdviceTitle: '오늘의 조언',
+      resultReady: (label) => `${label} 결과가 준비되었습니다.`,
+      reply: {
+        summary: (relationship, tone, goal) => `${relationship || '관계'} 관계에서는 ${tone || '선택한 말투'}로 ${goal || '대화 이어가기'}의 목적을 분명히 하되, 한 번에 결론을 요구하지 않는 답장이 좋습니다.`,
+        title: '답장 후보 3개',
+        cautionTitle: '주의할 점',
+        caution: '상대의 반응이 느리다면 같은 메시지를 반복하기보다 하루 정도 간격을 두는 편이 좋습니다.',
+        groups: [
+          ['나도 그 얘기 조금 더 듣고 싶어요. 편할 때 이어서 말해줄래요?', '그 말 들으니까 괜히 신경 쓰이네요. 오늘은 어땠어요?', '나도 너랑 이야기하는 게 편해. 조금 더 얘기해보자.'],
+          ['그럼 말 나온 김에 이번 주에 잠깐 볼까요? 부담 없는 시간으로 맞춰봐요.', '괜찮으면 커피라도 한잔하면서 얘기해요. 가능한 날 있어요?', '메시지로만 말하기 아쉬워서, 시간 맞으면 직접 얘기하고 싶어요.'],
+          ['내가 그 부분은 더 배려했어야 했어요. 불편했다면 미안해요.', '말이 조금 앞섰던 것 같아요. 기분 상했다면 정말 미안해요.', '네 입장에서 생각해보니 내가 놓친 게 있더라고요. 다시 잘 얘기해보고 싶어요.'],
+          ['지금은 서로 조금 차분히 생각할 시간이 필요할 것 같아요. 나중에 다시 얘기해요.', '내가 지금 바로 답을 정하기는 어려워요. 조금만 시간을 두고 볼게요.', '감정적으로 말하고 싶진 않아서 오늘은 여기까지 할게요.'],
+          ['그랬구나. 나는 그 부분이 조금 궁금했어요. 너는 어떻게 느꼈어?', '알겠어요. 그럼 지금은 어떤 쪽이 더 편해요?', '그 얘기 들으니까 상황이 조금 이해돼요. 이어서 말해줘요.'],
+        ],
+      },
+      tarot: {
+        summary: (topic, first, third) => `${topic || '질문'} 흐름은 ${first}에서 시작해 ${third}의 조언으로 정리됩니다.`,
+        current: '현재',
+        flow: '흐름',
+        advice: '조언',
+        currentText: (card) => `${card[0]}: ${card[1]}이 보입니다.`,
+        flowText: (card) => `${card[0]}: 상황은 ${card[1]} 쪽으로 움직입니다.`,
+        adviceText: (card) => `${card[0]}: ${card[1]}을 오늘의 기준으로 삼아보세요.`,
+      },
+      dream: {
+        summary: (keyword, emotion, mood) => `${keyword || '꿈'}은 오늘 마음속 ${mood}과 연결됩니다. ${emotion || '감정'}이 강했다면 최근 신경 쓰던 일이 꿈으로 정리되는 흐름입니다.`,
+        symbolTitle: '상징 해석',
+        symbolText: (keyword, text) => `${keyword || '꿈의 장면'}은 현재 놓치고 있던 감정 신호를 보여줍니다. ${text} 장면은 마음이 정리되고 싶어 하는 부분에 가깝습니다.`,
+        cautionTitle: '주의할 점',
+        cautionText: (caution) => `${caution}에 빠지면 꿈을 과하게 해석할 수 있습니다. 상징은 참고로만 받아들이는 편이 좋습니다.`,
+      },
+      hidden: {
+        summary: (relationship, mood) => `${relationship || '상대'} 관계는 ${mood}의 기류가 강합니다. 상대는 마음을 완전히 닫았다기보다 속도를 조절하려는 쪽에 가깝습니다.`,
+        mindTitle: '상대의 가능성 있는 마음',
+        mindText: (text) => `${text} 상황에서는 호감과 부담이 함께 섞여 보입니다. 지금은 확인받으려는 말보다 편한 대화가 더 유리합니다.`,
+        pointTitle: '관계 포인트',
+        pointText: (status, strength) => `${status || '현재 상황'}에서는 ${strength}을 살리면 분위기가 부드러워집니다.`,
+        actionTitle: '다음 행동',
+      },
+      fortune: {
+        summary: (focus, mood, strength) => `오늘은 ${mood}이 중심이 되는 날입니다. ${focus || '전체'} 흐름에서는 ${strength}을 살리면 기회가 생깁니다.`,
+        overallTitle: '전체 흐름',
+        overallText: '큰 변화보다 작은 정리가 운을 열어주는 날입니다. 미뤄둔 연락, 일정, 결정을 하나만 정리해도 체감이 달라집니다.',
+        detailTitle: '관계/일/금전',
+        detailText: (focus, caution) => `${focus || '전체'}에서는 ${caution}을 조심하세요. 상대의 반응이나 숫자 하나에 과하게 흔들리지 않는 것이 좋습니다.`,
+      },
+      compatibility: {
+        summary: (relationship) => `${relationship || '두 사람'}의 인연은 서로 다른 속도를 맞추는 과정에 있습니다. 끌림은 있지만 표현 방식의 차이를 조율해야 합니다.`,
+        attractionTitle: '끌림 포인트',
+        attractionText: (strength) => `두 사람 사이에는 ${strength}이 강점으로 작용합니다. 익숙한 방식보다 상대가 편해하는 표현을 살피면 흐름이 좋아집니다.`,
+        frictionTitle: '충돌 포인트',
+        frictionText: (caution) => `${caution}이 반복되면 사소한 말도 크게 느껴질 수 있습니다. 확인 질문을 짧게 던지는 편이 안전합니다.`,
+      },
+      freeQuestion: {
+        summary: (category) => `${category || '고민'} 질문은 지금 당장 답을 정하기보다 기준을 세우는 단계에 가깝습니다.`,
+        situationTitle: '상황 정리',
+        situationText: (text) => `${text} 문제는 감정, 현실 조건, 타이밍을 나눠서 보면 더 단순해집니다.`,
+        directionTitle: '가능한 방향',
+        directionText: (strength, caution) => `${strength}을 살리는 선택은 장기적으로 후회가 적고, ${caution}을 피하는 선택은 오늘의 불안을 줄입니다.`,
+      },
+      face: {
+        summary: (impression, mood) => `${impression || '인상'}은 ${mood}의 분위기를 줍니다. 웹에서는 사진 없이 입력한 키워드만 바탕으로 참고 풀이를 제공합니다.`,
+        flowTitle: '인상 흐름',
+        flowText: (focus, strength) => `${focus || '오늘의 조언'} 기준으로 보면 ${strength}이 강점처럼 보입니다. 첫인상에서는 편안함과 선명함의 균형이 중요합니다.`,
+        tipTitle: '활용 팁',
+        tipText: '중요한 만남 전에는 표정, 시선, 말의 속도를 정돈하는 것만으로도 인상이 크게 달라집니다.',
+        photoTitle: '사진 관상 안내',
+        photoText: '사진 기반 관상은 앱에서 동의 후 이용할 수 있습니다. 웹에서는 사진을 업로드하거나 저장하지 않습니다.',
+      },
+    },
+    en: {
+      cards: [
+        ['The Fool', 'a fresh start and light courage'],
+        ['The Magician', 'the initiative to change the situation'],
+        ['The High Priestess', 'a need to read what sits beneath the surface'],
+        ['The Empress', 'emotional recovery and relationship warmth'],
+        ['The Emperor', 'structure, standards, and grounded decisions'],
+        ['The Hierophant', 'advice, principles, and trusted guidance'],
+        ['The Lovers', 'attraction and a meaningful choice'],
+        ['The Chariot', 'momentum that can move things forward'],
+        ['Strength', 'patience that stays gentle but steady'],
+        ['The Hermit', 'an answer that appears after quiet reflection'],
+        ['Wheel of Fortune', 'a turning point in the flow'],
+        ['Justice', 'balance, responsibility, and fair judgment'],
+        ['The Hanged Man', 'a slower pace that reveals a new angle'],
+        ['Death', 'a change that begins after something ends'],
+        ['Temperance', 'careful blending without going too far'],
+        ['The Star', 'a small sign of hope returning'],
+        ['The Moon', 'a need to separate anxiety from fact'],
+        ['The Sun', 'clarity and brighter movement'],
+        ['Judgement', 'a decision that asks to be revisited'],
+        ['The World', 'completion of one chapter'],
+      ],
+      moods: ['calm', 'anticipation', 'carefulness', 'recovery', 'organization', 'transition'],
+      advice: [
+        'Start with a small check instead of rushing to a conclusion today.',
+        'Look at the context once more before deciding what a person or situation means.',
+        'Fewer words and clearer actions will stabilize the flow.',
+        'Focus on the smallest choice you can make today instead of following every emotion.',
+        'In relationships, a message that leaves room will work better than strong pressure.',
+        'Finishing one delayed task will make the next step feel lighter.',
+      ],
+      strengths: ['observation', 'resilience', 'expression', 'intuition', 'balance', 'momentum'],
+      cautions: ['over-interpreting', 'replying too quickly', 'emotional drain', 'delayed decisions', 'inflated expectations', 'reaching conclusions alone'],
+      inputFallback: 'the situation you entered',
+      genericAdviceTitle: "Today's Advice",
+      resultReady: (label) => `${label} result is ready.`,
+      reply: {
+        summary: (relationship, tone, goal) => `For ${relationship || 'this relationship'}, use a ${tone || 'selected'} tone and keep the goal of "${goal || 'keep talking'}" clear without demanding an immediate conclusion.`,
+        title: 'Three reply options',
+        cautionTitle: 'Watch out',
+        caution: 'If the other person responds slowly, avoid repeating the same message. A little time between replies can reduce pressure.',
+        groups: [
+          ['I’d like to hear a little more about that when you feel like sharing.', 'That made me curious about how your day went. How did it feel for you?', 'I feel comfortable talking with you, so I’d like to keep the conversation going.'],
+          ['Since it came up, would you like to meet for coffee sometime this week?', 'If you are free, I’d rather talk about it in person. What day works for you?', 'Messages feel a bit limited for this, so I’d like to catch up when our schedules match.'],
+          ['I should have been more considerate about that. I’m sorry if it made you uncomfortable.', 'I think my words moved faster than I intended. I’m sorry if they hurt you.', 'Thinking from your side, I can see what I missed. I’d like to talk again more carefully.'],
+          ['I think we both may need a little time to think calmly. Let’s talk again later.', 'I can’t decide right away, so I’ll take a bit of time with this.', 'I don’t want to speak emotionally, so I’ll pause here for today.'],
+          ['I see. I’m curious about that part too. How did it feel for you?', 'Got it. Which direction feels more comfortable for you right now?', 'That helps me understand the situation better. Tell me a little more when you can.'],
+        ],
+      },
+      tarot: {
+        summary: (topic, first, third) => `The flow for ${topic || 'your question'} begins with ${first} and lands on the advice of ${third}.`,
+        current: 'Present',
+        flow: 'Flow',
+        advice: 'Advice',
+        currentText: (card) => `${card[0]}: This points to ${card[1]}.`,
+        flowText: (card) => `${card[0]}: The situation is moving toward ${card[1]}.`,
+        adviceText: (card) => `${card[0]}: Use ${card[1]} as today’s standard.`,
+      },
+      dream: {
+        summary: (keyword, emotion, mood) => `${keyword || 'This dream'} connects with ${mood} in your current mind. If ${emotion || 'the emotion'} felt strong, a recent concern may be organizing itself through the dream.`,
+        symbolTitle: 'Symbol reading',
+        symbolText: (keyword, text) => `${keyword || 'The dream scene'} points to an emotional signal you may have missed. The scene "${text}" is close to something your mind wants to organize.`,
+        cautionTitle: 'Watch out',
+        cautionText: (caution) => `${caution} can make the dream feel heavier than it is. Treat symbols as a reference, not as a fixed prediction.`,
+      },
+      hidden: {
+        summary: (relationship, mood) => `${relationship || 'This relationship'} carries a strong tone of ${mood}. The other person may not be fully closed off; they may simply be adjusting the pace.`,
+        mindTitle: 'Possible hidden feelings',
+        mindText: (text) => `In the context of "${text}", interest and pressure may be mixed together. A comfortable conversation is more useful than asking for certainty right now.`,
+        pointTitle: 'Relationship point',
+        pointText: (status, strength) => `For "${status || 'the current situation'}", leaning on ${strength} can soften the mood.`,
+        actionTitle: 'Next action',
+      },
+      fortune: {
+        summary: (focus, mood, strength) => `Today centers on ${mood}. In the area of ${focus || 'overall flow'}, ${strength} can open a useful chance.`,
+        overallTitle: 'Overall flow',
+        overallText: 'Small organization matters more than dramatic change today. One cleared message, schedule, or decision can shift the mood.',
+        detailTitle: 'Relationships, work, and money',
+        detailText: (focus, caution) => `For ${focus || 'overall flow'}, watch ${caution}. Avoid letting one reaction or number pull you too far off balance.`,
+      },
+      compatibility: {
+        summary: (relationship) => `${relationship || 'These two people'} are learning to match different speeds. There is attraction, but the way each person expresses it needs adjustment.`,
+        attractionTitle: 'Attraction point',
+        attractionText: (strength) => `${strength} works as a strength between the two of you. Notice what feels comfortable for the other person, not only what feels familiar to you.`,
+        frictionTitle: 'Friction point',
+        frictionText: (caution) => `If ${caution} repeats, small words can feel larger than intended. Short confirmation questions are safer than assumptions.`,
+      },
+      freeQuestion: {
+        summary: (category) => `${category || 'This concern'} is less about deciding everything now and more about setting a clear standard.`,
+        situationTitle: 'Situation summary',
+        situationText: (text) => `The issue "${text}" becomes simpler when separated into emotion, practical conditions, and timing.`,
+        directionTitle: 'Possible direction',
+        directionText: (strength, caution) => `A choice that uses ${strength} is less likely to create long-term regret, while avoiding ${caution} can reduce today’s anxiety.`,
+      },
+      face: {
+        summary: (impression, mood) => `${impression || 'This impression'} gives a mood of ${mood}. The web version uses only the keywords you select, without receiving photos.`,
+        flowTitle: 'Impression flow',
+        flowText: (focus, strength) => `For ${focus || 'today’s advice'}, ${strength} looks like a useful strength. First impressions benefit from a balance of comfort and clarity.`,
+        tipTitle: 'Practical tip',
+        tipText: 'Before an important meeting, simply organizing your expression, eye contact, and speaking pace can change the impression significantly.',
+        photoTitle: 'Photo face reading',
+        photoText: 'Photo-based face reading is available in the app with consent. The web version does not upload or store photos.',
+      },
+    },
+    zh: {
+      cards: [
+        ['愚者', '新的开始和轻盈的勇气'],
+        ['魔术师', '改变局面的主动权'],
+        ['女祭司', '需要读懂表面之下的信息'],
+        ['女皇', '关系与情绪的恢复力'],
+        ['皇帝', '建立标准和秩序的力量'],
+        ['教皇', '需要建议、原则和可信引导'],
+        ['恋人', '吸引力与选择的分岔口'],
+        ['战车', '可以推动事情前进的动力'],
+        ['力量', '温和但稳定的坚持'],
+        ['隐士', '安静整理后看见的答案'],
+        ['命运之轮', '走势正在转换的节点'],
+        ['正义', '平衡、责任与公平判断'],
+        ['倒吊人', '放慢速度后出现的新角度'],
+        ['死亡', '结束之后才开始的改变'],
+        ['节制', '不过度、慢慢调和的能力'],
+        ['星星', '小小希望重新出现的迹象'],
+        ['月亮', '需要区分不安与事实'],
+        ['太阳', '变得清楚和明亮的走势'],
+        ['审判', '需要重新面对的决定'],
+        ['世界', '一个阶段的完成'],
+      ],
+      moods: ['平静', '期待', '谨慎', '恢复', '整理', '转换'],
+      advice: [
+        '今天不要急着下结论，先做一个小确认会更好。',
+        '在判断对方或状况之前，再多看一次背景，失误会减少。',
+        '少说一点、行动更明确，整体会更稳定。',
+        '与其被情绪牵着走，不如专注今天能做的最小选择。',
+        '关系里，留有余地的表达比强烈推进更容易被接受。',
+        '完成一个拖延的小整理，下一步会轻松很多。',
+      ],
+      strengths: ['观察力', '恢复力', '表达力', '直觉', '平衡感', '行动力'],
+      cautions: ['过度解读', '太快回复', '情绪消耗', '拖延决定', '期待过高', '独自下结论'],
+      inputFallback: '你输入的状况',
+      genericAdviceTitle: '今日建议',
+      resultReady: (label) => `${label}结果已生成。`,
+      reply: {
+        summary: (relationship, tone, goal) => `在${relationship || '这段关系'}中，建议用${tone || '选择的语气'}明确「${goal || '继续聊天'}」的目的，但不要一次要求对方给出结论。`,
+        title: '三条回复候选',
+        cautionTitle: '注意点',
+        caution: '如果对方回复慢，不要重复发送同样的内容。适当留一点时间，会减少压迫感。',
+        groups: [
+          ['我也想再多听一点这件事，等你方便的时候可以继续说。', '听你这么说，我有点好奇你今天的感受。后来怎么样？', '和你聊天我觉得挺舒服的，可以再多聊一点。'],
+          ['既然说到这里，这周要不要找个时间喝杯咖啡？', '如果你方便，我想当面聊聊。你哪天比较合适？', '只靠消息有点说不清，时间合适的话我想见面聊。'],
+          ['那一点我应该更体谅你。如果让你不舒服了，真的抱歉。', '我刚才说得有点急。如果让你受伤了，对不起。', '换成你的角度想，我发现自己有没注意到的地方。想再好好聊一次。'],
+          ['我觉得我们都需要一点时间冷静想想，之后再聊吧。', '我现在还没办法马上决定，想再给自己一点时间。', '我不想带着情绪继续说，所以今天先到这里。'],
+          ['这样啊。我对这一点也有点好奇，你当时怎么想的？', '明白。那现在你觉得哪种方式更舒服？', '这么说我更能理解状况了，有空再多告诉我一点。'],
+        ],
+      },
+      tarot: {
+        summary: (topic, first, third) => `${topic || '这个问题'}的走势从${first}开始，并以${third}的建议收束。`,
+        current: '现在',
+        flow: '走势',
+        advice: '建议',
+        currentText: (card) => `${card[0]}：这里显示出${card[1]}。`,
+        flowText: (card) => `${card[0]}：状况正朝着${card[1]}移动。`,
+        adviceText: (card) => `${card[0]}：可以把${card[1]}作为今天的判断标准。`,
+      },
+      dream: {
+        summary: (keyword, emotion, mood) => `${keyword || '这个梦'}与今天内心的${mood}有关。如果${emotion || '情绪'}很强，近期在意的事可能正在通过梦被整理。`,
+        symbolTitle: '象征解读',
+        symbolText: (keyword, text) => `${keyword || '梦里的场景'}显示出你可能忽略的情绪信号。「${text}」这个场景，接近内心想要整理的部分。`,
+        cautionTitle: '注意点',
+        cautionText: (caution) => `如果陷入${caution}，可能会把梦解读得过重。象征只适合作为参考。`,
+      },
+      hidden: {
+        summary: (relationship, mood) => `${relationship || '这段关系'}带有明显的${mood}气氛。对方未必完全关闭心门，更像是在调整速度。`,
+        mindTitle: '对方可能的心意',
+        mindText: (text) => `在「${text}」这个状况里，好感和压力可能同时存在。现在比起要求确认，更适合轻松对话。`,
+        pointTitle: '关系重点',
+        pointText: (status, strength) => `在「${status || '当前状况'}」中，发挥${strength}会让气氛更柔和。`,
+        actionTitle: '下一步行动',
+      },
+      fortune: {
+        summary: (focus, mood, strength) => `今天以${mood}为中心。在${focus || '整体'}方面，发挥${strength}会带来机会。`,
+        overallTitle: '整体走势',
+        overallText: '今天打开好运的不是大变化，而是小整理。整理一条消息、一个日程或一个决定，感受就会不同。',
+        detailTitle: '关系/工作/金钱',
+        detailText: (focus, caution) => `在${focus || '整体'}方面，要注意${caution}。不要因为一个反应或一个数字就过度动摇。`,
+      },
+      compatibility: {
+        summary: (relationship) => `${relationship || '两个人'}正在学习配合不同的节奏。吸引力存在，但表达方式需要调整。`,
+        attractionTitle: '吸引点',
+        attractionText: (strength) => `两个人之间，${strength}会成为强项。比起自己熟悉的方式，更要观察对方觉得舒服的表达。`,
+        frictionTitle: '冲突点',
+        frictionText: (caution) => `如果反复出现${caution}，小话也会被放大。用简短确认问题，比独自猜测更安全。`,
+      },
+      freeQuestion: {
+        summary: (category) => `${category || '这个烦恼'}现在更像是建立判断标准，而不是马上决定全部答案。`,
+        situationTitle: '状况整理',
+        situationText: (text) => `「${text}」这个问题，把情绪、现实条件和时机分开看，会更简单。`,
+        directionTitle: '可能方向',
+        directionText: (strength, caution) => `发挥${strength}的选择，长期后悔会更少；避开${caution}，也能减少今天的不安。`,
+      },
+      face: {
+        summary: (impression, mood) => `${impression || '这个印象'}带来${mood}的氛围。网页只根据你选择的关键词进行参考解读，不接收照片。`,
+        flowTitle: '印象走势',
+        flowText: (focus, strength) => `从${focus || '今日建议'}来看，${strength}像是一个强项。第一印象需要舒适感和清晰感的平衡。`,
+        tipTitle: '使用建议',
+        tipText: '重要见面前，只要整理表情、视线和说话速度，印象就会明显不同。',
+        photoTitle: '照片面相说明',
+        photoText: '照片面相可在应用中经同意后使用。网页不会上传或保存照片。',
+      },
+    },
+    ja: {
+      cards: [
+        ['愚者', '新しい始まりと軽やかな勇気'],
+        ['魔術師', '状況を変える主導権'],
+        ['女教皇', '表面の奥を読む必要'],
+        ['女帝', '関係と感情の回復力'],
+        ['皇帝', '基準を立て秩序を整える力'],
+        ['教皇', '助言と原則が必要な時期'],
+        ['恋人', '惹かれ合いと選択の分かれ道'],
+        ['戦車', '前へ進める推進力'],
+        ['力', 'やわらかく耐える粘り強さ'],
+        ['隠者', '一人で整理すると見える答え'],
+        ['運命の輪', '流れが変わる転換点'],
+        ['正義', 'バランスと責任を整える瞬間'],
+        ['吊るされた男', '速度を落とすと見える視点'],
+        ['死神', '終わらせることで始まる変化'],
+        ['節制', 'やりすぎず調和させる力'],
+        ['星', '小さな希望が戻る兆し'],
+        ['月', '不安と事実を分ける必要'],
+        ['太陽', '明るくはっきりしていく流れ'],
+        ['審判', '先延ばしにした決断を見直す時'],
+        ['世界', '一つの段階を終える完成感'],
+      ],
+      moods: ['落ち着き', '期待', '慎重さ', '回復', '整理', '転換'],
+      advice: [
+        '今日は結論を急がず、小さな確認から始めるのがよさそうです。',
+        '相手や状況を決めつける前に、もう一度背景を見直すと失敗が減ります。',
+        '言葉を少し絞り、行動をはっきりさせると流れが安定します。',
+        '感情に流されるより、今日できる最小の選択に集中してみてください。',
+        '関係では強い表現より、余白を残す言葉の方が伝わりやすいです。',
+        '後回しにしていた整理を一つ終えると、次の流れが軽くなります。',
+      ],
+      strengths: ['観察力', '回復力', '表現力', '直感', 'バランス感覚', '推進力'],
+      cautions: ['読みすぎ', '早すぎる返信', '感情の消耗', '先延ばしの決断', '期待しすぎ', '一人で結論を出すこと'],
+      inputFallback: '入力した状況',
+      genericAdviceTitle: '今日のアドバイス',
+      resultReady: (label) => `${label}の結果が用意できました。`,
+      reply: {
+        summary: (relationship, tone, goal) => `${relationship || 'この関係'}では、${tone || '選んだ口調'}で「${goal || '会話を続ける'}」目的をはっきりさせつつ、一度に結論を求めない返信が合います。`,
+        title: '返信候補3つ',
+        cautionTitle: '注意点',
+        caution: '相手の反応が遅い時は、同じ内容を繰り返すより少し時間を置く方が負担になりにくいです。',
+        groups: [
+          ['その話、もう少し聞いてみたいです。話せる時に続き教えてください。', 'そう言われると少し気になります。今日はどんな感じでしたか？', 'あなたと話すのは落ち着くので、もう少し話したいです。'],
+          ['せっかく話に出たので、今週どこかで少し会いませんか？', 'よければコーヒーでも飲みながら話しましょう。都合のいい日はありますか？', 'メッセージだけだと少し惜しいので、時間が合えば直接話したいです。'],
+          ['その部分はもっと配慮すべきでした。不快にさせていたらごめんなさい。', '少し言葉が先走ったと思います。傷つけていたら本当にごめんなさい。', 'あなたの立場で考えると、私が見落としていた部分がありました。もう一度丁寧に話したいです。'],
+          ['今はお互い少し落ち着いて考える時間が必要そうです。また後で話しましょう。', '今すぐ答えを出すのは難しいので、少し時間をください。', '感情的に話したくないので、今日はここまでにします。'],
+          ['そうだったんですね。私はその部分が少し気になります。どう感じましたか？', 'わかりました。今はどちらの形が一番楽ですか？', 'その話を聞いて状況が少しわかりました。よければもう少し教えてください。'],
+        ],
+      },
+      tarot: {
+        summary: (topic, first, third) => `${topic || '質問'}の流れは${first}から始まり、${third}のアドバイスへまとまります。`,
+        current: '現在',
+        flow: '流れ',
+        advice: 'アドバイス',
+        currentText: (card) => `${card[0]}：${card[1]}が見えます。`,
+        flowText: (card) => `${card[0]}：状況は${card[1]}の方向へ動いています。`,
+        adviceText: (card) => `${card[0]}：${card[1]}を今日の基準にしてみてください。`,
+      },
+      dream: {
+        summary: (keyword, emotion, mood) => `${keyword || '夢'}は今日の心の中の${mood}とつながっています。${emotion || '感情'}が強かったなら、最近気にしていたことが夢の中で整理されている流れです。`,
+        symbolTitle: '象徴の解釈',
+        symbolText: (keyword, text) => `${keyword || '夢の場面'}は、今見落としていた感情のサインを示します。「${text}」という場面は、心が整理したがっている部分に近いです。`,
+        cautionTitle: '注意点',
+        cautionText: (caution) => `${caution}に入り込むと、夢を重く読みすぎることがあります。象徴は参考として受け取るのがよさそうです。`,
+      },
+      hidden: {
+        summary: (relationship, mood) => `${relationship || '相手'}との関係には${mood}の気配が強くあります。相手は完全に閉じているというより、速度を調整している可能性があります。`,
+        mindTitle: '相手の可能性ある気持ち',
+        mindText: (text) => `「${text}」という状況では、好意と負担が同時に混ざっているように見えます。今は確認を求めるより、楽に話せる空気が有利です。`,
+        pointTitle: '関係のポイント',
+        pointText: (status, strength) => `「${status || '現在の状況'}」では、${strength}を活かすと雰囲気がやわらぎます。`,
+        actionTitle: '次の行動',
+      },
+      fortune: {
+        summary: (focus, mood, strength) => `今日は${mood}が中心になる日です。${focus || '全体'}の流れでは、${strength}を活かすとチャンスが生まれます。`,
+        overallTitle: '全体の流れ',
+        overallText: '大きな変化より、小さな整理が運を開く日です。連絡、予定、決断を一つ整えるだけでも体感が変わります。',
+        detailTitle: '関係/仕事/お金',
+        detailText: (focus, caution) => `${focus || '全体'}では${caution}に注意してください。相手の反応や数字一つに大きく揺れすぎないことが大切です。`,
+      },
+      compatibility: {
+        summary: (relationship) => `${relationship || '二人'}の縁は、違う速度を合わせていく過程にあります。惹かれ合いはありますが、表現方法の調整が必要です。`,
+        attractionTitle: '惹かれるポイント',
+        attractionText: (strength) => `二人の間では${strength}が強みとして働きます。自分に慣れた方法だけでなく、相手が楽に感じる表現を見てみましょう。`,
+        frictionTitle: '衝突ポイント',
+        frictionText: (caution) => `${caution}が繰り返されると、小さな言葉も大きく感じられます。短く確認する質問が安全です。`,
+      },
+      freeQuestion: {
+        summary: (category) => `${category || '悩み'}の質問は、今すぐ答えを決めるより基準を作る段階に近いです。`,
+        situationTitle: '状況整理',
+        situationText: (text) => `「${text}」という問題は、感情、現実条件、タイミングに分けるとシンプルになります。`,
+        directionTitle: '可能な方向',
+        directionText: (strength, caution) => `${strength}を活かす選択は長期的に後悔が少なく、${caution}を避ける選択は今日の不安を減らします。`,
+      },
+      face: {
+        summary: (impression, mood) => `${impression || '印象'}は${mood}の雰囲気を与えます。Webでは写真なしで、入力したキーワードだけをもとに参考鑑定を行います。`,
+        flowTitle: '印象の流れ',
+        flowText: (focus, strength) => `${focus || '今日のアドバイス'}を基準にすると、${strength}が強みのように見えます。第一印象では安心感とはっきりした印象のバランスが大切です。`,
+        tipTitle: '活用のコツ',
+        tipText: '大事な場面の前に、表情、視線、話す速さを整えるだけでも印象は大きく変わります。',
+        photoTitle: '写真人相の案内',
+        photoText: '写真ベースの人相鑑定は、アプリで同意後に利用できます。Webでは写真をアップロードしたり保存したりしません。',
+      },
+    },
+  };
 
-  const moods = ['차분함', '기대감', '조심스러움', '회복', '정리', '전환'];
-  const advice = [
-    '오늘은 결론을 서두르기보다 작은 확인부터 하는 편이 좋습니다.',
-    '상대나 상황을 단정하기 전에 한 번 더 맥락을 살피면 실수가 줄어듭니다.',
-    '말을 줄이고 행동을 분명히 하면 흐름이 더 안정됩니다.',
-    '기분에 끌려가기보다 오늘 할 수 있는 가장 작은 선택에 집중해 보세요.',
-    '관계에서는 강한 표현보다 여지를 남기는 말이 더 잘 통합니다.',
-    '미뤄둔 정리를 하나 끝내면 다음 흐름이 가벼워집니다.',
-  ];
-  const strengths = ['관찰력', '회복력', '표현력', '직감', '균형감', '추진력'];
-  const cautions = ['과한 해석', '성급한 답장', '감정 소모', '미룬 결정', '기대치 과잉', '혼자 결론내리기'];
+  const copy = copyByLang[service.lang] || copyByLang.ko;
 
   function hash(value) {
     return Array.from(value).reduce((acc, char) => {
@@ -142,144 +533,120 @@ const appUrl = ungyeol?.googlePlayUrl ?? 'https://play.google.com/store/apps/det
     return Object.fromEntries([...data.entries()].map(([key, value]) => [key, String(value).trim()]));
   }
 
+  function optionIndex(fieldName, value) {
+    const field = service.fields?.find((item) => item.name === fieldName);
+    const index = field?.options?.indexOf(value);
+    return typeof index === 'number' && index >= 0 ? index : 0;
+  }
+
   function sentenceFromText(text) {
-    if (!text) return '입력한 상황';
+    if (!text) return copy.inputFallback;
     const compact = text.replace(/\s+/g, ' ').trim();
     return compact.length > 72 ? `${compact.slice(0, 72)}...` : compact;
   }
 
   function buildReply(values, seed) {
-    const tone = values.tone || '부드러운 존댓말';
-    const goal = values.goal || '대화 이어가기';
-    const polite = tone.includes('존댓말');
-    const ending = polite ? '요' : '';
-    const base = {
-      '관심 표현': [
-        `나도 그 얘기 조금 더 듣고 싶${polite ? '어요' : '어'}. 편할 때 이어서 말해줄래${ending}?`,
-        `그 말 들으니까 괜히 신경 쓰이네${polite ? '요' : ''}. 오늘은 어땠${polite ? '어요' : '어'}?`,
-        `나도 너랑 이야기하는 게 편하${polite ? '네요' : '네'}. 조금 더 얘기해보자${polite ? '요' : ''}.`,
-      ],
-      '약속 잡기': [
-        `그럼 말 나온 김에 이번 주에 잠깐 볼까요? 부담 없는 시간으로 맞춰봐${polite ? '요' : ''}.`,
-        `괜찮으면 커피라도 한잔하면서 얘기해${polite ? '요' : '자'}. 가능한 날 있어${ending}?`,
-        `메시지로만 말하기 아쉬워서, 시간 맞으면 직접 얘기하고 싶${polite ? '어요' : '어'}.`,
-      ],
-      '사과하기': [
-        `내가 그 부분은 더 배려했어야 했${polite ? '어요' : '어'}. 불편했다면 미안해${polite ? '요' : ''}.`,
-        `말이 조금 앞섰던 것 같${polite ? '아요' : '아'}. 기분 상했다면 정말 미안해${polite ? '요' : ''}.`,
-        `네 입장에서 생각해보니 내가 놓친 게 있더라${polite ? '고요' : ''}. 미안하고, 다시 잘 얘기해보고 싶${polite ? '어요' : '어'}.`,
-      ],
-      '거리두기': [
-        `지금은 서로 조금 차분히 생각할 시간이 필요할 것 같${polite ? '아요' : '아'}. 나중에 다시 얘기해${polite ? '요' : '자'}.`,
-        `내가 지금 바로 답을 정하기는 어려워${polite ? '요' : ''}. 조금만 시간을 두고 볼게${polite ? '요' : ''}.`,
-        `감정적으로 말하고 싶진 않아서 오늘은 여기까지 할게${polite ? '요' : ''}.`,
-      ],
-      '대화 이어가기': [
-        `그랬구나. 나는 그 부분이 조금 궁금했${polite ? '어요' : '어'}. 너는 어떻게 느꼈${polite ? '어요' : '어'}?`,
-        `알겠${polite ? '어요' : '어'}. 그럼 지금은 어떤 쪽이 더 편해${ending}?`,
-        `그 얘기 들으니까 상황이 조금 이해돼${polite ? '요' : ''}. 이어서 말해줘${polite ? '요' : ''}.`,
-      ],
-    };
+    const goalIndex = optionIndex('goal', values.goal);
     return {
-      summary: `${values.relationship || '관계'} 관계에서는 ${tone}로 ${goal}의 목적을 분명히 하되, 한 번에 결론을 요구하지 않는 답장이 좋습니다.`,
+      summary: copy.reply.summary(values.relationship, values.tone, values.goal),
       sections: [
-        { title: '답장 후보 3개', items: base[goal] || base['대화 이어가기'] },
-        { title: '주의할 점', text: '상대의 반응이 느리다면 같은 메시지를 반복하기보다 하루 정도 간격을 두는 편이 좋습니다.' },
+        { title: copy.reply.title, items: copy.reply.groups[goalIndex] || copy.reply.groups[0] },
+        { title: copy.reply.cautionTitle, text: copy.reply.caution },
       ],
     };
   }
 
   function buildTarot(values, seed) {
-    const picked = [0, 1, 2].map((offset) => pick(cards, seed, offset * 7));
+    const picked = [0, 1, 2].map((offset) => pick(copy.cards, seed, offset * 7));
     return {
-      summary: `${values.topic || '질문'} 흐름은 ${picked[0][0]}에서 시작해 ${picked[2][0]}의 조언으로 정리됩니다.`,
+      summary: copy.tarot.summary(values.topic, picked[0][0], picked[2][0]),
       sections: [
-        { title: '현재', text: `${picked[0][0]}: ${picked[0][1]}이 보입니다.` },
-        { title: '흐름', text: `${picked[1][0]}: 상황은 ${picked[1][1]} 쪽으로 움직입니다.` },
-        { title: '조언', text: `${picked[2][0]}: ${picked[2][1]}을 오늘의 기준으로 삼아보세요.` },
+        { title: copy.tarot.current, text: copy.tarot.currentText(picked[0]) },
+        { title: copy.tarot.flow, text: copy.tarot.flowText(picked[1]) },
+        { title: copy.tarot.advice, text: copy.tarot.adviceText(picked[2]) },
       ],
     };
   }
 
   function buildResult(values) {
     const seed = hash(`${service.id}:${JSON.stringify(values)}:${new Date().toDateString()}`);
-    const mood = pick(moods, seed);
-    const strength = pick(strengths, seed, 3);
-    const caution = pick(cautions, seed, 5);
-    const coreAdvice = pick(advice, seed, 9);
+    const mood = pick(copy.moods, seed);
+    const strength = pick(copy.strengths, seed, 3);
+    const caution = pick(copy.cautions, seed, 5);
+    const coreAdvice = pick(copy.advice, seed, 9);
 
     if (service.id === 'reply') return buildReply(values, seed);
     if (service.id === 'tarot') return buildTarot(values, seed);
 
     if (service.id === 'dream') {
       return {
-        summary: `${values.keyword || '꿈'}은 오늘 마음속 ${mood}과 연결됩니다. ${values.emotion || '감정'}이 강했다면 최근 신경 쓰던 일이 꿈으로 정리되는 흐름입니다.`,
+        summary: copy.dream.summary(values.keyword, values.emotion, mood),
         sections: [
-          { title: '상징 해석', text: `${values.keyword || '꿈의 장면'}은 현재 놓치고 있던 감정 신호를 보여줍니다. ${sentenceFromText(values.dreamText)} 장면은 마음이 정리되고 싶어 하는 부분에 가깝습니다.` },
-          { title: '오늘의 조언', text: coreAdvice },
-          { title: '주의할 점', text: `${caution}에 빠지면 꿈을 과하게 해석할 수 있습니다. 상징은 참고로만 받아들이는 편이 좋습니다.` },
+          { title: copy.dream.symbolTitle, text: copy.dream.symbolText(values.keyword, sentenceFromText(values.dreamText)) },
+          { title: copy.genericAdviceTitle, text: coreAdvice },
+          { title: copy.dream.cautionTitle, text: copy.dream.cautionText(caution) },
         ],
       };
     }
 
     if (service.id === 'hidden-feelings') {
       return {
-        summary: `${values.relationship || '상대'} 관계는 ${mood}의 기류가 강합니다. 상대는 마음을 완전히 닫았다기보다 속도를 조절하려는 쪽에 가깝습니다.`,
+        summary: copy.hidden.summary(values.relationship, mood),
         sections: [
-          { title: '상대의 가능성 있는 마음', text: `${sentenceFromText(values.context)} 상황에서는 호감과 부담이 함께 섞여 보입니다. 지금은 확인받으려는 말보다 편한 대화가 더 유리합니다.` },
-          { title: '관계 포인트', text: `${values.status || '현재 상황'}에서는 ${strength}을 살리면 분위기가 부드러워집니다.` },
-          { title: '다음 행동', text: coreAdvice },
+          { title: copy.hidden.mindTitle, text: copy.hidden.mindText(sentenceFromText(values.context)) },
+          { title: copy.hidden.pointTitle, text: copy.hidden.pointText(values.status, strength) },
+          { title: copy.hidden.actionTitle, text: coreAdvice },
         ],
       };
     }
 
     if (service.id === 'fortune') {
       return {
-        summary: `오늘은 ${mood}이 중심이 되는 날입니다. ${values.focus || '전체'} 흐름에서는 ${strength}을 살리면 기회가 생깁니다.`,
+        summary: copy.fortune.summary(values.focus, mood, strength),
         sections: [
-          { title: '전체 흐름', text: '큰 변화보다 작은 정리가 운을 열어주는 날입니다. 미뤄둔 연락, 일정, 결정을 하나만 정리해도 체감이 달라집니다.' },
-          { title: '관계/일/금전', text: `${values.focus || '전체'}에서는 ${caution}을 조심하세요. 상대의 반응이나 숫자 하나에 과하게 흔들리지 않는 것이 좋습니다.` },
-          { title: '오늘의 조언', text: coreAdvice },
+          { title: copy.fortune.overallTitle, text: copy.fortune.overallText },
+          { title: copy.fortune.detailTitle, text: copy.fortune.detailText(values.focus, caution) },
+          { title: copy.genericAdviceTitle, text: coreAdvice },
         ],
       };
     }
 
     if (service.id === 'compatibility') {
       return {
-        summary: `${values.relationship || '두 사람'}의 인연은 서로 다른 속도를 맞추는 과정에 있습니다. 끌림은 있지만 표현 방식의 차이를 조율해야 합니다.`,
+        summary: copy.compatibility.summary(values.relationship),
         sections: [
-          { title: '끌림 포인트', text: `두 사람 사이에는 ${strength}이 강점으로 작용합니다. 익숙한 방식보다 상대가 편해하는 표현을 살피면 흐름이 좋아집니다.` },
-          { title: '충돌 포인트', text: `${caution}이 반복되면 사소한 말도 크게 느껴질 수 있습니다. 확인 질문을 짧게 던지는 편이 안전합니다.` },
-          { title: '오늘의 조언', text: coreAdvice },
+          { title: copy.compatibility.attractionTitle, text: copy.compatibility.attractionText(strength) },
+          { title: copy.compatibility.frictionTitle, text: copy.compatibility.frictionText(caution) },
+          { title: copy.genericAdviceTitle, text: coreAdvice },
         ],
       };
     }
 
     if (service.id === 'free-question') {
       return {
-        summary: `${values.category || '고민'} 질문은 지금 당장 답을 정하기보다 기준을 세우는 단계에 가깝습니다.`,
+        summary: copy.freeQuestion.summary(values.category),
         sections: [
-          { title: '상황 정리', text: `${sentenceFromText(values.question)} 문제는 감정, 현실 조건, 타이밍을 나눠서 보면 더 단순해집니다.` },
-          { title: '가능한 방향', text: `${strength}을 살리는 선택은 장기적으로 후회가 적고, ${caution}을 피하는 선택은 오늘의 불안을 줄입니다.` },
-          { title: '오늘의 조언', text: coreAdvice },
+          { title: copy.freeQuestion.situationTitle, text: copy.freeQuestion.situationText(sentenceFromText(values.question)) },
+          { title: copy.freeQuestion.directionTitle, text: copy.freeQuestion.directionText(strength, caution) },
+          { title: copy.genericAdviceTitle, text: coreAdvice },
         ],
       };
     }
 
     if (service.id === 'face-reading') {
       return {
-        summary: `${values.impression || '인상'}은 ${mood}의 분위기를 줍니다. 웹에서는 사진 없이 입력한 키워드만 바탕으로 참고 풀이를 제공합니다.`,
+        summary: copy.face.summary(values.impression, mood),
         sections: [
-          { title: '인상 흐름', text: `${values.focus || '오늘의 조언'} 기준으로 보면 ${strength}이 강점처럼 보입니다. 첫인상에서는 편안함과 선명함의 균형이 중요합니다.` },
-          { title: '활용 팁', text: '중요한 만남 전에는 표정, 시선, 말의 속도를 정돈하는 것만으로도 인상이 크게 달라집니다.' },
-          { title: '사진 관상 안내', text: '사진 기반 관상은 앱에서 동의 후 이용할 수 있습니다. 웹에서는 사진을 업로드하거나 저장하지 않습니다.' },
+          { title: copy.face.flowTitle, text: copy.face.flowText(values.focus, strength) },
+          { title: copy.face.tipTitle, text: copy.face.tipText },
+          { title: copy.face.photoTitle, text: copy.face.photoText },
         ],
       };
     }
 
     return {
-      summary: `${service.navLabel} 결과가 준비되었습니다.`,
-      sections: [{ title: '오늘의 조언', text: coreAdvice }],
+      summary: copy.resultReady(service.navLabel),
+      sections: [{ title: copy.genericAdviceTitle, text: coreAdvice }],
     };
   }
 
@@ -288,7 +655,12 @@ const appUrl = ungyeol?.googlePlayUrl ?? 'https://play.google.com/store/apps/det
     resultPanel.innerHTML = '';
     const header = document.createElement('div');
     header.className = 'result-head';
-    header.innerHTML = `<p class="eyebrow">${service.resultTitle}</p><h2>${result.summary}</h2>`;
+    const eyebrow = document.createElement('p');
+    eyebrow.className = 'eyebrow';
+    eyebrow.textContent = service.resultTitle;
+    const title = document.createElement('h2');
+    title.textContent = result.summary;
+    header.append(eyebrow, title);
     resultPanel.appendChild(header);
 
     const grid = document.createElement('div');

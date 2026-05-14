@@ -1,0 +1,67 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import UngyeolMiniService from '../../components/UngyeolMiniService.astro';
+import { languages, type Lang } from '../../i18n/translations';
+import {
+  getUngyeolLandingCopy,
+  getUngyeolServices,
+  ungyeolProductName,
+  ungyeolServiceAlternates,
+  type UngyeolServiceInfo,
+} from '../../i18n/ungyeolServices';
+import { absoluteUrl, breadcrumbSchema } from '../../lib/seo';
+
+interface Props {
+  service: UngyeolServiceInfo;
+  lang: Lang;
+}
+
+export function getStaticPaths() {
+  return (Object.keys(languages) as Lang[]).flatMap((lang) =>
+    getUngyeolServices(lang).map((service) => ({
+      params: { lang, ungyeolService: service.id },
+      props: { service, lang },
+    })),
+  );
+}
+
+const { service, lang } = Astro.props;
+const landingCopy = getUngyeolLandingCopy(lang);
+const productName = ungyeolProductName[lang];
+const pageTitle = `${service.title} | ${productName} - KokomaSoft`;
+const alternates = ungyeolServiceAlternates(service.id);
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebApplication',
+  name: `${productName} ${service.navLabel}`,
+  description: service.description,
+  applicationCategory: 'LifestyleApplication',
+  operatingSystem: 'Web',
+  url: absoluteUrl(service.path),
+  publisher: {
+    '@type': 'Organization',
+    name: 'KokomaSoft',
+    url: 'https://kokomasoft.com',
+  },
+};
+---
+
+<Layout
+  lang={lang}
+  title={pageTitle}
+  description={service.description}
+  canonicalPath={service.path}
+  alternates={alternates}
+  xDefaultPath={alternates.ko}
+  image="/app-icons/ungyeol.png"
+  structuredData={[
+    schema,
+    breadcrumbSchema([
+      { name: 'KokomaSoft', path: `/${lang}/` },
+      { name: landingCopy.breadcrumbLabel, path: `/${lang}/#ungyeol-tools` },
+      { name: service.navLabel, path: service.path },
+    ]),
+  ]}
+>
+  <UngyeolMiniService service={service} />
+</Layout>
