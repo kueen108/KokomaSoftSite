@@ -6,7 +6,7 @@ export default defineConfig({
     locales: ['ko', 'en', 'zh', 'ja'],
     routing: {
       prefixDefaultLocale: true,
-      redirectToDefaultLocale: true,
+      redirectToDefaultLocale: false,
     },
   },
 });
