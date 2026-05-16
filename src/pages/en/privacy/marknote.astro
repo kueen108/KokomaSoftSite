@@ -1,0 +1,18 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import PrivacyPolicy from '../../../components/PrivacyPolicy.astro';
+import { privacyAlternates, privacyDescription, privacyTitle } from '../../../lib/seo';
+
+const appId = 'marknote';
+const appName = 'MarkNote';
+---
+<Layout
+  lang="en"
+  title={privacyTitle(appName, 'en')}
+  description={privacyDescription(appName, 'en')}
+  canonicalPath="/en/privacy/marknote/"
+  alternates={privacyAlternates(appId)}
+  xDefaultPath="/ko/privacy/marknote/"
+>
+  <PrivacyPolicy lang="en" appName={appName} appId={appId} />
+</Layout>

@@ -181,3 +181,137 @@ export const appPrivacySections: Partial<Record<string, Record<Lang, { heading: 
     ],
   },
 };
+
+export const appPrivacySectionOverrides: Partial<Record<string, Record<Lang, { heading: string; content: string }[]>>> = {
+  marknote: {
+    ko: [
+      {
+        heading: '1. 앱이 접근하거나 처리하는 데이터',
+        content: 'MarkNote는 사용자가 Android 파일 선택기로 선택한 폴더와 파일, 앱 내부 작업 폴더에 생성한 Markdown 문서, 최근 파일, 현재 작업 폴더, 표시 및 편집 설정, 자동 저장 설정, 임시 초안에 접근하거나 이를 기기 내부에 저장할 수 있습니다. Google Drive 작업 폴더를 연결한 경우 사용자가 선택한 Drive 폴더와 파일의 메타데이터, Markdown 파일 본문, Google 계정 이메일 및 승인 세션 정보가 기능 제공을 위해 처리될 수 있습니다.',
+      },
+      {
+        heading: '2. 이용 목적',
+        content: '수집 또는 처리되는 데이터는 Markdown 파일 열기, 편집, 자동 저장, 이름 변경, 이동, 복사, 삭제, 미리보기, 검색, HTML/PDF 내보내기, 최근 파일과 작업 폴더 복원, Google Drive 작업 폴더 연결, 임시 초안 복구, 저장 충돌 대응을 위해 사용됩니다.',
+      },
+      {
+        heading: '3. 로컬 처리와 앱 운영자 서버',
+        content: '로컬 폴더의 파일 내용은 기기 안에서 처리됩니다. MarkNote 운영자 서버로 문서 본문, 파일명, 폴더 경로를 전송하지 않습니다. MarkNote는 자체 회원가입, 자체 클라우드 동기화, 광고, 외부 analytics SDK, 외부 crash reporting SDK를 제공하지 않습니다.',
+      },
+      {
+        heading: '4. Google Drive 기능',
+        content: 'Google Drive 작업 폴더 기능은 선택 사항이며, 로컬 폴더 편집은 Google 계정 없이 사용할 수 있습니다. 사용자가 Google Drive 작업 폴더를 연결하면 MarkNote는 Google 계정 승인과 Google Drive API를 사용하여 사용자가 선택한 Drive 파일을 읽고 저장합니다. MarkNote의 Google 사용자 데이터 사용 및 다른 앱으로의 전송은 Google API Services User Data Policy와 Limited Use 요구사항을 준수합니다.',
+      },
+      {
+        heading: '5. Mermaid 미리보기',
+        content: '문서에 Mermaid 코드 블록이 있을 때 MarkNote는 Mermaid 차트를 렌더링하기 위해 jsDelivr의 Mermaid 스크립트를 로드할 수 있습니다. 일반 Markdown 미리보기에서는 JavaScript와 네트워크 로딩을 사용하지 않습니다.',
+      },
+      {
+        heading: '6. 보관 및 삭제',
+        content: '로컬 설정과 임시 초안은 사용자가 Android 앱 데이터를 삭제하면 제거됩니다. 앱 내부 작업 폴더 파일은 앱의 파일 삭제 기능 또는 Android 앱 데이터 삭제로 제거할 수 있습니다. SAF 로컬 폴더와 Google Drive 원본 파일은 사용자가 선택한 외부 저장소에 남으며, 앱의 파일 삭제 기능 또는 해당 저장소 앱에서 직접 삭제할 수 있습니다. Google Drive 작업 폴더 연결은 앱에서 연결 해제할 수 있으며 원본 Drive 파일은 삭제되지 않습니다.',
+      },
+      {
+        heading: '7. 아동, 보안 및 변경',
+        content: 'MarkNote는 일반 생산성 도구이며 아동을 대상으로 하지 않습니다. Android의 저장소 권한 모델과 Google OAuth/Drive API의 HTTPS 통신을 사용하며, 중요한 문서는 별도로 백업하는 것을 권장합니다. 앱 기능, 데이터 처리 방식, 외부 SDK 사용이 변경되면 본 방침을 업데이트합니다.',
+      },
+    ],
+    en: [
+      {
+        heading: '1. Data the App Accesses or Processes',
+        content: 'MarkNote may access or store on device the folders and files you choose through the Android file picker, Markdown documents created in app work folders, recent files, the current work folder, display and editing settings, auto-save settings, and temporary drafts. If you connect a Google Drive work folder, metadata for the Drive folders and files you choose, Markdown file contents, Google account email, and authorization session information may be processed to provide the feature.',
+      },
+      {
+        heading: '2. How Data Is Used',
+        content: 'Data is used to open, edit, auto-save, rename, move, copy, delete, preview, search, and export Markdown files as HTML/PDF, restore recent files and work folders, connect Google Drive work folders, recover temporary drafts, and handle save conflicts.',
+      },
+      {
+        heading: '3. Local Processing and Operator Servers',
+        content: 'Local file contents are processed on device. MarkNote does not send document bodies, file names, or folder paths to MarkNote operator servers. MarkNote does not provide its own account system, app cloud sync, ads, external analytics SDK, or external crash reporting SDK.',
+      },
+      {
+        heading: '4. Google Drive Feature',
+        content: 'The Google Drive work folder feature is optional, and local folder editing works without a Google account. If you connect a Google Drive work folder, MarkNote uses Google authorization and the Google Drive API to read and save the Drive files you choose. MarkNote use and transfer of information received from Google APIs adheres to the Google API Services User Data Policy, including Limited Use requirements.',
+      },
+      {
+        heading: '5. Mermaid Preview',
+        content: 'When a document contains Mermaid code blocks, MarkNote may load the Mermaid script from jsDelivr to render charts. Regular Markdown preview does not use JavaScript or network loading.',
+      },
+      {
+        heading: '6. Retention and Deletion',
+        content: 'Local settings and temporary drafts are removed when you delete the app data in Android settings. Files in app work folders can be removed through the app file deletion flow or Android app data deletion. SAF local folders and original Google Drive files remain in the external storage you chose and can be deleted through the app file deletion flow or the relevant storage app. Google Drive work folder connections can be disconnected in the app; original Drive files are not deleted by disconnecting.',
+      },
+      {
+        heading: '7. Children, Security, and Changes',
+        content: 'MarkNote is a general productivity tool and is not directed to children. It uses the Android storage permission model and HTTPS communication through Google OAuth and Drive APIs; you should separately back up important documents. This policy will be updated if app features, data handling, or external SDK usage changes.',
+      },
+    ],
+    zh: [
+      {
+        heading: '1. 应用访问或处理的数据',
+        content: 'MarkNote 可能会访问或在设备内保存你通过 Android 文件选择器选择的文件夹和文件、在应用工作文件夹中创建的 Markdown 文档、最近文件、当前工作文件夹、显示和编辑设置、自动保存设置以及临时草稿。连接 Google Drive 工作文件夹时，你选择的 Drive 文件夹和文件元数据、Markdown 文件正文、Google 账号邮箱和授权会话信息可能会为提供功能而被处理。',
+      },
+      {
+        heading: '2. 数据使用目的',
+        content: '这些数据用于打开、编辑、自动保存、重命名、移动、复制、删除、预览、搜索 Markdown 文件，将文件导出为 HTML/PDF，恢复最近文件和工作文件夹，连接 Google Drive 工作文件夹，恢复临时草稿，以及处理保存冲突。',
+      },
+      {
+        heading: '3. 本地处理和运营者服务器',
+        content: '本地文件内容在设备内处理。MarkNote 不会将文档正文、文件名或文件夹路径发送到 MarkNote 运营者服务器。MarkNote 不提供自有账号系统、自有云同步、广告、外部 analytics SDK 或外部 crash reporting SDK。',
+      },
+      {
+        heading: '4. Google Drive 功能',
+        content: 'Google Drive 工作文件夹功能为可选功能；本地文件夹编辑无需 Google 账号即可使用。连接 Google Drive 工作文件夹时，MarkNote 会使用 Google 授权和 Google Drive API 读取并保存你选择的 Drive 文件。MarkNote 对从 Google API 获取的信息的使用和传输遵守 Google API Services User Data Policy，包括 Limited Use 要求。',
+      },
+      {
+        heading: '5. Mermaid 预览',
+        content: '当文档包含 Mermaid 代码块时，MarkNote 可能会从 jsDelivr 加载 Mermaid 脚本来渲染图表。普通 Markdown 预览不会使用 JavaScript 或网络加载。',
+      },
+      {
+        heading: '6. 保存与删除',
+        content: '本地设置和临时草稿会在你通过 Android 设置删除应用数据时移除。应用工作文件夹中的文件可通过应用内文件删除功能或 Android 应用数据删除来移除。SAF 本地文件夹和 Google Drive 原始文件会保留在你选择的外部存储中，可通过应用内文件删除功能或相应存储应用直接删除。Google Drive 工作文件夹连接可在应用中断开，断开连接不会删除原始 Drive 文件。',
+      },
+      {
+        heading: '7. 儿童、安全与变更',
+        content: 'MarkNote 是通用生产力工具，并非面向儿童。应用使用 Android 存储权限模型以及 Google OAuth/Drive API 的 HTTPS 通信；建议你另行备份重要文档。如应用功能、数据处理方式或外部 SDK 使用发生变化，本政策将更新。',
+      },
+    ],
+    ja: [
+      {
+        heading: '1. アプリがアクセスまたは処理するデータ',
+        content: 'MarkNote は、Android ファイル選択画面でユーザーが選択したフォルダとファイル、アプリ作業フォルダに作成した Markdown 文書、最近のファイル、現在の作業フォルダ、表示・編集設定、自動保存設定、一時下書きにアクセスし、端末内に保存する場合があります。Google Drive 作業フォルダを接続した場合、選択した Drive フォルダとファイルのメタデータ、Markdown ファイル本文、Google アカウントのメールアドレス、認証セッション情報が機能提供のために処理される場合があります。',
+      },
+      {
+        heading: '2. データの利用目的',
+        content: 'これらのデータは、Markdown ファイルのオープン、編集、自動保存、名前変更、移動、コピー、削除、プレビュー、検索、HTML/PDF エクスポート、最近のファイルと作業フォルダの復元、Google Drive 作業フォルダの接続、一時下書きの復元、保存競合への対応に使用されます。',
+      },
+      {
+        heading: '3. ローカル処理と運営者サーバー',
+        content: 'ローカルファイルの内容は端末内で処理されます。MarkNote は文書本文、ファイル名、フォルダパスを MarkNote 運営者サーバーへ送信しません。MarkNote は独自アカウント、独自クラウド同期、広告、外部 analytics SDK、外部 crash reporting SDK を提供しません。',
+      },
+      {
+        heading: '4. Google Drive 機能',
+        content: 'Google Drive 作業フォルダ機能は任意であり、ローカルフォルダ編集は Google アカウントなしで利用できます。Google Drive 作業フォルダを接続すると、MarkNote は Google 認証と Google Drive API を使用して、選択された Drive ファイルを読み書きします。MarkNote による Google API から取得した情報の使用および他アプリへの転送は、Limited Use 要件を含む Google API Services User Data Policy に従います。',
+      },
+      {
+        heading: '5. Mermaid プレビュー',
+        content: '文書に Mermaid コードブロックが含まれる場合、MarkNote は図をレンダリングするために jsDelivr から Mermaid スクリプトを読み込むことがあります。通常の Markdown プレビューでは JavaScript やネットワーク読み込みを使用しません。',
+      },
+      {
+        heading: '6. 保持と削除',
+        content: 'ローカル設定と一時下書きは、Android 設定でアプリデータを削除すると削除されます。アプリ作業フォルダ内のファイルは、アプリのファイル削除機能または Android アプリデータ削除で削除できます。SAF ローカルフォルダと Google Drive の元ファイルは、ユーザーが選択した外部ストレージに残り、アプリのファイル削除機能または該当するストレージアプリから直接削除できます。Google Drive 作業フォルダ接続はアプリ内で解除でき、解除しても元の Drive ファイルは削除されません。',
+      },
+      {
+        heading: '7. 子ども、セキュリティ、変更',
+        content: 'MarkNote は一般的な仕事効率化ツールであり、子どもを対象としていません。Android のストレージ権限モデルと Google OAuth/Drive API の HTTPS 通信を使用します。重要な文書は別途バックアップすることを推奨します。アプリ機能、データ処理方法、外部 SDK の使用に変更がある場合、本ポリシーを更新します。',
+      },
+    ],
+  },
+};
+
+export const appPrivacyLastUpdated: Partial<Record<string, Record<Lang, string>>> = {
+  marknote: {
+    ko: '최종 수정일: 2026년 5월 11일',
+    en: 'Last updated: May 11, 2026',
+    zh: '最后更新：2026年5月11日',
+    ja: '最終更新日：2026年5月11日',
+  },
+};

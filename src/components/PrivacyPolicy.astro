@@ -1,6 +1,11 @@
 ---
 import type { Lang } from '../i18n/translations';
-import { appPrivacySections, privacy } from '../i18n/privacy';
+import {
+  appPrivacyLastUpdated,
+  appPrivacySectionOverrides,
+  appPrivacySections,
+  privacy,
+} from '../i18n/privacy';
 
 interface Props {
   lang: Lang;
@@ -10,17 +15,19 @@ interface Props {
 
 const { lang, appName, appId } = Astro.props;
 const p = privacy[lang];
-const sections = [
+const sectionOverride = appId ? appPrivacySectionOverrides[appId]?.[lang] : undefined;
+const sections = sectionOverride ?? [
   ...p.sections,
   ...(appId ? appPrivacySections[appId]?.[lang] ?? [] : []),
 ];
+const lastUpdated = appId ? appPrivacyLastUpdated[appId]?.[lang] ?? p.lastUpdated : p.lastUpdated;
 ---
 
 <section class="privacy">
   <div class="container">
     <h1>{p.title}</h1>
     <p class="app-name">{appName}</p>
-    <p class="last-updated">{p.lastUpdated}</p>
+    <p class="last-updated">{lastUpdated}</p>
     <p class="intro">{p.intro(appName)}</p>
     {sections.map((section) => (
       <div class="section">

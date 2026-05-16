@@ -16,12 +16,124 @@ export interface AppInfo {
   supportNote: Record<Lang, string>;
   screenshots?: Partial<Record<Lang, AppScreenshot[]>>;
   category: 'productivity' | 'lifestyle' | 'utility' | 'entertainment';
+  operatingSystem?: string;
   googlePlayUrl?: string;
   appStoreUrl?: string;
   supportsAccountDeletion?: boolean;
 }
 
 export const apps: AppInfo[] = [
+  {
+    id: 'marknote',
+    iconUrl: '/app-icons/marknote.png',
+    name: {
+      ko: 'MarkNote',
+      en: 'MarkNote',
+      zh: 'MarkNote',
+      ja: 'MarkNote',
+    },
+    tagline: {
+      ko: 'Markdown 파일을 로컬 폴더와 Google Drive 작업 폴더에서 바로 열고 저장하는 local-first 편집기입니다.',
+      en: 'A local-first Markdown editor that opens and saves files directly in local and Google Drive work folders.',
+      zh: '一款 local-first Markdown 编辑器，可直接打开并保存本地文件夹和 Google Drive 工作文件夹中的文件。',
+      ja: 'ローカルフォルダと Google Drive 作業フォルダの Markdown ファイルを直接開いて保存できる local-first エディタです。',
+    },
+    description: {
+      ko: 'MarkNote는 원본 .md, .markdown, .txt 파일을 앱 전용 데이터베이스에 가두지 않고 Android에서 빠르게 편집하고 안전하게 저장하도록 돕습니다.',
+      en: 'MarkNote helps you edit original .md, .markdown, and .txt files quickly on Android without locking documents into a private app database.',
+      zh: 'MarkNote 可在 Android 上快速编辑原始 .md、.markdown 和 .txt 文件，不会把文档锁进应用专用数据库。',
+      ja: 'MarkNote は元の .md、.markdown、.txt ファイルをアプリ専用データベースに閉じ込めず、Android で素早く編集して安全に保存できます。',
+    },
+    features: {
+      ko: ['로컬 폴더와 Google Drive 작업 폴더의 원본 파일 직접 편집', '굵게, 링크, 이미지, 표, 코드 블록, Mermaid 차트를 돕는 Markdown 툴바', '앱 내 미리보기와 HTML/PDF 내보내기', '파일명과 본문 검색, 새 문서 만들기, 이름 변경, 이동, 복사, 삭제', '자동 저장, 임시 초안 복구, 외부 변경 충돌 감지'],
+      en: ['Edit original files directly in local and Google Drive work folders', 'Markdown toolbar for bold, links, images, tables, code blocks, and Mermaid charts', 'In-app preview plus HTML/PDF export', 'File name and body search with create, rename, move, copy, and delete actions', 'Auto save, temporary draft recovery, and external change conflict detection'],
+      zh: ['直接编辑本地文件夹和 Google Drive 工作文件夹中的原始文件', 'Markdown 工具栏支持粗体、链接、图片、表格、代码块和 Mermaid 图表', '应用内预览，并可导出 HTML/PDF', '支持文件名和正文搜索，以及新建、重命名、移动、复制、删除', '自动保存、临时草稿恢复和外部变更冲突检测'],
+      ja: ['ローカルフォルダと Google Drive 作業フォルダの元ファイルを直接編集', '太字、リンク、画像、表、コードブロック、Mermaid 図を入力しやすい Markdown ツールバー', 'アプリ内プレビューと HTML/PDF エクスポート', 'ファイル名と本文の検索、新規作成、名前変更、移動、コピー、削除', '自動保存、一時下書きの復元、外部変更の競合検出'],
+    },
+    recommendedFor: {
+      ko: ['Syncthing, Google Drive, Dropbox, 파일 관리자 폴더의 Markdown 문서를 그대로 쓰고 싶은 사용자', '모바일에서 기술 문서, 블로그 초안, 회의록, 체크리스트, AI 프롬프트를 작성하는 사용자', '앱 전용 클라우드나 계정 없이 단순한 편집기를 원하는 사용자'],
+      en: ['People who keep Markdown documents in Syncthing, Google Drive, Dropbox, or file manager folders', 'Developers, writers, and note takers drafting technical notes, blog posts, meeting notes, checklists, or AI prompts on mobile', 'Users who want a focused editor without a required app cloud or proprietary account'],
+      zh: ['想继续使用 Syncthing、Google Drive、Dropbox 或文件管理器文件夹中的 Markdown 文档的用户', '在手机上撰写技术文档、博客草稿、会议记录、清单或 AI prompt 的开发者、写作者和笔记用户', '想要无需应用云端或专有账号的专注编辑器的用户'],
+      ja: ['Syncthing、Google Drive、Dropbox、ファイル管理アプリのフォルダにある Markdown 文書をそのまま使いたい方', '技術文書、ブログ下書き、議事録、チェックリスト、AI プロンプトをモバイルで書く開発者、ライター、メモ利用者', '専用クラウドや独自アカウントが必須ではない集中できるエディタを求める方'],
+    },
+    supportNote: {
+      ko: 'MarkNote는 자체 계정, 자체 클라우드 동기화, 광고, 외부 analytics SDK를 제공하지 않습니다. Google Drive 작업 폴더 기능은 사용자가 선택한 Drive 파일을 읽고 저장하기 위해 Google 계정 승인을 사용합니다.',
+      en: 'MarkNote does not provide its own account system, app cloud sync, ads, or external analytics SDK. The Google Drive work folder feature uses Google authorization to read and save the Drive files you choose.',
+      zh: 'MarkNote 不提供自有账号系统、自有云同步、广告或外部 analytics SDK。Google Drive 工作文件夹功能会使用 Google 授权来读取和保存你选择的 Drive 文件。',
+      ja: 'MarkNote は独自アカウント、独自クラウド同期、広告、外部 analytics SDK を提供しません。Google Drive 作業フォルダ機能では、選択した Drive ファイルの読み書きに Google 認証を使用します。',
+    },
+    screenshots: {
+      ko: [
+        {
+          src: '/app-screenshots/marknote/ko/01-workspace.png',
+          caption: { ko: '작업 폴더와 최근 파일', en: 'Work folders and recent files', zh: '工作文件夹和最近文件', ja: '作業フォルダと最近のファイル' },
+        },
+        {
+          src: '/app-screenshots/marknote/ko/02-editor.png',
+          caption: { ko: 'Markdown 편집기', en: 'Markdown editor', zh: 'Markdown 编辑器', ja: 'Markdown エディタ' },
+        },
+        {
+          src: '/app-screenshots/marknote/ko/03-preview.png',
+          caption: { ko: '문서 미리보기', en: 'Document preview', zh: '文档预览', ja: '文書プレビュー' },
+        },
+        {
+          src: '/app-screenshots/marknote/ko/04-search.png',
+          caption: { ko: '파일과 본문 검색', en: 'File and body search', zh: '文件和正文搜索', ja: 'ファイルと本文検索' },
+        },
+        {
+          src: '/app-screenshots/marknote/ko/05-export-settings.png',
+          caption: { ko: '내보내기와 설정', en: 'Export and settings', zh: '导出和设置', ja: 'エクスポートと設定' },
+        },
+      ],
+      en: [
+        {
+          src: '/app-screenshots/marknote/en/01-workspace.png',
+          caption: { ko: '작업 폴더와 최근 파일', en: 'Work folders and recent files', zh: '工作文件夹和最近文件', ja: '作業フォルダと最近のファイル' },
+        },
+        {
+          src: '/app-screenshots/marknote/en/02-editor.png',
+          caption: { ko: 'Markdown 편집기', en: 'Markdown editor', zh: 'Markdown 编辑器', ja: 'Markdown エディタ' },
+        },
+        {
+          src: '/app-screenshots/marknote/en/03-preview.png',
+          caption: { ko: '문서 미리보기', en: 'Document preview', zh: '文档预览', ja: '文書プレビュー' },
+        },
+        {
+          src: '/app-screenshots/marknote/en/04-search.png',
+          caption: { ko: '파일과 본문 검색', en: 'File and body search', zh: '文件和正文搜索', ja: 'ファイルと本文検索' },
+        },
+        {
+          src: '/app-screenshots/marknote/en/05-export-settings.png',
+          caption: { ko: '내보내기와 설정', en: 'Export and settings', zh: '导出和设置', ja: 'エクスポートと設定' },
+        },
+      ],
+      ja: [
+        {
+          src: '/app-screenshots/marknote/ja/01-workspace.png',
+          caption: { ko: '작업 폴더와 최근 파일', en: 'Work folders and recent files', zh: '工作文件夹和最近文件', ja: '作業フォルダと最近のファイル' },
+        },
+        {
+          src: '/app-screenshots/marknote/ja/02-editor.png',
+          caption: { ko: 'Markdown 편집기', en: 'Markdown editor', zh: 'Markdown 编辑器', ja: 'Markdown エディタ' },
+        },
+        {
+          src: '/app-screenshots/marknote/ja/03-preview.png',
+          caption: { ko: '문서 미리보기', en: 'Document preview', zh: '文档预览', ja: '文書プレビュー' },
+        },
+        {
+          src: '/app-screenshots/marknote/ja/04-search.png',
+          caption: { ko: '파일과 본문 검색', en: 'File and body search', zh: '文件和正文搜索', ja: 'ファイルと本文検索' },
+        },
+        {
+          src: '/app-screenshots/marknote/ja/05-export-settings.png',
+          caption: { ko: '내보내기와 설정', en: 'Export and settings', zh: '导出和设置', ja: 'エクスポートと設定' },
+        },
+      ],
+    },
+    category: 'productivity',
+    operatingSystem: 'Android',
+    googlePlayUrl: 'https://play.google.com/store/apps/details?id=com.kokomasoft.marknote',
+  },
   {
     id: 'lifelotto',
     iconUrl: '/app-icons/lifelotto.png',

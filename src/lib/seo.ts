@@ -51,10 +51,10 @@ export function homeTitle(lang: Lang) {
 
 export function homeDescription(lang: Lang) {
   const descriptions: Record<Lang, string> = {
-    ko: 'KokomaSoft는 운결, Onul, 인생로또 645, MyTube 등 모바일 앱을 개발하는 앱 스튜디오입니다. 앱 소개, 공식 다운로드, 개인정보처리방침, 계정 삭제 안내를 제공합니다.',
-    en: 'KokomaSoft is a mobile app studio behind Ungyeol, Onul, Life Lotto 645, and MyTube. Find official app information, store links, privacy policies, and account deletion guidance.',
-    zh: 'KokomaSoft 是开发 Ungyeol、Onul、人生乐透 645 和 MyTube 的移动应用工作室。您可以查看应用介绍、官方商店链接、隐私政策和账号删除说明。',
-    ja: 'KokomaSoftはUngyeol、Onul、人生ロト 645、MyTubeを開発するモバイルアプリスタジオです。公式アプリ情報、ストアリンク、プライバシーポリシー、アカウント削除案内を掲載しています。',
+    ko: 'KokomaSoft는 MarkNote, 운결, Onul, 인생로또 645, MyTube 등 모바일 앱을 개발하는 앱 스튜디오입니다. 앱 소개, 공식 다운로드, 개인정보처리방침, 계정 삭제 안내를 제공합니다.',
+    en: 'KokomaSoft is a mobile app studio behind MarkNote, Ungyeol, Onul, Life Lotto 645, and MyTube. Find official app information, store links, privacy policies, and account deletion guidance.',
+    zh: 'KokomaSoft 是开发 MarkNote、Ungyeol、Onul、人生乐透 645 和 MyTube 的移动应用工作室。您可以查看应用介绍、官方商店链接、隐私政策和账号删除说明。',
+    ja: 'KokomaSoftはMarkNote、Ungyeol、Onul、人生ロト 645、MyTubeを開発するモバイルアプリスタジオです。公式アプリ情報、ストアリンク、プライバシーポリシー、アカウント削除案内を掲載しています。',
   };
   return descriptions[lang];
 }
@@ -82,10 +82,10 @@ export function privacyTitle(appName: string, lang: Lang) {
 
 export function privacyDescription(appName: string, lang: Lang) {
   const descriptions: Record<Lang, string> = {
-    ko: `${appName}의 개인정보 수집, 이용, 보관, 광고 및 분석 서비스, 이용자 권리와 문의 방법을 안내합니다.`,
-    en: `Read how ${appName} handles data collection, use, retention, advertising, analytics, user rights, and privacy contact requests.`,
-    zh: `查看 ${appName} 如何处理信息收集、使用、保存、广告、分析、用户权利和隐私咨询。`,
-    ja: `${appName}の情報収集、利用、保持、広告、分析、ユーザーの権利、問い合わせ方法を確認できます。`,
+    ko: `${appName}의 개인정보 처리, 이용 목적, 보관 및 삭제, 외부 서비스 이용, 이용자 권리와 문의 방법을 안내합니다.`,
+    en: `Read how ${appName} handles data processing, use purposes, retention and deletion, external services, user rights, and privacy contact requests.`,
+    zh: `查看 ${appName} 如何处理数据、使用目的、保存与删除、外部服务、用户权利和隐私咨询。`,
+    ja: `${appName}のデータ処理、利用目的、保持と削除、外部サービス、ユーザーの権利、問い合わせ方法を確認できます。`,
   };
   return descriptions[lang];
 }
@@ -144,7 +144,7 @@ export function mobileApplicationSchema(app: AppInfo, lang: Lang) {
     name: app.name[lang],
     description: app.description[lang],
     applicationCategory: app.category,
-    operatingSystem: 'Android, iOS',
+    operatingSystem: app.operatingSystem ?? (app.appStoreUrl ? 'Android, iOS' : 'Android'),
     image: absoluteUrl(app.iconUrl),
     url: absoluteUrl(localizedPath(lang, `/apps/${app.id}/`)),
     offers: {
