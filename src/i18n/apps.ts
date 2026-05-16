@@ -22,6 +22,14 @@ export interface AppInfo {
   supportsAccountDeletion?: boolean;
 }
 
+const appDisplayOrder: Record<string, number> = {
+  ungyeol: 0,
+  lifelotto: 1,
+  mytube: 2,
+  onul: 3,
+  marknote: 4,
+};
+
 export const apps: AppInfo[] = [
   {
     id: 'marknote',
@@ -417,4 +425,8 @@ export const apps: AppInfo[] = [
     category: 'lifestyle',
     googlePlayUrl: 'https://play.google.com/store/apps/details?id=com.kokomasoft.ungyeol',
   },
-];
+].sort(
+  (a, b) =>
+    (appDisplayOrder[a.id] ?? Number.MAX_SAFE_INTEGER) -
+    (appDisplayOrder[b.id] ?? Number.MAX_SAFE_INTEGER),
+);
