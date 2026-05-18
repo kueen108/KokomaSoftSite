@@ -1,7 +1,9 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 
-const title = 'SnsPublisher Terms of Service | KokomaSoft';
+const appName = 'SnsPublisher';
+const appIcon = '/app-icons/sns-publisher.png';
+const title = `${appName} Terms of Service`;
 const description =
   'Terms of Service for SnsPublisher, KokomaSoft social content publishing support service.';
 ---
@@ -12,12 +14,22 @@ const description =
   description={description}
   canonicalPath="/sns-publisher/terms/"
   xDefaultPath="/sns-publisher/terms/"
+  image={appIcon}
+  favicon={appIcon}
+  headerBrandName={appName}
+  headerIcon={appIcon}
+  headerHref="/sns-publisher/"
   ogType="article"
 >
   <section class="legal-page">
     <div class="container">
-      <p class="eyebrow">SnsPublisher Legal</p>
-      <h1>Terms of Service</h1>
+      <div class="legal-brand">
+        <img src={appIcon} alt="SnsPublisher app icon" width="76" height="76" />
+        <div>
+          <p class="eyebrow">SnsPublisher Legal</p>
+          <h1>SnsPublisher Terms of Service</h1>
+        </div>
+      </div>
       <p class="last-updated">Last updated: May 18, 2026</p>
       <p class="intro">
         These Terms of Service apply to SnsPublisher, a KokomaSoft service that helps authorized users prepare, manage, and publish short-form promotional content to connected creator accounts.
@@ -41,7 +53,7 @@ const description =
       <article class="legal-section">
         <h2>3. Authorized Accounts and Platform Rules</h2>
         <p>
-          If a feature requires third-party authorization, you may need to sign in to the relevant account and grant the requested permissions. Your use of each connected platform remains subject to that platform's terms, community guidelines, privacy policy, and developer requirements, including TikTok Content Posting API requirements where applicable.
+          If a feature requires third-party authorization, you may need to sign in to the relevant account and grant the requested permissions. Your use of each connected platform remains subject to that platform's terms, community guidelines, privacy policy, and developer requirements.
         </p>
       </article>
 
@@ -109,6 +121,24 @@ const description =
     margin-bottom: 0.65rem;
   }
 
+  .legal-brand {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .legal-brand img {
+    width: 76px;
+    height: 76px;
+    border-radius: 18px;
+    box-shadow: 0 16px 36px rgba(15, 23, 42, 0.16);
+  }
+
+  .legal-brand .eyebrow {
+    margin-bottom: 0.35rem;
+  }
+
   h1 {
     color: var(--color-ink);
     font-size: clamp(2.1rem, 5vw, 3.4rem);
@@ -152,5 +182,12 @@ const description =
 
   .legal-section a:hover {
     text-decoration: underline;
+  }
+
+  @media (max-width: 560px) {
+    .legal-brand {
+      align-items: flex-start;
+      flex-direction: column;
+    }
   }
 </style>

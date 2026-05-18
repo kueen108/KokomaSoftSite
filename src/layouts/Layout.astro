@@ -13,6 +13,10 @@ interface Props {
   alternates?: Partial<Record<Lang, string>>;
   xDefaultPath?: string;
   image?: string;
+  favicon?: string;
+  headerBrandName?: string;
+  headerIcon?: string;
+  headerHref?: string;
   ogType?: 'website' | 'article';
   structuredData?: StructuredData | StructuredData[];
 }
@@ -25,6 +29,10 @@ const {
   alternates,
   xDefaultPath,
   image,
+  favicon,
+  headerBrandName,
+  headerIcon,
+  headerHref,
   ogType = 'website',
   structuredData,
 } = Astro.props;
@@ -34,6 +42,10 @@ const pageDescription = description ?? tr.siteDescription;
 const pagePath = canonicalPath ?? Astro.url.pathname;
 const canonicalUrl = absoluteUrl(pagePath);
 const imageUrl = image ? absoluteUrl(image) : undefined;
+const faviconPath = favicon ?? '/favicon.svg';
+const faviconType = faviconPath.endsWith('.png') ? 'image/png' : 'image/svg+xml';
+const logoHref = headerHref ?? `/${lang}/`;
+const logoText = headerBrandName ?? 'KokomaSoft';
 const alternateEntries = Object.entries(alternates ?? {}) as [Lang, string][];
 const structuredDataList = Array.isArray(structuredData)
   ? structuredData
@@ -71,7 +83,8 @@ const structuredDataList = Array.isArray(structuredData)
     <meta name="twitter:description" content={pageDescription} />
     {imageUrl && <meta name="twitter:image" content={imageUrl} />}
     <title>{pageTitle}</title>
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type={faviconType} href={faviconPath} />
+    {favicon && <link rel="apple-touch-icon" href={faviconPath} />}
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -85,9 +98,13 @@ const structuredDataList = Array.isArray(structuredData)
   <body>
     <header class="header">
       <div class="container">
-        <a href={`/${lang}/`} class="logo">
-          <span class="logo-icon">K</span>
-          <span class="logo-text">KokomaSoft</span>
+        <a href={logoHref} class="logo">
+          {headerIcon ? (
+            <img class="logo-image" src={headerIcon} alt={`${logoText} app icon`} width="36" height="36" />
+          ) : (
+            <span class="logo-icon">K</span>
+          )}
+          <span class="logo-text">{logoText}</span>
         </a>
         <nav class="nav">
           <a href={`/${lang}/#apps`}>{tr.appsTitle}</a>
@@ -217,6 +234,13 @@ const structuredDataList = Array.isArray(structuredData)
         border-radius: 8px;
         font-weight: 700;
         font-size: 1.1rem;
+      }
+
+      .logo-image {
+        display: block;
+        width: 36px;
+        height: 36px;
+        border-radius: 8px;
       }
 
       .nav {

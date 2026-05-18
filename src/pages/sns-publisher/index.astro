@@ -1,7 +1,9 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 
-const title = 'SnsPublisher | KokomaSoft';
+const appName = 'SnsPublisher';
+const appIcon = '/app-icons/sns-publisher.png';
+const title = appName;
 const description =
   'SnsPublisher helps authorized teams prepare and publish short-form promotional videos to creator accounts.';
 ---
@@ -12,11 +14,15 @@ const description =
   description={description}
   canonicalPath="/sns-publisher/"
   xDefaultPath="/sns-publisher/"
-  image="/app-icons/mytube.png"
+  image={appIcon}
+  favicon={appIcon}
+  headerBrandName={appName}
+  headerIcon={appIcon}
+  headerHref="/sns-publisher/"
   structuredData={{
     '@context': 'https://schema.org',
     '@type': 'Service',
-    name: 'SnsPublisher',
+    name: appName,
     provider: {
       '@type': 'Organization',
       name: 'KokomaSoft',
@@ -24,13 +30,17 @@ const description =
     },
     serviceType: 'Social content publishing support',
     url: 'https://kokomasoft.com/sns-publisher/',
+    image: 'https://kokomasoft.com/app-icons/sns-publisher.png',
     description,
   }}
 >
   <section class="service-hero">
     <div class="container service-hero-grid">
       <div class="service-copy">
-        <p class="eyebrow">KokomaSoft Service</p>
+        <div class="app-identity">
+          <img src={appIcon} alt="SnsPublisher app icon" width="88" height="88" />
+          <p class="eyebrow">KokomaSoft Service</p>
+        </div>
         <h1>SnsPublisher</h1>
         <p class="lead">
           SnsPublisher supports KokomaSoft's content operations by helping authorized users prepare captions, organize media, and publish short-form promotional videos to approved creator accounts.
@@ -74,9 +84,9 @@ const description =
           </p>
         </article>
         <article>
-          <h3>Authorized account access</h3>
+          <h3>Sandbox review flow</h3>
           <p>
-            SnsPublisher uses user-granted authorization for supported third-party developer APIs, including the TikTok Content Posting API where enabled for the account.
+            The current production request is limited to OAuth authorization, creator account access, and inbox upload using the <code>user.info.basic</code> and <code>video.upload</code> scopes. Direct publishing is not part of this request.
           </p>
         </article>
         <article>
@@ -123,6 +133,24 @@ const description =
     letter-spacing: 0;
     text-transform: uppercase;
     margin-bottom: 0.7rem;
+  }
+
+  .app-identity {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .app-identity img {
+    width: 88px;
+    height: 88px;
+    border-radius: 20px;
+    box-shadow: 0 18px 42px rgba(15, 23, 42, 0.18);
+  }
+
+  .app-identity .eyebrow {
+    margin-bottom: 0;
   }
 
   h1,
@@ -213,6 +241,14 @@ const description =
   .contact-band p {
     color: var(--color-text);
     line-height: 1.72;
+  }
+
+  code {
+    padding: 0.1rem 0.3rem;
+    border-radius: 5px;
+    background: rgba(15, 23, 42, 0.08);
+    color: var(--color-ink);
+    font-size: 0.92em;
   }
 
   .service-section {

@@ -1,7 +1,9 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 
-const title = 'SnsPublisher Privacy Policy | KokomaSoft';
+const appName = 'SnsPublisher';
+const appIcon = '/app-icons/sns-publisher.png';
+const title = `${appName} Privacy Policy`;
 const description =
   'Privacy Policy for SnsPublisher, KokomaSoft social content publishing support service.';
 ---
@@ -12,12 +14,22 @@ const description =
   description={description}
   canonicalPath="/sns-publisher/privacy/"
   xDefaultPath="/sns-publisher/privacy/"
+  image={appIcon}
+  favicon={appIcon}
+  headerBrandName={appName}
+  headerIcon={appIcon}
+  headerHref="/sns-publisher/"
   ogType="article"
 >
   <section class="legal-page">
     <div class="container">
-      <p class="eyebrow">SnsPublisher Legal</p>
-      <h1>Privacy Policy</h1>
+      <div class="legal-brand">
+        <img src={appIcon} alt="SnsPublisher app icon" width="76" height="76" />
+        <div>
+          <p class="eyebrow">SnsPublisher Legal</p>
+          <h1>SnsPublisher Privacy Policy</h1>
+        </div>
+      </div>
       <p class="last-updated">Last updated: May 18, 2026</p>
       <p class="intro">
         This Privacy Policy explains how KokomaSoft handles information when users access SnsPublisher, our service for preparing and publishing short-form promotional content to authorized creator accounts.
@@ -40,7 +52,7 @@ const description =
       <article class="legal-section">
         <h2>3. Third-Party Authorization and Permissions</h2>
         <p>
-          If SnsPublisher asks you to authorize access to a third-party account, the permission screen will describe the access requested. We only use authorized account information for the feature you requested and in accordance with applicable developer requirements, including TikTok Content Posting API requirements where applicable.
+          If SnsPublisher asks you to authorize access to a third-party account, the permission screen will describe the access requested. We only use authorized account information for the feature you requested and in accordance with applicable developer requirements.
         </p>
       </article>
 
@@ -115,6 +127,24 @@ const description =
     margin-bottom: 0.65rem;
   }
 
+  .legal-brand {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .legal-brand img {
+    width: 76px;
+    height: 76px;
+    border-radius: 18px;
+    box-shadow: 0 16px 36px rgba(15, 23, 42, 0.16);
+  }
+
+  .legal-brand .eyebrow {
+    margin-bottom: 0.35rem;
+  }
+
   h1 {
     color: var(--color-ink);
     font-size: clamp(2.1rem, 5vw, 3.4rem);
@@ -158,5 +188,12 @@ const description =
 
   .legal-section a:hover {
     text-decoration: underline;
+  }
+
+  @media (max-width: 560px) {
+    .legal-brand {
+      align-items: flex-start;
+      flex-direction: column;
+    }
   }
 </style>
