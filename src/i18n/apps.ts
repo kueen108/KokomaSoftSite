@@ -19,6 +19,7 @@ export interface AppInfo {
   operatingSystem?: string;
   googlePlayUrl?: string;
   appStoreUrl?: string;
+  introVideoUrl?: string;
   supportsAccountDeletion?: boolean;
 }
 
@@ -141,6 +142,7 @@ export const apps: AppInfo[] = [
     category: 'productivity',
     operatingSystem: 'Android',
     googlePlayUrl: 'https://play.google.com/store/apps/details?id=com.kokomasoft.marknote',
+    introVideoUrl: 'https://www.youtube.com/shorts/f1_EF5rne8Y',
   },
   {
     id: 'lifelotto',
@@ -184,6 +186,7 @@ export const apps: AppInfo[] = [
     category: 'entertainment',
     googlePlayUrl: 'https://play.google.com/store/apps/details?id=com.kokomasoft.lifelotto',
     appStoreUrl: 'https://apps.apple.com/kr/app/%EC%9D%B8%EC%83%9D%EB%A1%9C%EB%98%90-645/id6752466063',
+    introVideoUrl: 'https://www.youtube.com/shorts/dASuSVpuLdA',
   },
   {
     id: 'mytube',
@@ -227,6 +230,7 @@ export const apps: AppInfo[] = [
     category: 'entertainment',
     googlePlayUrl: 'https://play.google.com/store/apps/details?id=com.kokomasoft.hottube',
     appStoreUrl: 'https://apps.apple.com/kr/app/my-tube/id6738738608',
+    introVideoUrl: 'https://www.youtube.com/shorts/qcywcf0MY7A',
   },
   {
     id: 'onul',
@@ -313,6 +317,7 @@ export const apps: AppInfo[] = [
     },
     category: 'lifestyle',
     googlePlayUrl: 'https://play.google.com/store/apps/details?id=com.kokomasoft.mindfulecho',
+    introVideoUrl: 'https://www.youtube.com/shorts/8UVL8eX9r50',
     supportsAccountDeletion: true,
   },
   {
@@ -424,6 +429,7 @@ export const apps: AppInfo[] = [
     },
     category: 'lifestyle',
     googlePlayUrl: 'https://play.google.com/store/apps/details?id=com.kokomasoft.ungyeol',
+    introVideoUrl: 'https://www.youtube.com/shorts/WO983G2cULg',
   },
 ].sort(
   (a, b) =>

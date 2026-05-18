@@ -157,7 +157,7 @@ export function mobileApplicationSchema(app: AppInfo, lang: Lang) {
       name: 'KokomaSoft',
       url: SITE_URL,
     },
-    sameAs: [app.googlePlayUrl, app.appStoreUrl].filter(Boolean),
+    sameAs: [app.googlePlayUrl, app.appStoreUrl, app.introVideoUrl].filter(Boolean),
   };
 }
 

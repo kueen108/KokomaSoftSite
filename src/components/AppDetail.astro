@@ -43,6 +43,11 @@ const ungyeolTools = getUngyeolLandingCopy(lang);
           {tr.appStore}
         </a>
       )}
+      {app.introVideoUrl && (
+        <a href={app.introVideoUrl} target="_blank" rel="noopener noreferrer" class="store-btn video-link">
+          {tr.appIntroVideo}
+        </a>
+      )}
     </div>
   </div>
 </section>
@@ -248,7 +253,8 @@ const ungyeolTools = getUngyeolLandingCopy(lang);
   }
 
   .store-btn.google-play:hover,
-  .store-btn.app-store:hover {
+  .store-btn.app-store:hover,
+  .store-btn.video-link:hover {
     transform: translateY(-2px);
   }
 
@@ -257,6 +263,11 @@ const ungyeolTools = getUngyeolLandingCopy(lang);
     border: 1px solid rgba(255, 255, 255, 0.22);
     color: white;
     backdrop-filter: blur(14px);
+  }
+
+  .store-btn.video-link {
+    background: #cc1f1a;
+    color: white;
   }
 
   .detail-section {

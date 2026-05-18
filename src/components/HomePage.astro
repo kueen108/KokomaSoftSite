@@ -94,6 +94,12 @@ const heroScreenshots = apps
               <a href={`/${lang}/apps/${app.id}/`} class="details-link">
                 {tr.learnMore}
               </a>
+              {app.introVideoUrl && (
+                <a href={app.introVideoUrl} target="_blank" rel="noopener noreferrer" class="store-btn video-link">
+                  <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+                  {tr.appIntroVideo}
+                </a>
+              )}
               {app.googlePlayUrl && (
                 <a href={app.googlePlayUrl} target="_blank" rel="noopener noreferrer" class="store-btn google-play">
                   <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M3.609 1.814L13.792 12 3.61 22.186a.996.996 0 01-.61-.92V2.734a1 1 0 01.609-.92zm10.89 10.893l2.302 2.302-10.937 6.333 8.635-8.635zm3.199-1.4l2.545 1.473c.68.394.68 1.047 0 1.44l-2.545 1.474-2.535-2.535 2.535-2.535zM5.864 2.658L16.8 8.99l-2.302 2.302-8.634-8.634z"/></svg>
@@ -557,6 +563,15 @@ const heroScreenshots = apps
 
   .store-btn.google-play:hover {
     background: #334155;
+  }
+
+  .store-btn.video-link {
+    background: #cc1f1a;
+    color: white;
+  }
+
+  .store-btn.video-link:hover {
+    background: #a61c17;
   }
 
   .privacy-link {
