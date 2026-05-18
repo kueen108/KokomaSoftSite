@@ -18,7 +18,7 @@ interface SitemapPage {
   priority: string;
 }
 
-const lastmod = '2026-05-16';
+const lastmod = '2026-05-18';
 
 function escapeXml(value: string) {
   return value
@@ -64,6 +64,20 @@ export function GET() {
       changefreq: 'weekly' as const,
       priority: lang === 'ko' ? '0.9' : '0.8',
     })),
+    {
+      path: '/tiktok/terms/',
+      alternates: {},
+      xDefaultPath: '/tiktok/terms/',
+      changefreq: 'yearly',
+      priority: '0.4',
+    },
+    {
+      path: '/tiktok/privacy/',
+      alternates: {},
+      xDefaultPath: '/tiktok/privacy/',
+      changefreq: 'yearly',
+      priority: '0.4',
+    },
     ...apps.flatMap((app) => {
       const paths = appAlternates(app.id);
       return languageCodes.map((lang) => ({
