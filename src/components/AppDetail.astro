@@ -43,7 +43,7 @@ const ungyeolTools = getUngyeolLandingCopy(lang);
           {tr.appStore}
         </a>
       )}
-      {app.introVideoUrl && (
+      {lang === 'ko' && app.introVideoUrl && (
         <a href={app.introVideoUrl} target="_blank" rel="noopener noreferrer" class="store-btn video-link">
           {tr.appIntroVideo}
         </a>
