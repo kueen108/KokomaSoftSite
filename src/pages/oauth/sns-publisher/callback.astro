@@ -1,0 +1,106 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+
+const appName = 'SnsPublisher';
+const appIcon = '/app-icons/sns-publisher.png';
+const title = `${appName} OAuth Callback`;
+const description = 'OAuth callback page for SnsPublisher account authorization.';
+---
+
+<Layout
+  lang="en"
+  title={title}
+  description={description}
+  canonicalPath="/oauth/sns-publisher/callback/"
+  xDefaultPath="/oauth/sns-publisher/callback/"
+  image={appIcon}
+  favicon={appIcon}
+  headerBrandName={appName}
+  headerIcon={appIcon}
+  headerHref="/sns-publisher/"
+  ogType="article"
+>
+  <section class="callback-page">
+    <div class="container">
+      <img class="app-icon" src={appIcon} alt="SnsPublisher app icon" width="88" height="88" />
+      <p class="eyebrow">SnsPublisher</p>
+      <h1>OAuth Callback</h1>
+      <p class="intro">
+        This page is used to complete account authorization for SnsPublisher. If you were redirected here after approving access, return to the SnsPublisher tool with the authorization code shown in the browser URL.
+      </p>
+      <div class="legal-links">
+        <a href="/sns-publisher/">Website</a>
+        <a href="/sns-publisher/terms/">Terms of Service</a>
+        <a href="/sns-publisher/privacy/">Privacy Policy</a>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .callback-page {
+    min-height: 68vh;
+    padding: 5rem 0;
+    background: var(--color-bg);
+  }
+
+  .callback-page .container {
+    max-width: 760px;
+  }
+
+  .app-icon {
+    width: 88px;
+    height: 88px;
+    border-radius: 20px;
+    box-shadow: 0 18px 42px rgba(15, 23, 42, 0.18);
+    margin-bottom: 1rem;
+  }
+
+  .eyebrow {
+    color: var(--color-primary);
+    font-size: 0.78rem;
+    font-weight: 800;
+    letter-spacing: 0;
+    text-transform: uppercase;
+    margin-bottom: 0.65rem;
+  }
+
+  h1 {
+    color: var(--color-ink);
+    font-size: clamp(2.2rem, 5vw, 3.6rem);
+    line-height: 1.05;
+    margin-bottom: 1rem;
+  }
+
+  .intro {
+    color: var(--color-text);
+    font-size: 1.05rem;
+    line-height: 1.8;
+  }
+
+  .legal-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 2rem;
+  }
+
+  .legal-links a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    background: var(--color-ink);
+    color: white;
+    font-weight: 700;
+    text-decoration: none;
+  }
+
+  .legal-links a:not(:first-child) {
+    background: transparent;
+    color: var(--color-ink);
+    border: 1px solid var(--color-border);
+  }
+</style>
