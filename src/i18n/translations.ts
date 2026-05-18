@@ -48,8 +48,8 @@ export const translations = {
     contactEmail: '이메일',
     privacyPolicy: '개인정보처리방침',
     accountDeletion: '계정/데이터 삭제',
-    tiktokTerms: 'TikTok 이용약관',
-    tiktokPrivacy: 'TikTok 개인정보처리방침',
+    snsPublisherTerms: 'SnsPublisher 이용약관',
+    snsPublisherPrivacy: 'SnsPublisher 개인정보처리방침',
     footerRights: '© 2026 KokomaSoft. All rights reserved.',
     appCategories: {
       productivity: '생산성',
@@ -98,8 +98,8 @@ export const translations = {
     contactEmail: 'Email',
     privacyPolicy: 'Privacy Policy',
     accountDeletion: 'Account/Data Deletion',
-    tiktokTerms: 'TikTok Terms',
-    tiktokPrivacy: 'TikTok Privacy',
+    snsPublisherTerms: 'SnsPublisher Terms',
+    snsPublisherPrivacy: 'SnsPublisher Privacy',
     footerRights: '© 2026 KokomaSoft. All rights reserved.',
     appCategories: {
       productivity: 'Productivity',
@@ -148,8 +148,8 @@ export const translations = {
     contactEmail: '邮箱',
     privacyPolicy: '隐私政策',
     accountDeletion: '账号/数据删除',
-    tiktokTerms: 'TikTok 条款',
-    tiktokPrivacy: 'TikTok 隐私',
+    snsPublisherTerms: 'SnsPublisher 条款',
+    snsPublisherPrivacy: 'SnsPublisher 隐私',
     footerRights: '© 2026 KokomaSoft. 保留所有权利。',
     appCategories: {
       productivity: '效率',
@@ -198,8 +198,8 @@ export const translations = {
     contactEmail: 'メール',
     privacyPolicy: 'プライバシーポリシー',
     accountDeletion: 'アカウント/データ削除',
-    tiktokTerms: 'TikTok 利用規約',
-    tiktokPrivacy: 'TikTok プライバシー',
+    snsPublisherTerms: 'SnsPublisher 利用規約',
+    snsPublisherPrivacy: 'SnsPublisher プライバシー',
     footerRights: '© 2026 KokomaSoft. All rights reserved.',
     appCategories: {
       productivity: '仕事効率化',
