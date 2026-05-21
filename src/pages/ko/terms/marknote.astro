@@ -1,0 +1,230 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+
+const appName = 'MarkNote';
+const appIcon = '/app-icons/marknote.png';
+const title = `${appName} 서비스 약관`;
+const description =
+  'MarkNote 서비스 약관. KokomaSoft 의 로컬 우선 마크다운 편집/미리보기 웹 서비스 이용 조건을 안내합니다.';
+---
+
+<Layout
+  lang="ko"
+  title={title}
+  description={description}
+  canonicalPath="/ko/terms/marknote/"
+  xDefaultPath="/ko/terms/marknote/"
+  image={appIcon}
+  favicon={appIcon}
+  headerBrandName={appName}
+  headerIcon={appIcon}
+  headerHref="https://md.kokomasoft.com/"
+  ogType="article"
+>
+  <section class="legal-page">
+    <div class="container">
+      <div class="legal-brand">
+        <img src={appIcon} alt="MarkNote 앱 아이콘" width="76" height="76" />
+        <div>
+          <p class="eyebrow">MarkNote Legal</p>
+          <h1>MarkNote 서비스 약관</h1>
+        </div>
+      </div>
+      <p class="last-updated">최종 업데이트: 2026년 5월 21일</p>
+      <p class="intro">
+        본 약관은 KokomaSoft 가 제공하는 마크다운 편집/미리보기 웹 서비스 MarkNote(이하 "서비스")의
+        이용 조건을 규정합니다. 서비스를 이용함으로써 사용자는 본 약관과 서비스 내에 표시되는
+        추가 안내에 동의하는 것으로 간주됩니다. 동의하지 않는 경우 서비스 이용을 중단해 주세요.
+      </p>
+
+      <article class="legal-section">
+        <h2>1. 서비스 개요</h2>
+        <p>
+          MarkNote 는 브라우저에서 동작하는 로컬 우선(local-first) 마크다운 편집기입니다. 문서 작성과
+          미리보기, 파일/폴더 관리, 그리고 선택적인 Google Drive 연동을 통한 파일 편집 기능을
+          제공합니다. 제공 기능은 브라우저 환경, 지역, 연동 상태에 따라 달라질 수 있습니다.
+        </p>
+      </article>
+
+      <article class="legal-section">
+        <h2>2. 요금</h2>
+        <p>
+          서비스는 현재 무료로 제공됩니다. 향후 유료 기능이 도입될 경우 사전에 고지하고 별도의
+          조건을 적용합니다.
+        </p>
+      </article>
+
+      <article class="legal-section">
+        <h2>3. 사용자의 책임</h2>
+        <p>
+          사용자는 서비스로 작성·업로드·저장·공유하는 콘텐츠에 대한 책임이 있으며, 해당 콘텐츠에
+          필요한 모든 권리와 권한을 보유해야 합니다. 법령, 제3자의 권리, 플랫폼 정책을 위반하는
+          용도로 서비스를 사용해서는 안 됩니다. 중요한 문서는 별도로 백업할 것을 권장합니다.
+        </p>
+      </article>
+
+      <article class="legal-section">
+        <h2>4. 로컬 데이터 저장</h2>
+        <p>
+          앱 작업 폴더의 문서는 브라우저 저장소(OPFS)에, 임시 초안은 IndexedDB 에, 앱 설정은
+          localStorage 에 사용자의 기기 내부에만 저장됩니다. 운영자 서버로 문서 본문이나 파일
+          경로가 전송되지 않습니다. 브라우저의 사이트 데이터 삭제 시 해당 로컬 데이터는 제거됩니다.
+        </p>
+      </article>
+
+      <article class="legal-section">
+        <h2>5. Google Drive 연동 (선택)</h2>
+        <p>
+          Google Drive 연동은 선택 기능이며, Google 계정 없이도 로컬 편집을 사용할 수 있습니다.
+          연동 시 서비스는 Google 인증과 Google Drive API 를 사용하여 사용자가 선택한 Drive
+          파일을 직접 읽고 저장합니다. Google 계정 및 Drive 이용은 Google 의 약관과 정책을 따르며,
+          서비스의 Google 사용자 데이터 처리는
+          <a href="https://developers.google.com/terms/api-services-user-data-policy" target="_blank" rel="noopener">Google API Services User Data Policy</a>
+          의 Limited Use 요건을 준수합니다. 데이터 처리에 관한 자세한 내용은
+          <a href="/ko/privacy/marknote/">개인정보처리방침</a>을 참고하세요.
+        </p>
+      </article>
+
+      <article class="legal-section">
+        <h2>6. 지적재산권 및 오픈소스</h2>
+        <p>
+          사용자가 작성한 문서의 권리는 사용자에게 있습니다. 서비스 자체의 상표, 디자인, 소스코드에
+          대한 권리는 KokomaSoft 또는 각 권리자에게 있으며, 오픈소스 구성요소는 각 라이선스(MIT 등)를
+          따릅니다.
+        </p>
+      </article>
+
+      <article class="legal-section">
+        <h2>7. 보증의 부인</h2>
+        <p>
+          서비스는 "있는 그대로(AS-IS)" 제공되며, 특정 목적에의 적합성, 무중단성, 무오류성,
+          데이터의 무손실을 보증하지 않습니다. 사용자는 자신의 책임으로 서비스를 이용합니다.
+        </p>
+      </article>
+
+      <article class="legal-section">
+        <h2>8. 책임의 제한</h2>
+        <p>
+          관련 법령이 허용하는 범위에서, KokomaSoft 는 서비스 이용 또는 이용 불능으로 발생한 직접·간접·
+          부수적·결과적 손해(데이터 손실 포함)에 대해 책임을 지지 않습니다.
+        </p>
+      </article>
+
+      <article class="legal-section">
+        <h2>9. 서비스 변경 및 중단</h2>
+        <p>
+          KokomaSoft 는 서비스의 전부 또는 일부를 사전 고지 후 변경하거나 중단할 수 있습니다. 기능
+          변경, 데이터 처리 방식 변경, 외부 구성요소 사용 변경이 있는 경우 본 약관 또는
+          개인정보처리방침을 업데이트합니다.
+        </p>
+      </article>
+
+      <article class="legal-section">
+        <h2>10. 약관 변경</h2>
+        <p>본 약관이 변경되면 이 페이지의 최종 업데이트 날짜를 갱신합니다.</p>
+      </article>
+
+      <article class="legal-section">
+        <h2>11. 준거법</h2>
+        <p>본 약관은 대한민국 법률에 따라 해석되고 적용됩니다.</p>
+      </article>
+
+      <article class="legal-section">
+        <h2>12. 문의</h2>
+        <p>
+          문의: <a href="mailto:kueen108@gmail.com">kueen108@gmail.com</a>
+        </p>
+      </article>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .legal-page {
+    padding: 5rem 0;
+    background: var(--color-bg);
+  }
+
+  .legal-page .container {
+    max-width: 820px;
+  }
+
+  .eyebrow {
+    color: var(--color-primary);
+    font-size: 0.78rem;
+    font-weight: 800;
+    letter-spacing: 0;
+    text-transform: uppercase;
+    margin-bottom: 0.65rem;
+  }
+
+  .legal-brand {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .legal-brand img {
+    width: 76px;
+    height: 76px;
+    border-radius: 18px;
+    box-shadow: 0 16px 36px rgba(15, 23, 42, 0.16);
+  }
+
+  .legal-brand .eyebrow {
+    margin-bottom: 0.35rem;
+  }
+
+  h1 {
+    color: var(--color-ink);
+    font-size: clamp(2.1rem, 5vw, 3.4rem);
+    line-height: 1.05;
+    margin-bottom: 0.75rem;
+  }
+
+  .last-updated {
+    color: var(--color-text-muted);
+    font-size: 0.9rem;
+    margin-bottom: 2rem;
+  }
+
+  .intro,
+  .legal-section p {
+    color: var(--color-text);
+    line-height: 1.82;
+  }
+
+  .intro {
+    margin-bottom: 2.25rem;
+  }
+
+  .legal-section {
+    padding-top: 1.4rem;
+    margin-top: 1.4rem;
+    border-top: 1px solid var(--color-border);
+  }
+
+  .legal-section h2 {
+    color: var(--color-ink);
+    font-size: 1.15rem;
+    margin-bottom: 0.65rem;
+  }
+
+  .legal-section a {
+    color: var(--color-primary);
+    font-weight: 700;
+    text-decoration: none;
+  }
+
+  .legal-section a:hover {
+    text-decoration: underline;
+  }
+
+  @media (max-width: 560px) {
+    .legal-brand {
+      align-items: flex-start;
+      flex-direction: column;
+    }
+  }
+</style>
