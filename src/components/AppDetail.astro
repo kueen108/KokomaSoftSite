@@ -33,6 +33,11 @@ const ungyeolTools = getUngyeolLandingCopy(lang);
       </div>
     </div>
     <div class="store-actions">
+      {app.webUrl && (
+        <a href={app.webUrl} target="_blank" rel="noopener noreferrer" class="store-btn web-app">
+          {tr.openWebApp}
+        </a>
+      )}
       {app.googlePlayUrl && (
         <a href={app.googlePlayUrl} target="_blank" rel="noopener noreferrer" class="store-btn google-play">
           {tr.googlePlay}
@@ -254,8 +259,14 @@ const ungyeolTools = getUngyeolLandingCopy(lang);
 
   .store-btn.google-play:hover,
   .store-btn.app-store:hover,
-  .store-btn.video-link:hover {
+  .store-btn.video-link:hover,
+  .store-btn.web-app:hover {
     transform: translateY(-2px);
+  }
+
+  .store-btn.web-app {
+    background: #2563eb;
+    color: white;
   }
 
   .store-btn.app-store {

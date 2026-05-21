@@ -19,6 +19,7 @@ export interface AppInfo {
   operatingSystem?: string;
   googlePlayUrl?: string;
   appStoreUrl?: string;
+  webUrl?: string;
   introVideoUrl?: string;
   supportsAccountDeletion?: boolean;
 }
@@ -140,8 +141,9 @@ export const apps: AppInfo[] = [
       ],
     },
     category: 'productivity',
-    operatingSystem: 'Android',
+    operatingSystem: 'Android, Web',
     googlePlayUrl: 'https://play.google.com/store/apps/details?id=com.kokomasoft.marknote',
+    webUrl: 'https://md.kokomasoft.com/',
     introVideoUrl: 'https://www.youtube.com/shorts/f1_EF5rne8Y',
   },
   {
