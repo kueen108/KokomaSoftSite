@@ -9,7 +9,7 @@ Public URL after deploy: `/blog/<slug>/` (intended domain: `https://blog.kokomas
 
 ## Selection
 - Research current Medium articles related to AI, Claude Code, Codex, OpenClaw, and coding agents.
-- Pick exactly one article: the most useful for 챨리 today.
+- Pick exactly one article: the most useful for a general developer audience today.
 - Prefer recent, practical, non-obvious pieces.
 - If full Medium access is blocked, use public metadata/snippets and explicitly note the limitation in the post.
 - Do not reproduce large copyrighted passages. Summarize and comment in Korean, link to the original.
@@ -30,15 +30,16 @@ tags: ["AI", "Claude Code", "Codex"]
 ```
 
 ## Body format
-Use Korean and this structure. Target 1,800-2,800 Korean words (roughly 8,000-14,000 Korean characters) when source material allows. The list page can stay concise, but the detail page must feel like a full Telegram-style briefing with context, explanation, opinion, and practical takeaways. Do not pad with fluff; add concrete examples, implications, and 챨리-specific interpretation.
+Use Korean and this structure. Target 1,800-2,800 Korean words (roughly 8,000-14,000 Korean characters) when source material allows. The list page can stay concise, but the detail page must feel like a full public blog briefing with context, explanation, opinion, and practical takeaways. Do not pad with fluff; add concrete examples, implications, and general-reader interpretation.
 
 Required depth rules:
 - `왜 이 글인가`: 3+ paragraphs with context and why it matters now.
 - `핵심 요약`: include explanation, not only short bullets.
 - Include at least one section that explains the original article’s argument step by step.
-- Include a 챨리-specific section connecting the article to OpenClaw/coding-agent/automation habits when relevant.
+- Write for a public audience. Do not mention the owner/user by name. Use headings like `일반 독자에게 중요한 포인트`, `개발자에게 중요한 포인트`, or `실무 적용 포인트`.
 - Include concrete checklist/action items.
 - Preserve copyright safety: summarize and comment; do not reproduce long source passages.
+- Do not include a standing access/verification footer. If access limitations materially affect the article, mention it briefly in the body.
 
 Use this structure:
 
@@ -49,7 +50,7 @@ Use this structure:
 ## 핵심 요약
 - 7~10 bullets or short explanatory paragraphs.
 
-## 챨리에게 중요한 포인트
+## 일반 독자에게 중요한 포인트
 - 4~6 bullets or paragraphs.
 
 ## 적용 아이디어
@@ -58,8 +59,6 @@ Use this structure:
 ## 읽기 우선순위
 A short but opinionated reading recommendation, plus when to read the original.
 
-## 접근/검증 메모
-Mention whether the full article was available, and what sources were used.
 ```
 
 ## Publish steps
