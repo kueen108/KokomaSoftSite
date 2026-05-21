@@ -33,20 +33,20 @@ const description = 'AI, Claude Code, Codex, OpenClaw 관련 Medium 글 중 매�
       ) : (
         <div class="posts-grid">
           {posts.map((post) => (
-            <article class="post-card">
+            <a class="post-card" href={`${getBlogPostSlug(post)}/`}>
               <p class="date">{new Date(post.data.pubDate).toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
-              <h2><a href={`${getBlogPostSlug(post)}/`}>{post.data.title}</a></h2>
+              <h2>{post.data.title}</h2>
               <p class="description">{post.data.description}</p>
               <div class="source">
                 <span>원문</span>
-                <a href={post.data.sourceUrl} target="_blank" rel="noopener noreferrer">{post.data.sourceTitle}</a>
+                <span class="source-title">{post.data.sourceTitle}</span>
               </div>
               {post.data.tags?.length ? (
                 <ul class="tags">
                   {post.data.tags.map((tag) => <li>{tag}</li>)}
                 </ul>
               ) : null}
-            </article>
+            </a>
           ))}
         </div>
       )}
@@ -114,12 +114,24 @@ const description = 'AI, Claude Code, Codex, OpenClaw 관련 Medium 글 중 매�
     margin-bottom: 0.65rem;
   }
 
-  .post-card h2 a {
-    color: var(--color-ink);
+  .post-card {
+    display: block;
+    color: inherit;
     text-decoration: none;
+    transition: transform 0.16s ease, box-shadow 0.16s ease, border-color 0.16s ease;
   }
 
-  .post-card h2 a:hover {
+  .post-card:hover {
+    transform: translateY(-2px);
+    border-color: var(--color-primary);
+    box-shadow: 0 18px 50px rgba(15, 23, 42, 0.1);
+  }
+
+  .post-card h2 {
+    color: var(--color-ink);
+  }
+
+  .post-card:hover h2 {
     color: var(--color-primary);
   }
 
@@ -137,10 +149,9 @@ const description = 'AI, Claude Code, Codex, OpenClaw 관련 Medium 글 중 매�
     font-size: 0.92rem;
   }
 
-  .source a {
+  .source-title {
     color: var(--color-primary);
     font-weight: 700;
-    text-decoration: none;
   }
 
   .tags {
