@@ -1,0 +1,223 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import { termsAlternates } from '../../../lib/seo';
+
+const appName = 'MarkNote';
+const appIcon = '/app-icons/marknote.png';
+const title = `${appName} 服务条款`;
+const description =
+  'MarkNote 服务条款。说明 KokomaSoft 提供的本地优先 Markdown 编辑与预览 Web 服务的使用条件。';
+---
+
+<Layout
+  lang="zh"
+  title={title}
+  description={description}
+  canonicalPath="/zh/terms/marknote/"
+  alternates={termsAlternates('marknote')}
+  xDefaultPath="/ko/terms/marknote/"
+  image={appIcon}
+  favicon={appIcon}
+  headerBrandName={appName}
+  headerIcon={appIcon}
+  headerHref="https://md.kokomasoft.com/"
+  ogType="article"
+>
+  <section class="legal-page">
+    <div class="container">
+      <div class="legal-brand">
+        <img src={appIcon} alt="MarkNote 应用图标" width="76" height="76" />
+        <div>
+          <p class="eyebrow">MarkNote Legal</p>
+          <h1>MarkNote 服务条款</h1>
+        </div>
+      </div>
+      <p class="last-updated">最后更新：2026年5月21日</p>
+      <p class="intro">
+        本条款规定了 KokomaSoft 提供的 Markdown 编辑与预览 Web 服务 MarkNote（以下简称“本服务”）的使用条件。
+        使用本服务即视为您同意本条款及服务内显示的附加说明。如不同意，请停止使用本服务。
+      </p>
+
+      <article class="legal-section">
+        <h2>1. 服务概述</h2>
+        <p>
+          MarkNote 是一款在浏览器中运行的本地优先 Markdown 编辑器，提供文档编辑与预览、文件/文件夹管理，以及
+          可选的 Google Drive 集成以编辑文件。可用功能可能因浏览器环境、地区和连接状态而异。
+        </p>
+      </article>
+
+      <article class="legal-section">
+        <h2>2. 费用</h2>
+        <p>本服务目前免费提供。若今后推出付费功能，我们将提前通知并适用单独的条款。</p>
+      </article>
+
+      <article class="legal-section">
+        <h2>3. 用户的责任</h2>
+        <p>
+          您需对通过本服务创建、上传、保存或分享的内容负责，并且必须拥有该内容所需的全部权利与许可。不得将
+          本服务用于违反法律、第三方权利或平台政策的用途。建议另行备份重要文档。
+        </p>
+      </article>
+
+      <article class="legal-section">
+        <h2>4. 本地数据存储</h2>
+        <p>
+          应用工作文件夹中的文档保存在浏览器存储（OPFS）中，临时草稿保存在 IndexedDB 中，应用设置保存在
+          localStorage 中，均仅存储在您的设备内。文档正文和文件路径不会发送到运营者服务器。清除浏览器的站点
+          数据即可删除这些本地数据。
+        </p>
+      </article>
+
+      <article class="legal-section">
+        <h2>5. Google Drive 集成（可选）</h2>
+        <p>
+          Google Drive 集成为可选功能，无需 Google 账号即可使用本地编辑。连接后，本服务使用 Google 授权和
+          Google Drive API 直接读取和保存您选择的 Drive 文件。您对 Google 账号和 Drive 的使用受 Google 的条款和
+          政策约束，本服务对 Google 用户数据的处理遵守
+          <a href="https://developers.google.com/terms/api-services-user-data-policy" target="_blank" rel="noopener">Google API Services User Data Policy</a>
+          ，包括 Limited Use 要求。有关数据处理的详情，请参阅
+          <a href="/zh/privacy/marknote/">隐私政策</a>。
+        </p>
+      </article>
+
+      <article class="legal-section">
+        <h2>6. 知识产权与开源</h2>
+        <p>
+          您创建的文档的权利归您所有。本服务的商标、设计和源代码的权利归 KokomaSoft 或各自权利人所有，开源
+          组件受其各自许可证（MIT 等）约束。
+        </p>
+      </article>
+
+      <article class="legal-section">
+        <h2>7. 免责声明</h2>
+        <p>
+          本服务按“现状（AS-IS）”提供，不保证适用于特定目的、不间断可用、无错误运行或数据无丢失。您需自行承担
+          使用本服务的风险。
+        </p>
+      </article>
+
+      <article class="legal-section">
+        <h2>8. 责任限制</h2>
+        <p>
+          在适用法律允许的范围内，KokomaSoft 不对因使用或无法使用本服务而产生的任何直接、间接、附带或后果性
+          损害（包括数据丢失）承担责任。
+        </p>
+      </article>
+
+      <article class="legal-section">
+        <h2>9. 服务的变更与终止</h2>
+        <p>
+          KokomaSoft 可在提前通知后变更或终止本服务的全部或部分。如功能、数据处理方式或外部组件的使用发生变更，
+          我们将更新本条款或隐私政策。
+        </p>
+      </article>
+
+      <article class="legal-section">
+        <h2>10. 条款变更</h2>
+        <p>本条款变更时，我们将更新本页面的最后更新日期。</p>
+      </article>
+
+      <article class="legal-section">
+        <h2>11. 适用法律</h2>
+        <p>本条款依据大韩民国法律进行解释和适用。</p>
+      </article>
+
+      <article class="legal-section">
+        <h2>12. 联系方式</h2>
+        <p>
+          联系方式：<a href="mailto:kueen108@gmail.com">kueen108@gmail.com</a>
+        </p>
+      </article>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .legal-page {
+    padding: 5rem 0;
+    background: var(--color-bg);
+  }
+
+  .legal-page .container {
+    max-width: 820px;
+  }
+
+  .eyebrow {
+    color: var(--color-primary);
+    font-size: 0.78rem;
+    font-weight: 800;
+    letter-spacing: 0;
+    text-transform: uppercase;
+    margin-bottom: 0.65rem;
+  }
+
+  .legal-brand {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .legal-brand img {
+    width: 76px;
+    height: 76px;
+    border-radius: 18px;
+    box-shadow: 0 16px 36px rgba(15, 23, 42, 0.16);
+  }
+
+  .legal-brand .eyebrow {
+    margin-bottom: 0.35rem;
+  }
+
+  h1 {
+    color: var(--color-ink);
+    font-size: clamp(2.1rem, 5vw, 3.4rem);
+    line-height: 1.05;
+    margin-bottom: 0.75rem;
+  }
+
+  .last-updated {
+    color: var(--color-text-muted);
+    font-size: 0.9rem;
+    margin-bottom: 2rem;
+  }
+
+  .intro,
+  .legal-section p {
+    color: var(--color-text);
+    line-height: 1.82;
+  }
+
+  .intro {
+    margin-bottom: 2.25rem;
+  }
+
+  .legal-section {
+    padding-top: 1.4rem;
+    margin-top: 1.4rem;
+    border-top: 1px solid var(--color-border);
+  }
+
+  .legal-section h2 {
+    color: var(--color-ink);
+    font-size: 1.15rem;
+    margin-bottom: 0.65rem;
+  }
+
+  .legal-section a {
+    color: var(--color-primary);
+    font-weight: 700;
+    text-decoration: none;
+  }
+
+  .legal-section a:hover {
+    text-decoration: underline;
+  }
+
+  @media (max-width: 560px) {
+    .legal-brand {
+      align-items: flex-start;
+      flex-direction: column;
+    }
+  }
+</style>

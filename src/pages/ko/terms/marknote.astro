@@ -1,5 +1,6 @@
 ---
 import Layout from '../../../layouts/Layout.astro';
+import { termsAlternates } from '../../../lib/seo';
 
 const appName = 'MarkNote';
 const appIcon = '/app-icons/marknote.png';
@@ -13,6 +14,7 @@ const description =
   title={title}
   description={description}
   canonicalPath="/ko/terms/marknote/"
+  alternates={termsAlternates('marknote')}
   xDefaultPath="/ko/terms/marknote/"
   image={appIcon}
   favicon={appIcon}

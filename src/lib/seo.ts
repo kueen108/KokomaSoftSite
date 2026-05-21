@@ -40,6 +40,10 @@ export function privacyAlternates(appId: string) {
   return localizedPaths(`/privacy/${appId}/`);
 }
 
+export function termsAlternates(appId: string) {
+  return localizedPaths(`/terms/${appId}/`);
+}
+
 export function accountDeletionAlternates(appId: string) {
   return localizedPaths(`/account-deletion/${appId}/`);
 }

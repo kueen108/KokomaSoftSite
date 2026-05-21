@@ -1,0 +1,233 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import { termsAlternates } from '../../../lib/seo';
+
+const appName = 'MarkNote';
+const appIcon = '/app-icons/marknote.png';
+const title = `${appName} 利用規約`;
+const description =
+  'MarkNote の利用規約。KokomaSoft が提供するローカルファーストの Markdown 編集・プレビュー Web サービスの利用条件を説明します。';
+---
+
+<Layout
+  lang="ja"
+  title={title}
+  description={description}
+  canonicalPath="/ja/terms/marknote/"
+  alternates={termsAlternates('marknote')}
+  xDefaultPath="/ko/terms/marknote/"
+  image={appIcon}
+  favicon={appIcon}
+  headerBrandName={appName}
+  headerIcon={appIcon}
+  headerHref="https://md.kokomasoft.com/"
+  ogType="article"
+>
+  <section class="legal-page">
+    <div class="container">
+      <div class="legal-brand">
+        <img src={appIcon} alt="MarkNote アプリアイコン" width="76" height="76" />
+        <div>
+          <p class="eyebrow">MarkNote Legal</p>
+          <h1>MarkNote 利用規約</h1>
+        </div>
+      </div>
+      <p class="last-updated">最終更新日: 2026年5月21日</p>
+      <p class="intro">
+        本規約は、KokomaSoft が提供する Markdown 編集・プレビュー Web サービス MarkNote(以下「本サービス」)
+        の利用条件を定めるものです。本サービスを利用することで、利用者は本規約およびサービス内に表示される
+        追加の案内に同意したものとみなされます。同意いただけない場合は、本サービスの利用を中止してください。
+      </p>
+
+      <article class="legal-section">
+        <h2>1. サービス概要</h2>
+        <p>
+          MarkNote はブラウザで動作するローカルファーストの Markdown エディタです。ドキュメントの編集と
+          プレビュー、ファイル/フォルダの管理、および任意の Google Drive 連携によるファイル編集機能を
+          提供します。利用可能な機能はブラウザ環境、地域、接続状況により異なる場合があります。
+        </p>
+      </article>
+
+      <article class="legal-section">
+        <h2>2. 料金</h2>
+        <p>
+          本サービスは現在無料で提供されています。今後有料機能を導入する場合は、事前に告知し、別途の条件を
+          適用します。
+        </p>
+      </article>
+
+      <article class="legal-section">
+        <h2>3. 利用者の責任</h2>
+        <p>
+          利用者は、本サービスを通じて作成・アップロード・保存・共有するコンテンツについて責任を負い、当該
+          コンテンツに必要なすべての権利と許可を保有していなければなりません。法令、第三者の権利、プラット
+          フォームのポリシーに違反する用途で本サービスを利用してはなりません。重要なドキュメントは別途
+          バックアップすることを推奨します。
+        </p>
+      </article>
+
+      <article class="legal-section">
+        <h2>4. ローカルデータの保存</h2>
+        <p>
+          アプリ作業フォルダのドキュメントはブラウザのストレージ(OPFS)に、一時的な下書きは IndexedDB に、
+          アプリ設定は localStorage に、いずれも利用者の端末内にのみ保存されます。ドキュメント本文やファイル
+          パスが運営者サーバーに送信されることはありません。ブラウザのサイトデータを削除すると、これらの
+          ローカルデータは削除されます。
+        </p>
+      </article>
+
+      <article class="legal-section">
+        <h2>5. Google Drive 連携(任意)</h2>
+        <p>
+          Google Drive 連携は任意の機能であり、Google アカウントなしでもローカル編集を利用できます。連携時、
+          本サービスは Google 認証と Google Drive API を使用して、利用者が選択した Drive ファイルを直接読み書き
+          します。Google アカウントおよび Drive の利用は Google の規約とポリシーに従い、本サービスの Google
+          ユーザーデータの取り扱いは
+          <a href="https://developers.google.com/terms/api-services-user-data-policy" target="_blank" rel="noopener">Google API Services User Data Policy</a>
+          の Limited Use 要件を遵守します。データの取り扱いの詳細は
+          <a href="/ja/privacy/marknote/">プライバシーポリシー</a>をご覧ください。
+        </p>
+      </article>
+
+      <article class="legal-section">
+        <h2>6. 知的財産およびオープンソース</h2>
+        <p>
+          利用者が作成したドキュメントの権利は利用者に帰属します。本サービスの商標、デザイン、ソースコードに
+          関する権利は KokomaSoft または各権利者に帰属し、オープンソースの構成要素は各ライセンス(MIT など)に
+          従います。
+        </p>
+      </article>
+
+      <article class="legal-section">
+        <h2>7. 保証の否認</h2>
+        <p>
+          本サービスは「現状有姿(AS-IS)」で提供され、特定目的への適合性、無停止性、無誤謬性、データの無損失を
+          保証しません。利用者は自己の責任で本サービスを利用します。
+        </p>
+      </article>
+
+      <article class="legal-section">
+        <h2>8. 責任の制限</h2>
+        <p>
+          適用法が許容する範囲において、KokomaSoft は本サービスの利用または利用不能から生じた直接的・間接的・
+          付随的・結果的損害(データ損失を含む)について責任を負いません。
+        </p>
+      </article>
+
+      <article class="legal-section">
+        <h2>9. サービスの変更および終了</h2>
+        <p>
+          KokomaSoft は事前の告知をもって本サービスの全部または一部を変更または終了することがあります。機能、
+          データの取り扱い、外部構成要素の利用に変更がある場合は、本規約またはプライバシーポリシーを更新します。
+        </p>
+      </article>
+
+      <article class="legal-section">
+        <h2>10. 規約の変更</h2>
+        <p>本規約が変更された場合は、このページの最終更新日を更新します。</p>
+      </article>
+
+      <article class="legal-section">
+        <h2>11. 準拠法</h2>
+        <p>本規約は大韓民国の法律に従って解釈・適用されます。</p>
+      </article>
+
+      <article class="legal-section">
+        <h2>12. お問い合わせ</h2>
+        <p>
+          お問い合わせ: <a href="mailto:kueen108@gmail.com">kueen108@gmail.com</a>
+        </p>
+      </article>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .legal-page {
+    padding: 5rem 0;
+    background: var(--color-bg);
+  }
+
+  .legal-page .container {
+    max-width: 820px;
+  }
+
+  .eyebrow {
+    color: var(--color-primary);
+    font-size: 0.78rem;
+    font-weight: 800;
+    letter-spacing: 0;
+    text-transform: uppercase;
+    margin-bottom: 0.65rem;
+  }
+
+  .legal-brand {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .legal-brand img {
+    width: 76px;
+    height: 76px;
+    border-radius: 18px;
+    box-shadow: 0 16px 36px rgba(15, 23, 42, 0.16);
+  }
+
+  .legal-brand .eyebrow {
+    margin-bottom: 0.35rem;
+  }
+
+  h1 {
+    color: var(--color-ink);
+    font-size: clamp(2.1rem, 5vw, 3.4rem);
+    line-height: 1.05;
+    margin-bottom: 0.75rem;
+  }
+
+  .last-updated {
+    color: var(--color-text-muted);
+    font-size: 0.9rem;
+    margin-bottom: 2rem;
+  }
+
+  .intro,
+  .legal-section p {
+    color: var(--color-text);
+    line-height: 1.82;
+  }
+
+  .intro {
+    margin-bottom: 2.25rem;
+  }
+
+  .legal-section {
+    padding-top: 1.4rem;
+    margin-top: 1.4rem;
+    border-top: 1px solid var(--color-border);
+  }
+
+  .legal-section h2 {
+    color: var(--color-ink);
+    font-size: 1.15rem;
+    margin-bottom: 0.65rem;
+  }
+
+  .legal-section a {
+    color: var(--color-primary);
+    font-weight: 700;
+    text-decoration: none;
+  }
+
+  .legal-section a:hover {
+    text-decoration: underline;
+  }
+
+  @media (max-width: 560px) {
+    .legal-brand {
+      align-items: flex-start;
+      flex-direction: column;
+    }
+  }
+</style>
