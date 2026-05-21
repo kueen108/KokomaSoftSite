@@ -17,6 +17,7 @@ interface Props {
   headerBrandName?: string;
   headerIcon?: string;
   headerHref?: string;
+  headerNavBaseHref?: string;
   ogType?: 'website' | 'article';
   structuredData?: StructuredData | StructuredData[];
 }
@@ -33,6 +34,7 @@ const {
   headerBrandName,
   headerIcon,
   headerHref,
+  headerNavBaseHref,
   ogType = 'website',
   structuredData,
 } = Astro.props;
@@ -45,6 +47,8 @@ const imageUrl = image ? absoluteUrl(image) : undefined;
 const faviconPath = favicon ?? '/favicon.svg';
 const faviconType = faviconPath.endsWith('.png') ? 'image/png' : 'image/svg+xml';
 const logoHref = headerHref ?? `/${lang}/`;
+const navBaseHref = headerNavBaseHref ?? '';
+const navHref = (path: string) => `${navBaseHref}${path}`;
 const logoText = headerBrandName ?? 'KokomaSoft';
 const alternateEntries = Object.entries(alternates ?? {}) as [Lang, string][];
 const structuredDataList = Array.isArray(structuredData)
@@ -107,14 +111,14 @@ const structuredDataList = Array.isArray(structuredData)
           <span class="logo-text">{logoText}</span>
         </a>
         <nav class="nav">
-          <a href={`/${lang}/#apps`}>{tr.appsTitle}</a>
-          <a href={`/${lang}/#support`}>{tr.supportAndPrivacyTitle}</a>
-          <a href={`/${lang}/#about`}>{tr.aboutTitle}</a>
-          <a href={`/${lang}/#contact`}>{tr.contactTitle}</a>
+          <a href={navHref(`/${lang}/#apps`)}>{tr.appsTitle}</a>
+          <a href={navHref(`/${lang}/#support`)}>{tr.supportAndPrivacyTitle}</a>
+          <a href={navHref(`/${lang}/#about`)}>{tr.aboutTitle}</a>
+          <a href={navHref(`/${lang}/#contact`)}>{tr.contactTitle}</a>
           <div class="lang-switcher">
             {Object.entries(languages).map(([code, label]) => (
               <a
-                href={alternates?.[code as Lang] ?? `/${code}/`}
+                href={alternates?.[code as Lang] ?? navHref(`/${code}/`)}
                 class:list={['lang-link', { active: code === lang }]}
               >
                 {label}
@@ -137,8 +141,8 @@ const structuredDataList = Array.isArray(structuredData)
     <footer class="footer">
       <div class="container">
         <div class="footer-links">
-          <a href="/sns-publisher/terms/">{tr.snsPublisherTerms}</a>
-          <a href="/sns-publisher/privacy/">{tr.snsPublisherPrivacy}</a>
+          <a href={navHref('/sns-publisher/terms/')}>{tr.snsPublisherTerms}</a>
+          <a href={navHref('/sns-publisher/privacy/')}>{tr.snsPublisherPrivacy}</a>
         </div>
         <p>{tr.footerRights}</p>
       </div>
