@@ -34,20 +34,32 @@ function blogAssetRequest(request: Request) {
   if (url.pathname === '/sitemap.xml') {
     url.pathname = '/blog/sitemap.xml';
   } else if (url.pathname === '/') {
-    url.pathname = '/blog/';
+    url.pathname = '/blog/index.html';
   } else if (
     !url.pathname.startsWith('/blog/') &&
     !url.pathname.startsWith('/_astro/') &&
     !hasFileExtension(url.pathname)
   ) {
-    url.pathname = `/blog${url.pathname.endsWith('/') ? url.pathname : `${url.pathname}/`}`;
+    const blogPath = url.pathname.endsWith('/') ? url.pathname.slice(0, -1) : url.pathname;
+    url.pathname = `/blog${blogPath}/index.html`;
   }
 
   return new Request(url, request);
 }
 
+function forceHtmlResponse(response: Response) {
+  const headers = new Headers(response.headers);
+  headers.set('Content-Type', 'text/html; charset=utf-8');
+  headers.delete('Content-Disposition');
+  return new Response(response.body, {
+    status: response.status,
+    statusText: response.statusText,
+    headers,
+  });
+}
+
 export default {
-  fetch(request: Request, env: Env) {
+  async fetch(request: Request, env: Env) {
     const url = new URL(request.url);
     if (url.hostname === BLOG_HOST) {
       if (url.pathname === '/robots.txt') {
@@ -57,6 +69,14 @@ export default {
         return mainSiteRedirect(url);
       }
     }
-    return env.ASSETS.fetch(blogAssetRequest(request));
+
+    const assetRequest = blogAssetRequest(request);
+    const response = await env.ASSETS.fetch(assetRequest);
+
+    if (url.hostname === BLOG_HOST && !hasFileExtension(url.pathname)) {
+      return forceHtmlResponse(response);
+    }
+
+    return response;
   },
 };
