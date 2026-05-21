@@ -34,14 +34,13 @@ function blogAssetRequest(request: Request) {
   if (url.pathname === '/sitemap.xml') {
     url.pathname = '/blog/sitemap.xml';
   } else if (url.pathname === '/') {
-    url.pathname = '/blog/index.html';
+    url.pathname = '/blog/';
   } else if (
     !url.pathname.startsWith('/blog/') &&
     !url.pathname.startsWith('/_astro/') &&
     !hasFileExtension(url.pathname)
   ) {
-    const blogPath = url.pathname.endsWith('/') ? url.pathname.slice(0, -1) : url.pathname;
-    url.pathname = `/blog${blogPath}/index.html`;
+    url.pathname = `/blog${url.pathname.endsWith('/') ? url.pathname : `${url.pathname}/`}`;
   }
 
   return new Request(url, request);
