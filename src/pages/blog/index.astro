@@ -1,8 +1,8 @@
 ---
 import Layout from '../../layouts/Layout.astro';
-import { getMediumDigestPosts } from '../../lib/blog';
+import { getBlogPostSlug, getMediumDigestPosts } from '../../lib/blog';
 
-const posts = getMediumDigestPosts();
+const posts = await getMediumDigestPosts();
 const title = 'AI Article Digest | KokomaSoft Blog';
 const description = 'AI, Claude Code, Codex, OpenClaw 관련 Medium 글 중 매일 하나를 엄선해 한국어로 정리합니다.';
 ---
@@ -34,16 +34,16 @@ const description = 'AI, Claude Code, Codex, OpenClaw 관련 Medium 글 중 매�
         <div class="posts-grid">
           {posts.map((post) => (
             <article class="post-card">
-              <p class="date">{new Date(post.frontmatter.pubDate).toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
-              <h2><a href={`${post.slug}/`}>{post.frontmatter.title}</a></h2>
-              <p class="description">{post.frontmatter.description}</p>
+              <p class="date">{new Date(post.data.pubDate).toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
+              <h2><a href={`${getBlogPostSlug(post)}/`}>{post.data.title}</a></h2>
+              <p class="description">{post.data.description}</p>
               <div class="source">
                 <span>원문</span>
-                <a href={post.frontmatter.sourceUrl} target="_blank" rel="noopener noreferrer">{post.frontmatter.sourceTitle}</a>
+                <a href={post.data.sourceUrl} target="_blank" rel="noopener noreferrer">{post.data.sourceTitle}</a>
               </div>
-              {post.frontmatter.tags?.length ? (
+              {post.data.tags?.length ? (
                 <ul class="tags">
-                  {post.frontmatter.tags.map((tag) => <li>{tag}</li>)}
+                  {post.data.tags.map((tag) => <li>{tag}</li>)}
                 </ul>
               ) : null}
             </article>

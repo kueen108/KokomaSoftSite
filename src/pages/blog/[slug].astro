@@ -1,34 +1,36 @@
 ---
 import Layout from '../../layouts/Layout.astro';
-import { getMediumDigestPosts, type BlogPost } from '../../lib/blog';
+import { getBlogPostSlug, getMediumDigestPosts, type BlogPost } from '../../lib/blog';
+import { render } from 'astro:content';
 import { absoluteUrl, breadcrumbSchema } from '../../lib/seo';
 
 interface Props {
   post: BlogPost;
 }
 
-export function getStaticPaths() {
-  return getMediumDigestPosts().map((post) => ({
-    params: { slug: post.slug },
+export async function getStaticPaths() {
+  const posts = await getMediumDigestPosts();
+  return posts.map((post) => ({
+    params: { slug: getBlogPostSlug(post) },
     props: { post },
   }));
 }
 
 const { post } = Astro.props;
-const { Content } = post;
-const published = new Date(post.frontmatter.pubDate);
-const title = `${post.frontmatter.title} | KokomaSoft Blog`;
-const canonicalPath = `/blog/${post.slug}/`;
+const { Content } = await render(post);
+const published = new Date(post.data.pubDate);
+const title = `${post.data.title} | KokomaSoft Blog`;
+const canonicalPath = `/blog/${getBlogPostSlug(post)}/`;
 const schema = {
   '@context': 'https://schema.org',
   '@type': 'BlogPosting',
-  headline: post.frontmatter.title,
-  description: post.frontmatter.description,
-  datePublished: post.frontmatter.pubDate,
-  dateModified: post.frontmatter.pubDate,
+  headline: post.data.title,
+  description: post.data.description,
+  datePublished: post.data.pubDate,
+  dateModified: post.data.pubDate,
   url: absoluteUrl(canonicalPath),
   inLanguage: 'ko',
-  isBasedOn: post.frontmatter.sourceUrl,
+  isBasedOn: post.data.sourceUrl,
   publisher: {
     '@type': 'Organization',
     name: 'KokomaSoft',
@@ -40,7 +42,7 @@ const schema = {
 <Layout
   lang="ko"
   title={title}
-  description={post.frontmatter.description}
+  description={post.data.description}
   canonicalPath={canonicalPath}
   xDefaultPath={canonicalPath}
   ogType="article"
@@ -49,7 +51,7 @@ const schema = {
     breadcrumbSchema([
       { name: 'KokomaSoft', path: '/' },
       { name: 'Blog', path: '/blog/' },
-      { name: post.frontmatter.title, path: canonicalPath },
+      { name: post.data.title, path: canonicalPath },
     ]),
   ]}
 >
@@ -57,19 +59,19 @@ const schema = {
     <div class="container narrow">
       <a class="back-link" href="../">← 블로그 목록</a>
       <p class="eyebrow">Daily Medium Digest</p>
-      <h1>{post.frontmatter.title}</h1>
-      <p class="description">{post.frontmatter.description}</p>
+      <h1>{post.data.title}</h1>
+      <p class="description">{post.data.description}</p>
       <div class="meta">
-        <time datetime={post.frontmatter.pubDate}>{published.toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 'numeric' })}</time>
-        {post.frontmatter.sourceAuthor && <span>{post.frontmatter.sourceAuthor}</span>}
+        <time datetime={post.data.pubDate}>{published.toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 'numeric' })}</time>
+        {post.data.sourceAuthor && <span>{post.data.sourceAuthor}</span>}
       </div>
       <div class="source-card">
         <span>원문</span>
-        <a href={post.frontmatter.sourceUrl} target="_blank" rel="noopener noreferrer">{post.frontmatter.sourceTitle}</a>
+        <a href={post.data.sourceUrl} target="_blank" rel="noopener noreferrer">{post.data.sourceTitle}</a>
       </div>
-      {post.frontmatter.tags?.length ? (
+      {post.data.tags?.length ? (
         <ul class="tags">
-          {post.frontmatter.tags.map((tag) => <li>{tag}</li>)}
+          {post.data.tags.map((tag) => <li>{tag}</li>)}
         </ul>
       ) : null}
     </div>
