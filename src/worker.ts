@@ -8,6 +8,12 @@ function hasFileExtension(pathname: string) {
   return /\/[^/]+\.[^/]+$/.test(pathname);
 }
 
+function blogRobotsResponse() {
+  return new Response('User-agent: *\nAllow: /\n\nSitemap: https://blog.kokomasoft.com/sitemap.xml\n', {
+    headers: { 'Content-Type': 'text/plain; charset=utf-8' },
+  });
+}
+
 function blogAssetRequest(request: Request) {
   const url = new URL(request.url);
 
@@ -15,7 +21,9 @@ function blogAssetRequest(request: Request) {
     return request;
   }
 
-  if (url.pathname === '/') {
+  if (url.pathname === '/sitemap.xml') {
+    url.pathname = '/blog/sitemap.xml';
+  } else if (url.pathname === '/') {
     url.pathname = '/blog/';
   } else if (
     !url.pathname.startsWith('/blog/') &&
@@ -30,6 +38,10 @@ function blogAssetRequest(request: Request) {
 
 export default {
   fetch(request: Request, env: Env) {
+    const url = new URL(request.url);
+    if (url.hostname === BLOG_HOST && url.pathname === '/robots.txt') {
+      return blogRobotsResponse();
+    }
     return env.ASSETS.fetch(blogAssetRequest(request));
   },
 };

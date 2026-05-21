@@ -20,7 +20,7 @@ const { post } = Astro.props;
 const { Content } = await render(post);
 const published = new Date(post.data.pubDate);
 const title = `${post.data.title} | KokomaSoft Blog`;
-const canonicalPath = `/blog/${getBlogPostSlug(post)}/`;
+const canonicalPath = `https://blog.kokomasoft.com/${getBlogPostSlug(post)}/`;
 const schema = {
   '@context': 'https://schema.org',
   '@type': 'BlogPosting',
@@ -51,7 +51,7 @@ const schema = {
     schema,
     breadcrumbSchema([
       { name: 'KokomaSoft', path: '/' },
-      { name: 'Blog', path: '/blog/' },
+      { name: 'Blog', path: 'https://blog.kokomasoft.com/' },
       { name: post.data.title, path: canonicalPath },
     ]),
   ]}
