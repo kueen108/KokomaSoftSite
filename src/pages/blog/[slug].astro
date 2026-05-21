@@ -1,0 +1,216 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getMediumDigestPosts, type BlogPost } from '../../lib/blog';
+import { absoluteUrl, breadcrumbSchema } from '../../lib/seo';
+
+interface Props {
+  post: BlogPost;
+}
+
+export function getStaticPaths() {
+  return getMediumDigestPosts().map((post) => ({
+    params: { slug: post.slug },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+const { Content } = post;
+const published = new Date(post.frontmatter.pubDate);
+const title = `${post.frontmatter.title} | KokomaSoft Blog`;
+const canonicalPath = `/blog/${post.slug}/`;
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'BlogPosting',
+  headline: post.frontmatter.title,
+  description: post.frontmatter.description,
+  datePublished: post.frontmatter.pubDate,
+  dateModified: post.frontmatter.pubDate,
+  url: absoluteUrl(canonicalPath),
+  inLanguage: 'ko',
+  isBasedOn: post.frontmatter.sourceUrl,
+  publisher: {
+    '@type': 'Organization',
+    name: 'KokomaSoft',
+    url: 'https://kokomasoft.com',
+  },
+};
+---
+
+<Layout
+  lang="ko"
+  title={title}
+  description={post.frontmatter.description}
+  canonicalPath={canonicalPath}
+  xDefaultPath={canonicalPath}
+  ogType="article"
+  structuredData={[
+    schema,
+    breadcrumbSchema([
+      { name: 'KokomaSoft', path: '/' },
+      { name: 'Blog', path: '/blog/' },
+      { name: post.frontmatter.title, path: canonicalPath },
+    ]),
+  ]}
+>
+  <article class="blog-post">
+    <div class="container narrow">
+      <a class="back-link" href="../">← 블로그 목록</a>
+      <p class="eyebrow">Daily Medium Digest</p>
+      <h1>{post.frontmatter.title}</h1>
+      <p class="description">{post.frontmatter.description}</p>
+      <div class="meta">
+        <time datetime={post.frontmatter.pubDate}>{published.toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 'numeric' })}</time>
+        {post.frontmatter.sourceAuthor && <span>{post.frontmatter.sourceAuthor}</span>}
+      </div>
+      <div class="source-card">
+        <span>원문</span>
+        <a href={post.frontmatter.sourceUrl} target="_blank" rel="noopener noreferrer">{post.frontmatter.sourceTitle}</a>
+      </div>
+      {post.frontmatter.tags?.length ? (
+        <ul class="tags">
+          {post.frontmatter.tags.map((tag) => <li>{tag}</li>)}
+        </ul>
+      ) : null}
+    </div>
+
+    <div class="container narrow content">
+      <Content />
+    </div>
+  </article>
+</Layout>
+
+<style>
+  .blog-post {
+    padding: 4rem 0 5rem;
+  }
+
+  .narrow {
+    max-width: 850px;
+  }
+
+  .back-link {
+    display: inline-flex;
+    margin-bottom: 1.5rem;
+    color: var(--color-primary);
+    font-weight: 800;
+    text-decoration: none;
+  }
+
+  .eyebrow {
+    color: var(--color-primary);
+    font-size: 0.78rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    margin-bottom: 0.75rem;
+  }
+
+  h1 {
+    color: var(--color-ink);
+    font-size: clamp(2.2rem, 6vw, 4.4rem);
+    line-height: 1.05;
+    margin-bottom: 1rem;
+  }
+
+  .description {
+    color: var(--color-text);
+    font-size: 1.08rem;
+    line-height: 1.8;
+  }
+
+  .meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    color: var(--color-text-muted);
+    font-size: 0.92rem;
+    margin-top: 1rem;
+  }
+
+  .source-card {
+    display: grid;
+    gap: 0.25rem;
+    margin-top: 1.4rem;
+    padding: 1rem;
+    border: 1px solid var(--color-border);
+    border-radius: 10px;
+    background: var(--color-surface);
+  }
+
+  .source-card span {
+    color: var(--color-text-muted);
+    font-size: 0.82rem;
+    font-weight: 800;
+  }
+
+  .source-card a {
+    color: var(--color-primary);
+    font-weight: 800;
+    text-decoration: none;
+  }
+
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+    margin-top: 1rem;
+    list-style: none;
+  }
+
+  .tags li {
+    padding: 0.25rem 0.55rem;
+    border-radius: 999px;
+    background: var(--color-bg-alt);
+    color: var(--color-text-muted);
+    font-size: 0.8rem;
+    font-weight: 700;
+  }
+
+  .content {
+    margin-top: 2.5rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--color-border);
+  }
+
+  .content :global(h2) {
+    color: var(--color-ink);
+    font-size: 1.45rem;
+    margin: 2rem 0 0.7rem;
+  }
+
+  .content :global(h3) {
+    color: var(--color-ink);
+    font-size: 1.1rem;
+    margin: 1.4rem 0 0.5rem;
+  }
+
+  .content :global(p),
+  .content :global(li) {
+    color: var(--color-text);
+    line-height: 1.86;
+  }
+
+  .content :global(p + p),
+  .content :global(ul + p),
+  .content :global(p + ul) {
+    margin-top: 1rem;
+  }
+
+  .content :global(ul),
+  .content :global(ol) {
+    padding-left: 1.3rem;
+  }
+
+  .content :global(blockquote) {
+    margin: 1.6rem 0;
+    padding: 1rem 1.2rem;
+    border-left: 4px solid var(--color-primary);
+    background: var(--color-bg-alt);
+    border-radius: 0 8px 8px 0;
+  }
+
+  .content :global(a) {
+    color: var(--color-primary);
+    font-weight: 800;
+  }
+</style>

@@ -1,0 +1,3 @@
+https://blog.kokomasoft.com/ /blog/ 200
+https://blog.kokomasoft.com/:slug/ /blog/:slug/ 200
+https://blog.kokomasoft.com/:slug /blog/:slug/ 301
