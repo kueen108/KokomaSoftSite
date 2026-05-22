@@ -27,9 +27,10 @@ export interface AppInfo {
 const appDisplayOrder: Record<string, number> = {
   ungyeol: 0,
   lifelotto: 1,
-  mytube: 2,
-  onul: 3,
-  marknote: 4,
+  lifepension: 2,
+  mytube: 3,
+  onul: 4,
+  marknote: 5,
 };
 
 export const apps: AppInfo[] = [
@@ -189,6 +190,124 @@ export const apps: AppInfo[] = [
     googlePlayUrl: 'https://play.google.com/store/apps/details?id=com.kokomasoft.lifelotto',
     appStoreUrl: 'https://apps.apple.com/kr/app/%EC%9D%B8%EC%83%9D%EB%A1%9C%EB%98%90-645/id6752466063',
     introVideoUrl: 'https://www.youtube.com/shorts/dASuSVpuLdA',
+  },
+  {
+    id: 'lifepension',
+    iconUrl: '/app-icons/lifepension.png',
+    name: {
+      ko: '인생연금 720',
+      en: 'Life Pension 720',
+      zh: '人生年金 720',
+      ja: '人生年金 720',
+    },
+    tagline: {
+      ko: '연금복권720+ 당첨 확인, QR 스캔, 번호 저장, 통계 분석과 추천을 한곳에서 관리합니다.',
+      en: 'Check Pension Lottery 720+ results, scan QR codes, save picks, and use statistics-based recommendations in one place.',
+      zh: '集中查看韩国 Pension Lottery 720+ 结果、扫描 QR、保存号码，并参考统计分析推荐。',
+      ja: '韓国 Pension Lottery 720+ の結果確認、QRスキャン、番号保存、統計分析とおすすめを一つにまとめます。',
+    },
+    description: {
+      ko: '인생연금 720은 매주 연금복권720+ 당첨 번호를 확인하고, 구매한 번호를 저장하며, 빈도·분포·패턴 통계를 참고해 번호 조합을 관리할 수 있는 복권 도우미 앱입니다.',
+      en: 'Life Pension 720 helps Korean Pension Lottery 720+ players check weekly results, save purchased numbers, and review frequency, distribution, and pattern statistics before organizing picks.',
+      zh: '人生年金 720 可帮助韩国 Pension Lottery 720+ 用户查看每周开奖结果、保存已购号码，并参考频率、分布和模式统计来管理号码组合。',
+      ja: '人生年金 720 は、韓国 Pension Lottery 720+ の週間結果確認、購入番号の保存、頻度・分布・パターン統計を参考にした番号管理を支援するアプリです。',
+    },
+    features: {
+      ko: ['최신 회차와 과거 회차 당첨 번호 확인', 'QR 코드 스캔과 갤러리 이미지 인식으로 빠른 당첨 확인', '구매 번호 저장, 즐겨찾기, 메모, 자동 확인 알림', '조별·자리별 빈도, 분포, 패턴, 핫/콜드 번호 분석', '1등·2등·보너스 당첨금과 세후 수령액 계산'],
+      en: ['Latest and historical draw result checks', 'QR code scanning and gallery image recognition for quick verification', 'Saved numbers, favorites, memos, and automatic result alerts', 'Group and digit frequency, distribution, pattern, and hot/cold number analysis', 'Prize and after-tax payout calculators for first, second, and bonus prizes'],
+      zh: ['查看最新和历史开奖信息', '通过 QR 扫描和相册图片识别快速核对中奖结果', '保存号码、收藏、备注和自动结果提醒', '按组别和位数分析频率、分布、模式以及热门/冷门号码', '计算一等奖、二等奖和特别奖的奖金及税后金额'],
+      ja: ['最新回と過去回の当選番号確認', 'QRコードスキャンとギャラリー画像認識による素早い照合', '購入番号の保存、お気に入り、メモ、自動結果通知', '組別・桁別の頻度、分布、パターン、ホット/コールド番号分析', '1等・2等・ボーナス賞金と税引後受取額の計算'],
+    },
+    recommendedFor: {
+      ko: ['연금복권720+ 구매 번호를 매주 기록하고 싶은 사용자', 'QR 스캔으로 빠르게 당첨 여부를 확인하고 싶은 사용자', '빈도와 패턴 같은 참고 통계를 함께 보고 싶은 사용자'],
+      en: ['People who want to record Korean Pension Lottery 720+ picks every week', 'Users who want fast result checks with QR scanning', 'Anyone who wants reference statistics such as frequency and patterns while choosing numbers'],
+      zh: ['想每周记录韩国 Pension Lottery 720+ 号码的用户', '想通过 QR 扫描快速确认中奖结果的用户', '想在选号时参考频率和模式统计的用户'],
+      ja: ['韓国 Pension Lottery 720+ の購入番号を毎週記録したい方', 'QRスキャンで素早く当選確認をしたい方', '番号選びの参考として頻度やパターン統計も見たい方'],
+    },
+    supportNote: {
+      ko: '인생연금 720은 당첨을 보장하지 않는 정보·분석 도구입니다. 저장 번호, QR 스캔, 알림, 클라우드 동기화, 통계 기능 관련 문의는 이메일로 접수합니다.',
+      en: 'Life Pension 720 is an information and analysis tool and does not guarantee winnings. Email support is available for saved numbers, QR scanning, alerts, cloud sync, and statistics questions.',
+      zh: '人生年金 720 是信息和分析工具，不保证中奖。关于保存号码、QR 扫描、提醒、云同步和统计功能的问题可通过邮件联系。',
+      ja: '人生年金 720 は情報・分析ツールであり、当選を保証するものではありません。保存番号、QRスキャン、通知、クラウド同期、統計機能に関する問い合わせはメールで受け付けています。',
+    },
+    screenshots: {
+      ko: [
+        {
+          src: '/app-screenshots/lifepension/results.png',
+          caption: { ko: '당첨 기록', en: 'Draw history', zh: '开奖历史', ja: '当選履歴' },
+        },
+        {
+          src: '/app-screenshots/lifepension/recommendations.png',
+          caption: { ko: '번호 추천', en: 'Number recommendations', zh: '号码推荐', ja: '番号おすすめ' },
+        },
+        {
+          src: '/app-screenshots/lifepension/statistics.png',
+          caption: { ko: '통계 분석', en: 'Statistics', zh: '统计分析', ja: '統計分析' },
+        },
+        {
+          src: '/app-screenshots/lifepension/saved-numbers.png',
+          caption: { ko: '내 번호 관리', en: 'Saved numbers', zh: '保存号码', ja: '保存番号' },
+        },
+      ],
+      en: [
+        {
+          src: '/app-screenshots/lifepension/results.png',
+          caption: { ko: '당첨 기록', en: 'Draw history', zh: '开奖历史', ja: '当選履歴' },
+        },
+        {
+          src: '/app-screenshots/lifepension/recommendations.png',
+          caption: { ko: '번호 추천', en: 'Number recommendations', zh: '号码推荐', ja: '番号おすすめ' },
+        },
+        {
+          src: '/app-screenshots/lifepension/statistics.png',
+          caption: { ko: '통계 분석', en: 'Statistics', zh: '统计分析', ja: '統計分析' },
+        },
+        {
+          src: '/app-screenshots/lifepension/saved-numbers.png',
+          caption: { ko: '내 번호 관리', en: 'Saved numbers', zh: '保存号码', ja: '保存番号' },
+        },
+      ],
+      zh: [
+        {
+          src: '/app-screenshots/lifepension/results.png',
+          caption: { ko: '당첨 기록', en: 'Draw history', zh: '开奖历史', ja: '当選履歴' },
+        },
+        {
+          src: '/app-screenshots/lifepension/recommendations.png',
+          caption: { ko: '번호 추천', en: 'Number recommendations', zh: '号码推荐', ja: '番号おすすめ' },
+        },
+        {
+          src: '/app-screenshots/lifepension/statistics.png',
+          caption: { ko: '통계 분석', en: 'Statistics', zh: '统计分析', ja: '統計分析' },
+        },
+        {
+          src: '/app-screenshots/lifepension/saved-numbers.png',
+          caption: { ko: '내 번호 관리', en: 'Saved numbers', zh: '保存号码', ja: '保存番号' },
+        },
+      ],
+      ja: [
+        {
+          src: '/app-screenshots/lifepension/results.png',
+          caption: { ko: '당첨 기록', en: 'Draw history', zh: '开奖历史', ja: '当選履歴' },
+        },
+        {
+          src: '/app-screenshots/lifepension/recommendations.png',
+          caption: { ko: '번호 추천', en: 'Number recommendations', zh: '号码推荐', ja: '番号おすすめ' },
+        },
+        {
+          src: '/app-screenshots/lifepension/statistics.png',
+          caption: { ko: '통계 분석', en: 'Statistics', zh: '统计分析', ja: '統計分析' },
+        },
+        {
+          src: '/app-screenshots/lifepension/saved-numbers.png',
+          caption: { ko: '내 번호 관리', en: 'Saved numbers', zh: '保存号码', ja: '保存番号' },
+        },
+      ],
+    },
+    category: 'entertainment',
+    operatingSystem: 'Android, iOS',
+    googlePlayUrl: 'https://play.google.com/store/apps/details?id=com.kokomasoft.lifepension',
+    appStoreUrl: 'https://apps.apple.com/kr/app/%EC%9D%B8%EC%83%9D%EC%97%B0%EA%B8%88-720/id6753057731',
   },
   {
     id: 'mytube',

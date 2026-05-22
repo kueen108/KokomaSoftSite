@@ -1,0 +1,18 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import PrivacyPolicy from '../../../components/PrivacyPolicy.astro';
+import { privacyAlternates, privacyDescription, privacyTitle } from '../../../lib/seo';
+
+const appId = 'lifepension';
+const appName = '人生年金 720';
+---
+<Layout
+  lang="ja"
+  title={privacyTitle(appName, 'ja')}
+  description={privacyDescription(appName, 'ja')}
+  canonicalPath="/ja/privacy/lifepension/"
+  alternates={privacyAlternates(appId)}
+  xDefaultPath="/ko/privacy/lifepension/"
+>
+  <PrivacyPolicy lang="ja" appName={appName} appId={appId} />
+</Layout>

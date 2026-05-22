@@ -55,10 +55,10 @@ export function homeTitle(lang: Lang) {
 
 export function homeDescription(lang: Lang) {
   const descriptions: Record<Lang, string> = {
-    ko: 'KokomaSoft는 MarkNote, 운결, Onul, 인생로또 645, MyTube 등 모바일 앱을 개발하는 앱 스튜디오입니다. 앱 소개, 공식 다운로드, 개인정보처리방침, 계정 삭제 안내를 제공합니다.',
-    en: 'KokomaSoft is a mobile app studio behind MarkNote, Ungyeol, Onul, Life Lotto 645, and MyTube. Find official app information, store links, privacy policies, and account deletion guidance.',
-    zh: 'KokomaSoft 是开发 MarkNote、Ungyeol、Onul、人生乐透 645 和 MyTube 的移动应用工作室。您可以查看应用介绍、官方商店链接、隐私政策和账号删除说明。',
-    ja: 'KokomaSoftはMarkNote、Ungyeol、Onul、人生ロト 645、MyTubeを開発するモバイルアプリスタジオです。公式アプリ情報、ストアリンク、プライバシーポリシー、アカウント削除案内を掲載しています。',
+    ko: 'KokomaSoft는 MarkNote, 운결, Onul, 인생로또 645, 인생연금 720, MyTube 등 모바일 앱을 개발하는 앱 스튜디오입니다. 앱 소개, 공식 다운로드, 개인정보처리방침, 계정 삭제 안내를 제공합니다.',
+    en: 'KokomaSoft is a mobile app studio behind MarkNote, Ungyeol, Onul, Life Lotto 645, Life Pension 720, and MyTube. Find official app information, store links, privacy policies, and account deletion guidance.',
+    zh: 'KokomaSoft 是开发 MarkNote、Ungyeol、Onul、人生乐透 645、人生年金 720 和 MyTube 的移动应用工作室。您可以查看应用介绍、官方商店链接、隐私政策和账号删除说明。',
+    ja: 'KokomaSoftはMarkNote、Ungyeol、Onul、人生ロト 645、人生年金 720、MyTubeを開発するモバイルアプリスタジオです。公式アプリ情報、ストアリンク、プライバシーポリシー、アカウント削除案内を掲載しています。',
   };
   return descriptions[lang];
 }

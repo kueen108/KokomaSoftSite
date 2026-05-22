@@ -180,6 +180,32 @@ export const appPrivacySections: Partial<Record<string, Record<Lang, { heading: 
       },
     ],
   },
+  lifepension: {
+    ko: [
+      {
+        heading: '인생연금 720 기능 데이터 안내',
+        content: '인생연금 720은 연금복권720+ 당첨 확인, QR 스캔, 구매 번호 저장, 통계 분석, 알림, 클라우드 동기화 기능을 제공하기 위해 사용자가 저장한 복권 번호, 메모, 즐겨찾기, QR 스캔 이력, 알림 설정, 선택한 동기화 계정 정보를 처리할 수 있습니다. 본 앱은 복권 당첨을 보장하지 않으며, 통계와 추천 결과는 참고용 정보입니다.',
+      },
+    ],
+    en: [
+      {
+        heading: 'Life Pension 720 Feature Data',
+        content: 'Life Pension 720 may process saved lottery numbers, memos, favorites, QR scan history, notification settings, and selected sync account information to provide Pension Lottery 720+ result checks, QR scanning, saved numbers, statistics, alerts, and cloud sync features. The App does not guarantee lottery winnings; statistics and recommendations are reference information only.',
+      },
+    ],
+    zh: [
+      {
+        heading: '人生年金 720 功能数据说明',
+        content: '人生年金 720 可能会处理已保存的彩票号码、备注、收藏、QR 扫描历史、通知设置和所选同步账号信息，以提供 Pension Lottery 720+ 结果查询、QR 扫描、号码保存、统计、提醒和云同步功能。本应用不保证中奖；统计和推荐结果仅供参考。',
+      },
+    ],
+    ja: [
+      {
+        heading: '人生年金 720 の機能データについて',
+        content: '人生年金 720 は、Pension Lottery 720+ の結果確認、QRスキャン、保存番号、統計、通知、クラウド同期機能を提供するため、保存した宝くじ番号、メモ、お気に入り、QRスキャン履歴、通知設定、選択した同期アカウント情報を処理する場合があります。本アプリは当選を保証するものではなく、統計とおすすめ結果は参考情報です。',
+      },
+    ],
+  },
 };
 
 export const appPrivacySectionOverrides: Partial<Record<string, Record<Lang, { heading: string; content: string }[]>>> = {
@@ -313,5 +339,11 @@ export const appPrivacyLastUpdated: Partial<Record<string, Record<Lang, string>>
     en: 'Last updated: May 11, 2026',
     zh: '最后更新：2026年5月11日',
     ja: '最終更新日：2026年5月11日',
+  },
+  lifepension: {
+    ko: '최종 수정일: 2026년 5월 23일',
+    en: 'Last updated: May 23, 2026',
+    zh: '最后更新：2026年5月23日',
+    ja: '最終更新日：2026年5月23日',
   },
 };
