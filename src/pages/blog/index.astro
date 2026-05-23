@@ -1,10 +1,17 @@
 ---
 import Layout from '../../layouts/Layout.astro';
-import { getBlogPostSlug, getMediumDigestPosts } from '../../lib/blog';
+import { blogCategoryMeta, getBlogPostCategory, getBlogPostSlug, getMediumDigestPosts, type BlogCategory } from '../../lib/blog';
 
 const posts = await getMediumDigestPosts();
-const title = 'AI Article Digest | KokomaSoft Blog';
-const description = 'AI, Claude Code, Codex, OpenClaw 관련 Medium 글 중 매일 하나를 엄선해 한국어로 정리합니다.';
+const categories: BlogCategory[] = ['knowledge', 'ai'];
+const postsByCategory = Object.fromEntries(
+  categories.map((category) => [
+    category,
+    posts.filter((post) => getBlogPostCategory(post) === category),
+  ]),
+) as Record<BlogCategory, typeof posts>;
+const title = 'KokomaSoft Blog | 오늘의 지식과 AI 글';
+const description = '매일 아침 엄선한 오늘의 지식과 AI, Claude Code, Codex, OpenClaw 관련 글을 한국어로 정리합니다.';
 ---
 
 <Layout
@@ -19,9 +26,9 @@ const description = 'AI, Claude Code, Codex, OpenClaw 관련 Medium 글 중 매�
 >
   <section class="blog-hero">
     <div class="container">
-      <p class="eyebrow">Daily Medium Digest</p>
-      <h1>오늘 읽을 AI 글 하나</h1>
-      <p class="lead">AI, 코딩 에이전트, Claude Code, Codex, OpenClaw 흐름에서 챨리가 읽을 가치가 큰 Medium 글을 매일 하나만 골라 한국어로 정리합니다.</p>
+      <p class="eyebrow">Daily Briefing Blog</p>
+      <h1>오늘의 지식과 AI 글</h1>
+      <p class="lead">매일 아침 8시에는 현대의 지적인 사람이 알아두면 좋은 지식 한 가지를, 9시에는 AI 흐름에서 읽을 가치가 큰 글 하나를 골라 한국어로 정리합니다.</p>
     </div>
   </section>
 
@@ -30,26 +37,51 @@ const description = 'AI, Claude Code, Codex, OpenClaw 관련 Medium 글 중 매�
       {posts.length === 0 ? (
         <article class="empty-card">
           <h2>아직 게시된 글이 없습니다</h2>
-          <p>첫 자동 발행이 끝나면 여기에 매일 추천 글이 쌓입니다.</p>
+          <p>첫 자동 발행이 끝나면 여기에 매일 글이 쌓입니다.</p>
         </article>
       ) : (
-        <div class="posts-grid">
-          {posts.map((post) => (
-            <a class="post-card" href={`${getBlogPostSlug(post)}/`}>
-              <p class="date">{new Date(post.data.pubDate).toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
-              <h2>{post.data.title}</h2>
-              <p class="description">{post.data.description}</p>
-              <div class="source">
-                <span>원문</span>
-                <span class="source-title">{post.data.sourceTitle}</span>
-              </div>
-              {post.data.tags?.length ? (
-                <ul class="tags">
-                  {post.data.tags.map((tag) => <li>{tag}</li>)}
-                </ul>
-              ) : null}
-            </a>
-          ))}
+        <div class="category-sections">
+          {categories.map((category) => {
+            const categoryPosts = postsByCategory[category];
+            const meta = blogCategoryMeta[category];
+            return (
+              <section class="category-section" aria-labelledby={`category-${category}`}>
+                <div class="category-heading">
+                  <div>
+                    <p class="category-eyebrow">{meta.eyebrow}</p>
+                    <h2 id={`category-${category}`}>{meta.label}</h2>
+                    <p>{meta.description}</p>
+                  </div>
+                  <span class="count">{categoryPosts.length}개</span>
+                </div>
+
+                {categoryPosts.length ? (
+                  <div class="posts-grid">
+                    {categoryPosts.map((post) => (
+                      <a class="post-card" href={`${getBlogPostSlug(post)}/`}>
+                        <p class="date">{new Date(post.data.pubDate).toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
+                        <h3>{post.data.title}</h3>
+                        <p class="description">{post.data.description}</p>
+                        <div class="source">
+                          <span>{category === 'knowledge' ? '참고' : '원문'}</span>
+                          <span class="source-title">{post.data.sourceTitle}</span>
+                        </div>
+                        {post.data.tags?.length ? (
+                          <ul class="tags">
+                            {post.data.tags.map((tag) => <li>{tag}</li>)}
+                          </ul>
+                        ) : null}
+                      </a>
+                    ))}
+                  </div>
+                ) : (
+                  <article class="empty-card compact">
+                    <p>아직 이 분류의 글이 없습니다.</p>
+                  </article>
+                )}
+              </section>
+            );
+          })}
         </div>
       )}
     </div>
@@ -89,6 +121,54 @@ const description = 'AI, Claude Code, Codex, OpenClaw 관련 Medium 글 중 매�
     padding: 3rem 0 5rem;
   }
 
+  .category-sections {
+    display: grid;
+    gap: 2.5rem;
+  }
+
+  .category-section {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .category-heading {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    align-items: flex-start;
+  }
+
+  .category-eyebrow {
+    color: var(--color-primary);
+    font-size: 0.76rem;
+    font-weight: 900;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-bottom: 0.35rem;
+  }
+
+  .category-heading h2 {
+    color: var(--color-ink);
+    font-size: clamp(1.5rem, 4vw, 2.25rem);
+    margin-bottom: 0.35rem;
+  }
+
+  .category-heading p {
+    max-width: 760px;
+    color: var(--color-text-muted);
+    line-height: 1.7;
+  }
+
+  .count {
+    flex: 0 0 auto;
+    padding: 0.35rem 0.7rem;
+    border-radius: 999px;
+    background: var(--color-bg-alt);
+    color: var(--color-text-muted);
+    font-size: 0.82rem;
+    font-weight: 800;
+  }
+
   .posts-grid {
     display: grid;
     gap: 1rem;
@@ -110,7 +190,7 @@ const description = 'AI, Claude Code, Codex, OpenClaw 관련 Medium 글 중 매�
     margin-bottom: 0.45rem;
   }
 
-  .post-card h2 {
+  .post-card h3 {
     font-size: clamp(1.35rem, 3vw, 2rem);
     line-height: 1.25;
     margin-bottom: 0.65rem;
@@ -129,11 +209,11 @@ const description = 'AI, Claude Code, Codex, OpenClaw 관련 Medium 글 중 매�
     box-shadow: 0 18px 50px rgba(15, 23, 42, 0.1);
   }
 
-  .post-card h2 {
+  .post-card h3 {
     color: var(--color-ink);
   }
 
-  .post-card:hover h2 {
+  .post-card:hover h3 {
     color: var(--color-primary);
   }
 
@@ -164,6 +244,14 @@ const description = 'AI, Claude Code, Codex, OpenClaw 관련 Medium 글 중 매�
     list-style: none;
   }
 
+  .empty-card.compact {
+    box-shadow: none;
+  }
+
+  .empty-card.compact p {
+    color: var(--color-text-muted);
+  }
+
   .tags li {
     padding: 0.25rem 0.55rem;
     border-radius: 999px;
@@ -171,5 +259,15 @@ const description = 'AI, Claude Code, Codex, OpenClaw 관련 Medium 글 중 매�
     color: var(--color-text-muted);
     font-size: 0.8rem;
     font-weight: 700;
+  }
+
+  @media (max-width: 640px) {
+    .category-heading {
+      display: grid;
+    }
+
+    .count {
+      width: fit-content;
+    }
   }
 </style>

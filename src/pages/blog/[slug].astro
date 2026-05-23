@@ -1,6 +1,6 @@
 ---
 import Layout from '../../layouts/Layout.astro';
-import { getBlogPostSlug, getMediumDigestPosts, type BlogPost } from '../../lib/blog';
+import { blogCategoryMeta, getBlogPostCategory, getBlogPostSlug, getMediumDigestPosts, type BlogPost } from '../../lib/blog';
 import { render } from 'astro:content';
 import { absoluteUrl, breadcrumbSchema } from '../../lib/seo';
 
@@ -19,6 +19,8 @@ export async function getStaticPaths() {
 const { post } = Astro.props;
 const { Content } = await render(post);
 const published = new Date(post.data.pubDate);
+const category = getBlogPostCategory(post);
+const categoryMeta = blogCategoryMeta[category];
 const title = `${post.data.title} | KokomaSoft Blog`;
 const canonicalPath = `https://blog.kokomasoft.com/${getBlogPostSlug(post)}/`;
 const schema = {
@@ -60,7 +62,7 @@ const schema = {
   <article class="blog-post">
     <div class="container narrow">
       <a class="back-link" href="../">← 블로그 목록</a>
-      <p class="eyebrow">Daily Medium Digest</p>
+      <p class="eyebrow">{categoryMeta.eyebrow}</p>
       <h1>{post.data.title}</h1>
       <p class="description">{post.data.description}</p>
       <div class="meta">
@@ -68,7 +70,7 @@ const schema = {
         {post.data.sourceAuthor && <span>{post.data.sourceAuthor}</span>}
       </div>
       <div class="source-card">
-        <span>원문</span>
+        <span>{category === 'knowledge' ? '주요 참고' : '원문'}</span>
         <a href={post.data.sourceUrl} target="_blank" rel="noopener noreferrer">{post.data.sourceTitle}</a>
       </div>
       {post.data.tags?.length ? (
