@@ -349,8 +349,10 @@ export const apps: AppInfo[] = [
       ja: '動画探索、プレイリスト、履歴管理に関する問い合わせはメールで受け付けています。',
     },
     category: 'entertainment',
+    operatingSystem: 'Android, iOS, Web',
     googlePlayUrl: 'https://play.google.com/store/apps/details?id=com.kokomasoft.hottube',
     appStoreUrl: 'https://apps.apple.com/kr/app/my-tube/id6738738608',
+    webUrl: 'https://mytube.kokomasoft.com/',
     introVideoUrl: 'https://www.youtube.com/shorts/qcywcf0MY7A',
   },
   {

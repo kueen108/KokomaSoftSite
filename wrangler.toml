@@ -1,6 +1,12 @@
 main = "src/worker.ts"
 name = "kokomasoft-site"
 compatibility_date = "2026-05-21"
+routes = [
+  { pattern = "kokomasoft.com", custom_domain = true },
+  { pattern = "www.kokomasoft.com", custom_domain = true },
+  { pattern = "blog.kokomasoft.com", custom_domain = true },
+  { pattern = "mytube.kokomasoft.com", custom_domain = true },
+]
 
 [assets]
 directory = "./dist"
