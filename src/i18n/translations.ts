@@ -14,8 +14,22 @@ export const translations = {
     heroTitle: '더 나은 모바일 경험을 만듭니다',
     heroSubtitle: 'KokomaSoft는 사용자 중심의 혁신적인 모바일 애플리케이션을 개발합니다.',
     appsTitle: '우리의 앱',
-    blogTitle: 'AI Article Digest',
-    blogSubtitle: 'AI, 코딩 에이전트, 개발 생산성 흐름에서 읽을 만한 글을 한국어로 정리합니다.',
+    blogTitle: '오늘의 지식, 개발 지식, AI 지식',
+    blogSubtitle: '매일 읽기 좋은 지식을 세 가지 테마로 나누어 한국어로 정리합니다.',
+    blogThemes: [
+      {
+        label: '오늘의 지식',
+        description: '고전, 과학, 예술, 문화처럼 현대인이 알아두면 좋은 주제를 다룹니다.',
+      },
+      {
+        label: '개발 지식',
+        description: 'CS, 아키텍처, 보안, 성능, 데이터베이스 등 실무 개발 지식을 정리합니다.',
+      },
+      {
+        label: 'AI 지식',
+        description: 'AI, 코딩 에이전트, 개발 생산성 흐름에서 읽을 만한 글을 요약합니다.',
+      },
+    ],
     blogCta: '블로그 보기',
     appsSubtitle: 'Google Play와 App Store에서 만나보세요',
     downloadOn: '다운로드',
@@ -68,8 +82,22 @@ export const translations = {
     heroTitle: 'Creating Better Mobile Experiences',
     heroSubtitle: 'KokomaSoft develops innovative, user-centered mobile applications.',
     appsTitle: 'Our Apps',
-    blogTitle: 'AI Article Digest',
-    blogSubtitle: 'Korean briefings on worthwhile articles across AI, coding agents, and developer productivity.',
+    blogTitle: 'Knowledge, Developer Notes, and AI Briefings',
+    blogSubtitle: 'Korean briefings organized into three daily themes for readers who want useful context fast.',
+    blogThemes: [
+      {
+        label: 'Daily Knowledge',
+        description: 'Classics, science, art, culture, and ideas worth keeping in your mental toolkit.',
+      },
+      {
+        label: 'Developer Knowledge',
+        description: 'CS, architecture, security, performance, databases, and practical engineering topics.',
+      },
+      {
+        label: 'AI Knowledge',
+        description: 'Noteworthy writing on AI, coding agents, and developer productivity trends.',
+      },
+    ],
     blogCta: 'Visit the blog',
     appsSubtitle: 'Available on Google Play and App Store',
     downloadOn: 'Download on',
@@ -122,8 +150,22 @@ export const translations = {
     heroTitle: '创造更好的移动体验',
     heroSubtitle: 'KokomaSoft 开发以用户为中心的创新移动应用。',
     appsTitle: '我们的应用',
-    blogTitle: 'AI Article Digest',
-    blogSubtitle: '用韩语整理 AI、编码代理和开发效率领域值得阅读的文章。',
+    blogTitle: '今日知识、开发知识与 AI 知识',
+    blogSubtitle: '以三个每日主题，用韩语整理值得快速了解的知识内容。',
+    blogThemes: [
+      {
+        label: '今日知识',
+        description: '涵盖经典、科学、艺术、文化等现代读者值得了解的主题。',
+      },
+      {
+        label: '开发知识',
+        description: '整理 CS、架构、安全、性能、数据库等实务开发知识。',
+      },
+      {
+        label: 'AI 知识',
+        description: '摘要 AI、编码代理和开发效率趋势中值得阅读的文章。',
+      },
+    ],
     blogCta: '查看博客',
     appsSubtitle: '在 Google Play 和 App Store 上下载',
     downloadOn: '下载',
@@ -176,8 +218,22 @@ export const translations = {
     heroTitle: 'より良いモバイル体験を創造します',
     heroSubtitle: 'KokomaSoftは、ユーザー中心の革新的なモバイルアプリケーションを開発しています。',
     appsTitle: '私たちのアプリ',
-    blogTitle: 'AI Article Digest',
-    blogSubtitle: 'AI、コーディングエージェント、開発生産性に関する注目記事を韓国語で整理します。',
+    blogTitle: '今日の知識、開発知識、AI知識',
+    blogSubtitle: '毎日読みたい知識を3つのテーマに分け、韓国語で整理します。',
+    blogThemes: [
+      {
+        label: '今日の知識',
+        description: '古典、科学、芸術、文化など、現代人が知っておきたいテーマを扱います。',
+      },
+      {
+        label: '開発知識',
+        description: 'CS、アーキテクチャ、セキュリティ、性能、データベースなどを整理します。',
+      },
+      {
+        label: 'AI知識',
+        description: 'AI、コーディングエージェント、開発生産性に関する注目記事を要約します。',
+      },
+    ],
     blogCta: 'ブログを見る',
     appsSubtitle: 'Google PlayとApp Storeでご利用いただけます',
     downloadOn: 'ダウンロード',
