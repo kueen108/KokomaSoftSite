@@ -1,7 +1,7 @@
 import { getCollection, type CollectionEntry } from 'astro:content';
 
 export type BlogPost = CollectionEntry<'medium-digest'>;
-export type BlogCategory = 'ai' | 'knowledge';
+export type BlogCategory = 'ai' | 'knowledge' | 'developer';
 
 export const blogCategoryMeta: Record<BlogCategory, { label: string; eyebrow: string; description: string }> = {
   ai: {
@@ -13,6 +13,11 @@ export const blogCategoryMeta: Record<BlogCategory, { label: string; eyebrow: st
     label: '오늘의 지식',
     eyebrow: 'Daily Knowledge',
     description: '고전, 과학, 예술, 문화, 기술 등 현대의 지적인 사람이 알아두면 좋은 주제를 엄선합니다.',
+  },
+  developer: {
+    label: '개발 지식',
+    eyebrow: 'Developer Knowledge',
+    description: 'CS, 아키텍처, 보안, 성능, 데이터베이스 등 소프트웨어 개발자가 실무에서 알아야 할 지식을 정리합니다.',
   },
 };
 
@@ -31,6 +36,9 @@ export function getBlogPostSlug(post: BlogPost) {
 
 export function getBlogPostCategory(post: BlogPost): BlogCategory {
   const slug = getBlogPostSlug(post);
+  if (slug.startsWith('developer-knowledge-') || post.data.tags?.includes('개발자가 알아야 할 지식')) {
+    return 'developer';
+  }
   if (slug.startsWith('knowledge-') || post.data.tags?.includes('오늘의 지식')) {
     return 'knowledge';
   }
