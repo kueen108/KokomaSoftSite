@@ -11,6 +11,9 @@ interface Props {
   lang: Lang;
   appName: string;
   appId?: string;
+  title?: string;
+  intro?: string;
+  contact?: string;
 }
 
 const { lang, appName, appId } = Astro.props;
@@ -21,14 +24,17 @@ const sections = sectionOverride ?? [
   ...(appId ? appPrivacySections[appId]?.[lang] ?? [] : []),
 ];
 const lastUpdated = appId ? appPrivacyLastUpdated[appId]?.[lang] ?? p.lastUpdated : p.lastUpdated;
+const title = Astro.props.title ?? p.title;
+const intro = Astro.props.intro ?? p.intro(appName);
+const contact = Astro.props.contact ?? p.contact;
 ---
 
 <section class="privacy">
   <div class="container">
-    <h1>{p.title}</h1>
+    <h1>{title}</h1>
     <p class="app-name">{appName}</p>
     <p class="last-updated">{lastUpdated}</p>
-    <p class="intro">{p.intro(appName)}</p>
+    <p class="intro">{intro}</p>
     {sections.map((section) => (
       <div class="section">
         <h2>{section.heading}</h2>
@@ -36,7 +42,7 @@ const lastUpdated = appId ? appPrivacyLastUpdated[appId]?.[lang] ?? p.lastUpdate
       </div>
     ))}
     <div class="section">
-      <p>{p.contact}</p>
+      <p>{contact}</p>
       <p><a href="mailto:kokomasoft@gmail.com">kokomasoft@gmail.com</a></p>
     </div>
   </div>

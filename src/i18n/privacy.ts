@@ -209,6 +209,144 @@ export const appPrivacySections: Partial<Record<string, Record<Lang, { heading: 
 };
 
 export const appPrivacySectionOverrides: Partial<Record<string, Record<Lang, { heading: string; content: string }[]>>> = {
+  smartbap: {
+    ko: [
+      {
+        heading: '1. 처리하는 정보',
+        content: '스마트밥은 계정 생성 없이 사용할 수 있는 식단 기록 앱입니다. 앱은 사용자가 입력하거나 선택한 식단 기록(날짜, 끼니, 음식명, 섭취량, 칼로리, 영양 성분, 메모), 음식 사진, 개인화 설정(태어난 해, 성별, 키, 몸무게, 활동량, 목표, 하루 목표 칼로리), 앱 설정(테마, 화면 모드, 사진 저장 설정)을 기기 내부에 저장할 수 있습니다.',
+      },
+      {
+        heading: '2. 이용 목적',
+        content: '처리되는 정보는 음식 기록 저장 및 표시, 칼로리와 영양 성분 계산, 일/주/월 단위 통계 제공, 최근 식단 기록 기반 브리핑 제공, 개인 신체 정보 기반 하루 목표 칼로리 추정, 사용자 문의 대응을 위해 사용됩니다.',
+      },
+      {
+        heading: '3. 원격 AI 분석',
+        content: '출시 빌드에서 원격 AI 분석이 활성화된 경우, 사용자가 음식 사진 분석 또는 식단 브리핑 기능을 사용할 때 음식 사진 또는 사진 분석에 필요한 이미지 데이터, 식단 기록과 영양 요약, 개인화 브리핑에 필요한 신체 프로필 일부가 Cloudflare Worker와 AI 제공자에게 전송될 수 있습니다. OpenAI API Key는 앱에 포함하지 않으며, 서버 측 Secret으로 관리합니다.',
+      },
+      {
+        heading: '4. 제3자 서비스',
+        content: '원격 AI 분석이 활성화된 경우 AI 분석 처리를 위해 Cloudflare Worker와 AI 제공자가 데이터를 처리할 수 있습니다. 스마트밥은 현재 앱 코드에 광고 SDK, 외부 Analytics SDK, 계정 인증 서비스를 포함하지 않습니다.',
+      },
+      {
+        heading: '5. 보관 및 삭제',
+        content: '식단 기록, 사진, 설정은 기본적으로 사용자의 기기 안에 저장됩니다. 사용자는 앱 내 삭제 기능으로 식단 기록을 삭제할 수 있으며, Android 설정에서 앱 데이터를 삭제하거나 앱을 제거하면 로컬에 저장된 데이터가 삭제됩니다. 원격 AI 처리 데이터와 관련한 문의는 kokomasoft@gmail.com으로 접수할 수 있습니다.',
+      },
+      {
+        heading: '6. 보안',
+        content: '원격 AI 분석이 사용되는 경우 네트워크 전송은 HTTPS를 사용합니다. 다만 인터넷 전송과 전자 저장 방식은 완전한 보안을 보장할 수 없으므로, 개발자는 합리적인 수준의 보호 조치를 유지합니다.',
+      },
+      {
+        heading: '7. 건강 관련 안내',
+        content: '스마트밥의 통계, 브리핑, 권장 목표 칼로리는 기록된 식단과 입력한 프로필을 바탕으로 한 생활 참고용 정보입니다. 의료적 진단, 치료, 처방 또는 전문 영양 상담을 대체하지 않습니다. 건강 상태나 질환에 따른 식단 관리는 전문가와 상담해 주세요.',
+      },
+      {
+        heading: '8. 아동, 문의 및 변경',
+        content: '스마트밥은 아동을 대상으로 하지 않습니다. 보호자가 아동의 개인정보가 앱을 통해 처리되었다고 판단하는 경우 kokomasoft@gmail.com으로 문의해 주세요. 앱 기능, 데이터 처리 방식, 외부 서비스 사용이 변경되면 본 방침을 업데이트합니다.',
+      },
+    ],
+    en: [
+      {
+        heading: '1. Information Processed',
+        content: 'SmartBap is a meal logging app that can be used without creating an account. The app may store meal records you enter or select (date, meal type, food name, serving amount, calories, nutrition values, and notes), food photos, personalization settings (birth year, sex, height, weight, activity level, goal, and daily calorie target), and app preferences (theme, display mode, and photo saving settings) on your device.',
+      },
+      {
+        heading: '2. How Information Is Used',
+        content: 'Information is used to save and display meal records, calculate calories and nutrients, provide daily/weekly/monthly statistics, generate briefings based on recent meal records, estimate daily calorie targets from body profile settings, and respond to user inquiries.',
+      },
+      {
+        heading: '3. Remote AI Analysis',
+        content: 'If remote AI analysis is enabled in the release build, food photos or image data needed for photo analysis, meal records and nutrition summaries, and selected body profile context needed for personalized briefings may be sent to a Cloudflare Worker and an AI provider when you use food photo analysis or diet briefing features. The OpenAI API key is not included in the app and is managed as a server-side secret.',
+      },
+      {
+        heading: '4. Third-Party Services',
+        content: 'When remote AI analysis is enabled, Cloudflare Worker and the AI provider may process data to provide the analysis. SmartBap currently does not include advertising SDKs, external analytics SDKs, or account authentication services in the app code.',
+      },
+      {
+        heading: '5. Retention and Deletion',
+        content: 'Meal records, photos, and settings are stored locally on your device by default. You can delete meal records in the app. Local data is deleted when you clear the app data in Android settings or uninstall the app. For questions about remote AI processing data, contact kokomasoft@gmail.com.',
+      },
+      {
+        heading: '6. Security',
+        content: 'When remote AI analysis is used, network transmission uses HTTPS. No internet transmission or electronic storage method can be guaranteed completely secure, but the developer maintains reasonable protective measures.',
+      },
+      {
+        heading: '7. Health Information Notice',
+        content: 'SmartBap statistics, briefings, and estimated calorie targets are informational lifestyle references based on recorded meals and user-provided profile data. They are not medical diagnosis, treatment, prescription, or professional nutrition advice. Please consult a qualified professional for diet management related to medical conditions.',
+      },
+      {
+        heading: '8. Children, Contact, and Changes',
+        content: 'SmartBap is not directed to children. If a guardian believes a child\'s personal information has been processed through the app, please contact kokomasoft@gmail.com. This policy will be updated if app features, data handling, or external service usage changes.',
+      },
+    ],
+    zh: [
+      {
+        heading: '1. 處理的資訊',
+        content: '智慧餐盤是一款不需要建立帳號即可使用的飲食紀錄 App。App 可能會在你的裝置內儲存你輸入或選取的飲食紀錄（日期、餐別、食物名稱、攝取量、熱量、營養成分與備註）、食物照片、個人化設定（出生年份、性別、身高、體重、活動量、目標與每日目標熱量）以及 App 設定（主題、顯示模式與照片保存設定）。',
+      },
+      {
+        heading: '2. 使用目的',
+        content: '這些資訊會用於保存與顯示飲食紀錄、計算熱量與營養成分、提供日/週/月統計、根據近期飲食紀錄提供簡報、依身體資料推估每日目標熱量，以及回覆使用者諮詢。',
+      },
+      {
+        heading: '3. 遠端 AI 分析',
+        content: '如果發行版本啟用遠端 AI 分析，當你使用食物照片分析或飲食簡報功能時，食物照片或照片分析所需的影像資料、飲食紀錄與營養摘要，以及個人化簡報所需的部分身體資料，可能會傳送至 Cloudflare Worker 與 AI 提供者。OpenAI API Key 不會包含在 App 內，而是作為伺服器端 Secret 管理。',
+      },
+      {
+        heading: '4. 第三方服務',
+        content: '啟用遠端 AI 分析時，Cloudflare Worker 與 AI 提供者可能會為提供分析功能而處理資料。智慧餐盤目前的 App 程式碼不包含廣告 SDK、外部 Analytics SDK 或帳號驗證服務。',
+      },
+      {
+        heading: '5. 保存與刪除',
+        content: '飲食紀錄、照片與設定預設會儲存在你的裝置內。你可以在 App 內刪除飲食紀錄。透過 Android 設定清除 App 資料或解除安裝 App 時，本機資料會被刪除。關於遠端 AI 處理資料的問題，請聯絡 kokomasoft@gmail.com。',
+      },
+      {
+        heading: '6. 安全性',
+        content: '使用遠端 AI 分析時，網路傳輸會使用 HTTPS。不過，網際網路傳輸與電子儲存方式無法保證絕對安全，開發者會維持合理程度的保護措施。',
+      },
+      {
+        heading: '7. 健康資訊提醒',
+        content: '智慧餐盤的統計、簡報與推估目標熱量，是根據已記錄飲食與使用者提供的個人資料產生的生活參考資訊，並非醫療診斷、治療、處方或專業營養建議。如需依健康狀態或疾病管理飲食，請諮詢合格專業人員。',
+      },
+      {
+        heading: '8. 兒童、聯絡與變更',
+        content: '智慧餐盤並非以兒童為對象。如果監護人認為兒童的個人資訊透過 App 被處理，請聯絡 kokomasoft@gmail.com。若 App 功能、資料處理方式或外部服務使用情形變更，本政策將會更新。',
+      },
+    ],
+    ja: [
+      {
+        heading: '1. 処理する情報',
+        content: 'スマートごはんは、アカウント作成なしで利用できる食事記録アプリです。アプリは、ユーザーが入力または選択した食事記録（日付、食事区分、食品名、摂取量、カロリー、栄養成分、メモ）、食事写真、パーソナライズ設定（生年、性別、身長、体重、活動量、目標、1日の目標カロリー）、アプリ設定（テーマ、表示モード、写真保存設定）を端末内に保存する場合があります。',
+      },
+      {
+        heading: '2. 利用目的',
+        content: 'これらの情報は、食事記録の保存と表示、カロリーと栄養成分の計算、日/週/月単位の統計提供、最近の食事記録にもとづくブリーフィング、身体プロフィールにもとづく1日の目標カロリー推定、ユーザーからのお問い合わせ対応に使用されます。',
+      },
+      {
+        heading: '3. リモートAI分析',
+        content: 'リリースビルドでリモートAI分析が有効な場合、食事写真分析または食事ブリーフィング機能の利用時に、食事写真または写真分析に必要な画像データ、食事記録と栄養サマリー、パーソナライズされたブリーフィングに必要な身体プロフィールの一部が Cloudflare Worker と AI 提供者へ送信される場合があります。OpenAI API Key はアプリに含まれず、サーバー側 Secret として管理されます。',
+      },
+      {
+        heading: '4. 第三者サービス',
+        content: 'リモートAI分析が有効な場合、分析機能を提供するために Cloudflare Worker と AI 提供者がデータを処理することがあります。スマートごはんの現在のアプリコードには、広告 SDK、外部 Analytics SDK、アカウント認証サービスは含まれていません。',
+      },
+      {
+        heading: '5. 保持と削除',
+        content: '食事記録、写真、設定は原則としてユーザーの端末内に保存されます。ユーザーはアプリ内の削除機能で食事記録を削除できます。Android 設定でアプリデータを削除する、またはアプリをアンインストールすると、ローカルに保存されたデータは削除されます。リモートAI処理データに関するお問い合わせは kokomasoft@gmail.com までご連絡ください。',
+      },
+      {
+        heading: '6. セキュリティ',
+        content: 'リモートAI分析が使用される場合、ネットワーク通信には HTTPS を使用します。ただし、インターネット通信および電子的な保存方法について完全な安全性を保証することはできないため、開発者は合理的な保護措置を維持します。',
+      },
+      {
+        heading: '7. 健康情報に関する注意',
+        content: 'スマートごはんの統計、ブリーフィング、推定目標カロリーは、記録された食事とユーザーが提供したプロフィールにもとづく生活参考情報です。医療上の診断、治療、処方、専門的な栄養相談に代わるものではありません。健康状態や疾患に応じた食事管理については、資格を持つ専門家にご相談ください。',
+      },
+      {
+        heading: '8. 子ども、連絡先、変更',
+        content: 'スマートごはんは子どもを対象としていません。保護者が、子どもの個人情報がアプリを通じて処理されたと考える場合は kokomasoft@gmail.com までご連絡ください。アプリ機能、データ処理方法、外部サービスの利用状況に変更がある場合、本ポリシーを更新します。',
+      },
+    ],
+  },
   marknote: {
     ko: [
       {
@@ -334,6 +472,12 @@ export const appPrivacySectionOverrides: Partial<Record<string, Record<Lang, { h
 };
 
 export const appPrivacyLastUpdated: Partial<Record<string, Record<Lang, string>>> = {
+  smartbap: {
+    ko: '최종 수정일: 2026년 6월 2일',
+    en: 'Last updated: June 2, 2026',
+    zh: '最後更新：2026年6月2日',
+    ja: '最終更新日：2026年6月2日',
+  },
   marknote: {
     ko: '최종 수정일: 2026년 5월 11일',
     en: 'Last updated: May 11, 2026',

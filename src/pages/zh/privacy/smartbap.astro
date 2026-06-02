@@ -1,0 +1,25 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import PrivacyPolicy from '../../../components/PrivacyPolicy.astro';
+import { privacyAlternates } from '../../../lib/seo';
+
+const appId = 'smartbap';
+const appName = '智慧餐盤';
+---
+<Layout
+  lang="zh"
+  title={`${appName} 隱私權政策 | KokomaSoft`}
+  description={`${appName} 如何處理資料、使用目的、保存與刪除、外部服務、使用者權利與隱私諮詢方式。`}
+  canonicalPath="/zh/privacy/smartbap/"
+  alternates={privacyAlternates(appId)}
+  xDefaultPath="/ko/privacy/smartbap/"
+>
+  <PrivacyPolicy
+    lang="zh"
+    appName={appName}
+    appId={appId}
+    title="隱私權政策"
+    intro={`KokomaSoft（以下稱「公司」）重視${appName}（以下稱「App」）使用者的隱私，並遵守相關法令。本隱私權政策說明 App 會處理哪些資訊，以及這些資訊的使用方式。`}
+    contact="如有隱私相關問題，請透過以下電子郵件聯絡我們。"
+  />
+</Layout>

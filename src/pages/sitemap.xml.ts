@@ -115,6 +115,16 @@ export function GET() {
         priority: '0.5',
       }));
     }),
+    ...(() => {
+      const paths = privacyAlternates('smartbap');
+      return languageCodes.map((lang) => ({
+        path: paths[lang],
+        alternates: paths,
+        xDefaultPath: paths.ko,
+        changefreq: 'yearly' as const,
+        priority: '0.5',
+      }));
+    })(),
     ...apps
       .filter((app) => app.supportsAccountDeletion)
       .flatMap((app) => {
