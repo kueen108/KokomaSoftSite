@@ -1,0 +1,19 @@
+---
+import AppSupport from '../../../components/AppSupport.astro';
+import Layout from '../../../layouts/Layout.astro';
+import { apps } from '../../../i18n/apps';
+import { supportAlternates, supportDescription, supportTitle } from '../../../lib/seo';
+
+const app = apps.find((item) => item.id === 'smartbap')!;
+---
+<Layout
+  lang="en"
+  title={supportTitle(app.name.en, 'en')}
+  description={supportDescription(app.name.en, 'en')}
+  canonicalPath="/en/support/smartbap/"
+  alternates={supportAlternates(app.id)}
+  xDefaultPath="/ko/support/smartbap/"
+  image={app.iconUrl}
+>
+  <AppSupport app={app} lang="en" />
+</Layout>

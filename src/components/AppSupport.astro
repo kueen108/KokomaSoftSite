@@ -1,0 +1,255 @@
+---
+import type { AppInfo } from '../i18n/apps';
+import type { Lang } from '../i18n/translations';
+
+interface Props {
+  app: AppInfo;
+  lang: Lang;
+}
+
+const { app, lang } = Astro.props;
+
+const copy = {
+  ko: {
+    title: `${app.name.ko} 지원`,
+    intro: '앱 사용, 오류 제보, 개인정보 문의, 건강 정보 출처 확인이 필요한 경우 아래 정보를 이용해 주세요.',
+    contactTitle: '문의',
+    contactBody: '앱 이름, 사용 기기, iOS/iPadOS 버전, 문제 상황을 함께 보내주시면 확인에 도움이 됩니다.',
+    privacyTitle: '개인정보처리방침',
+    privacyBody: '카메라, 사진, AI 분석, 로컬 저장 데이터 처리 방식을 확인할 수 있습니다.',
+    healthTitle: '건강 정보 계산 기준과 출처',
+    healthBody: '칼로리 목표, 식단 통계, 브리핑은 기록 기반 생활 참고 정보이며 의료 진단, 치료, 처방 또는 전문 영양 상담을 대체하지 않습니다.',
+    aiTitle: 'AI 사진 분석',
+    aiBody: '사진 분석 결과는 음식명과 양을 추정합니다. 사용자는 저장 전 음식, 중량, 칼로리를 확인하고 수정할 수 있습니다.',
+    linksTitle: '출처 링크',
+    privacyLink: '개인정보처리방침 열기',
+    appPageLink: '앱 소개 열기',
+  },
+  en: {
+    title: `${app.name.en} Support`,
+    intro: 'Use the information below for app support, bug reports, privacy questions, and health information source references.',
+    contactTitle: 'Contact',
+    contactBody: 'Please include the app name, device model, iOS/iPadOS version, and steps or screenshots related to the issue.',
+    privacyTitle: 'Privacy Policy',
+    privacyBody: 'Review how camera, photo, AI analysis, and locally stored data are handled.',
+    healthTitle: 'Health Information Basis and Sources',
+    healthBody: 'Calorie goals, diet statistics, and briefings are record-based lifestyle reference information and do not replace medical diagnosis, treatment, prescriptions, or professional nutrition advice.',
+    aiTitle: 'AI Photo Analysis',
+    aiBody: 'Photo analysis estimates food names and portions. Users can review and edit foods, weight, and calories before saving a record.',
+    linksTitle: 'Source Links',
+    privacyLink: 'Open Privacy Policy',
+    appPageLink: 'Open App Page',
+  },
+  zh: {
+    title: `${app.name.zh}支援`,
+    intro: '若需要 App 支援、錯誤回報、隱私問題或健康資訊來源，請使用以下資訊。',
+    contactTitle: '聯絡',
+    contactBody: '請一併提供 App 名稱、裝置型號、iOS/iPadOS 版本，以及問題步驟或截圖。',
+    privacyTitle: '隱私權政策',
+    privacyBody: '可查看相機、照片、AI 分析與本機儲存資料的處理方式。',
+    healthTitle: '健康資訊計算基準與來源',
+    healthBody: '熱量目標、飲食統計與簡報是根據紀錄提供的生活參考資訊，不能取代醫療診斷、治療、處方或專業營養諮詢。',
+    aiTitle: 'AI 照片分析',
+    aiBody: '照片分析會推估食物名稱與份量。使用者可在儲存前確認並修改食物、重量與熱量。',
+    linksTitle: '資料來源連結',
+    privacyLink: '開啟隱私權政策',
+    appPageLink: '開啟 App 介紹',
+  },
+  ja: {
+    title: `${app.name.ja}サポート`,
+    intro: 'アプリのサポート、不具合報告、プライバシーに関する質問、健康情報の出典確認には以下をご利用ください。',
+    contactTitle: '問い合わせ',
+    contactBody: 'アプリ名、端末モデル、iOS/iPadOSバージョン、問題の手順やスクリーンショットを添えてください。',
+    privacyTitle: 'プライバシーポリシー',
+    privacyBody: 'カメラ、写真、AI分析、ローカル保存データの取り扱いを確認できます。',
+    healthTitle: '健康情報の計算基準と出典',
+    healthBody: 'カロリー目標、食事統計、ブリーフィングは記録に基づく生活参考情報であり、医療診断、治療、処方、専門的な栄養相談の代わりではありません。',
+    aiTitle: 'AI写真分析',
+    aiBody: '写真分析は食品名と量を推定します。保存前に食品、重量、カロリーを確認して編集できます。',
+    linksTitle: '出典リンク',
+    privacyLink: 'プライバシーポリシーを開く',
+    appPageLink: 'アプリ紹介を開く',
+  },
+}[lang];
+
+const sources = [
+  {
+    title: 'Korea MFDS Food Nutrition Facts Database',
+    href: 'https://www.data.go.kr/data/15047698/fileData.do',
+  },
+  {
+    title: 'Mifflin-St Jeor resting metabolic rate equation',
+    href: 'https://pubmed.ncbi.nlm.nih.gov/2305711/',
+  },
+  {
+    title: 'FAO/WHO/UNU Human Energy Requirements',
+    href: 'https://www.fao.org/4/y5686e/y5686e07.htm',
+  },
+  {
+    title: 'Dietary Reference Intakes',
+    href: 'https://www.ncbi.nlm.nih.gov/books/NBK208874/',
+  },
+  {
+    title: 'FDA Sodium in Your Diet',
+    href: 'https://www.fda.gov/food/nutrition-education-resources-materials/sodium-your-diet',
+  },
+  {
+    title: 'FDA Added Sugars on the Nutrition Facts Label',
+    href: 'https://www.fda.gov/food/nutrition-facts-label/added-sugars-nutrition-facts-label',
+  },
+];
+---
+
+<section class="support">
+  <div class="container">
+    <a class="back-link" href={`/${lang}/apps/${app.id}/`}>{copy.appPageLink}</a>
+    <div class="hero">
+      <img src={app.iconUrl} alt={`${app.name[lang]} icon`} width="88" height="88" />
+      <div>
+        <h1>{copy.title}</h1>
+        <p>{copy.intro}</p>
+      </div>
+    </div>
+
+    <div class="support-grid">
+      <article class="panel">
+        <h2>{copy.contactTitle}</h2>
+        <p>{copy.contactBody}</p>
+        <a href="mailto:kokomasoft@gmail.com">kokomasoft@gmail.com</a>
+      </article>
+      <article class="panel">
+        <h2>{copy.privacyTitle}</h2>
+        <p>{copy.privacyBody}</p>
+        <a href={`/${lang}/privacy/${app.id}/`}>{copy.privacyLink}</a>
+      </article>
+      <article class="panel">
+        <h2>{copy.healthTitle}</h2>
+        <p>{copy.healthBody}</p>
+      </article>
+      <article class="panel">
+        <h2>{copy.aiTitle}</h2>
+        <p>{copy.aiBody}</p>
+      </article>
+    </div>
+
+    <article class="sources">
+      <h2>{copy.linksTitle}</h2>
+      <ul>
+        {sources.map((source) => (
+          <li><a href={source.href} target="_blank" rel="noopener noreferrer">{source.title}</a></li>
+        ))}
+      </ul>
+    </article>
+  </div>
+</section>
+
+<style>
+  .support {
+    padding: 4rem 0;
+  }
+
+  .support .container {
+    max-width: 920px;
+  }
+
+  .back-link {
+    display: inline-flex;
+    margin-bottom: 1.5rem;
+    color: var(--color-primary);
+    font-weight: 800;
+    text-decoration: none;
+  }
+
+  .back-link:hover {
+    text-decoration: underline;
+  }
+
+  .hero {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    margin-bottom: 2rem;
+  }
+
+  .hero img {
+    width: 88px;
+    height: 88px;
+    border-radius: 8px;
+    box-shadow: var(--shadow-soft);
+    flex: 0 0 auto;
+  }
+
+  h1 {
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    line-height: 1.12;
+    margin-bottom: 0.5rem;
+  }
+
+  .hero p,
+  .panel p {
+    color: var(--color-text-muted);
+    line-height: 1.8;
+  }
+
+  .support-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+  }
+
+  .panel,
+  .sources {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    box-shadow: var(--shadow-soft);
+  }
+
+  .panel {
+    padding: 1.4rem;
+  }
+
+  .panel h2,
+  .sources h2 {
+    font-size: 1.18rem;
+    margin-bottom: 0.7rem;
+  }
+
+  .panel a,
+  .sources a {
+    color: var(--color-primary);
+    font-weight: 800;
+    text-decoration: none;
+  }
+
+  .panel a:hover,
+  .sources a:hover {
+    text-decoration: underline;
+  }
+
+  .sources {
+    margin-top: 1rem;
+    padding: 1.4rem;
+  }
+
+  .sources ul {
+    list-style: none;
+    display: grid;
+    gap: 0.8rem;
+  }
+
+  .sources li {
+    padding-left: 1rem;
+    border-left: 3px solid rgba(15, 118, 110, 0.25);
+  }
+
+  @media (max-width: 720px) {
+    .hero {
+      align-items: flex-start;
+    }
+
+    .support-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

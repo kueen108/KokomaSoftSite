@@ -31,6 +31,7 @@ const appDisplayOrder: Record<string, number> = {
   mytube: 3,
   onul: 4,
   marknote: 5,
+  smartbap: 6,
 };
 
 export const apps: AppInfo[] = [
@@ -442,6 +443,48 @@ export const apps: AppInfo[] = [
     googlePlayUrl: 'https://play.google.com/store/apps/details?id=com.kokomasoft.mindfulecho',
     introVideoUrl: 'https://www.youtube.com/shorts/8UVL8eX9r50',
     supportsAccountDeletion: true,
+  },
+  {
+    id: 'smartbap',
+    iconUrl: '/app-icons/smartbap.png',
+    name: {
+      ko: '스마트밥',
+      en: 'SmartBap',
+      zh: '智慧餐盤',
+      ja: 'スマートごはん',
+    },
+    tagline: {
+      ko: '사진, 검색, 직접 입력으로 식사를 기록하고 칼로리와 영양 균형을 확인하는 식단 기록 앱입니다.',
+      en: 'A meal diary for logging food by photo, search, or manual entry and reviewing calories and nutrition balance.',
+      zh: '可透過照片、搜尋或手動輸入記錄餐點，並查看熱量與營養均衡的飲食紀錄 App。',
+      ja: '写真、検索、直接入力で食事を記録し、カロリーと栄養バランスを確認する食事記録アプリです。',
+    },
+    description: {
+      ko: '스마트밥은 음식 사진 AI 분석과 식품영양성분 DB를 활용해 식사 기록, 칼로리 통계, 최근 식단 브리핑을 제공합니다.',
+      en: 'SmartBap uses food-photo AI analysis and a food nutrition database to provide meal records, calorie stats, and recent diet briefings.',
+      zh: '智慧餐盤使用食物照片 AI 分析與食物營養資料庫，提供餐點紀錄、熱量統計與近期飲食簡報。',
+      ja: 'スマートごはんは食品写真AI分析と食品栄養成分DBを使い、食事記録、カロリー統計、最近の食事ブリーフィングを提供します。',
+    },
+    features: {
+      ko: ['카메라, 갤러리, 검색, 직접 입력으로 식사 기록', '일/주/월 단위 칼로리와 끼니별 통계', '최근 기록 기반 식단 브리핑과 생활 제안', '테마, 다크 모드, 목표 칼로리, 프로필 기반 목표 설정', '건강 정보 계산 기준과 출처 링크 제공'],
+      en: ['Log meals from camera, gallery, search, or manual entry', 'Daily, weekly, and monthly calorie and meal statistics', 'Recent-record diet briefings with lifestyle suggestions', 'Themes, dark mode, calorie goals, and profile-based goal settings', 'Calculation basis and source links for health-related information'],
+      zh: ['可用相機、相簿、搜尋或手動輸入記錄餐點', '日、週、月熱量與餐別統計', '根據近期紀錄產生飲食簡報與生活建議', '主題、深色模式、目標熱量與個人化目標設定', '提供健康資訊計算基準與資料來源連結'],
+      ja: ['カメラ、ギャラリー、検索、直接入力で食事を記録', '日・週・月単位のカロリーと食事別統計', '最近の記録に基づく食事ブリーフィングと生活提案', 'テーマ、ダークモード、目標カロリー、プロフィール基準目標設定', '健康情報の計算基準と出典リンクを提供'],
+    },
+    recommendedFor: {
+      ko: ['사진으로 빠르게 식사를 남기고 싶은 사용자', '하루 목표 칼로리와 최근 섭취 패턴을 확인하고 싶은 사용자', '식단 기록 기반 생활 참고 정보를 원하는 사용자'],
+      en: ['People who want to log meals quickly from photos', 'Users who want to review daily calorie goals and recent intake patterns', 'Anyone who wants lifestyle reference information based on meal records'],
+      zh: ['想用照片快速留下餐點紀錄的使用者', '想查看每日目標熱量與近期攝取模式的使用者', '需要根據飲食紀錄取得生活參考資訊的使用者'],
+      ja: ['写真で素早く食事を記録したい方', '1日の目標カロリーと最近の摂取パターンを確認したい方', '食事記録に基づく生活参考情報が欲しい方'],
+    },
+    supportNote: {
+      ko: '스마트밥의 칼로리 목표, 통계, 브리핑은 의료 진단이 아닌 기록 기반 생활 참고 정보입니다. 앱의 건강 정보 출처 화면과 이 지원 페이지에서 계산 기준과 출처 링크를 확인할 수 있습니다.',
+      en: 'SmartBap calorie goals, statistics, and briefings are record-based lifestyle reference information, not medical diagnosis. The app and this support page provide calculation basis and source links.',
+      zh: '智慧餐盤的熱量目標、統計與簡報是根據紀錄提供的生活參考資訊，不是醫療診斷。App 與此支援頁面提供計算基準與來源連結。',
+      ja: 'スマートごはんのカロリー目標、統計、ブリーフィングは医療診断ではなく、記録に基づく生活参考情報です。アプリとこのサポートページで計算基準と出典リンクを確認できます。',
+    },
+    category: 'lifestyle',
+    operatingSystem: 'iOS, iPadOS, Android',
   },
   {
     id: 'ungyeol',

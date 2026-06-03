@@ -40,6 +40,10 @@ export function privacyAlternates(appId: string) {
   return localizedPaths(`/privacy/${appId}/`);
 }
 
+export function supportAlternates(appId: string) {
+  return localizedPaths(`/support/${appId}/`);
+}
+
 export function termsAlternates(appId: string) {
   return localizedPaths(`/terms/${appId}/`);
 }
@@ -90,6 +94,26 @@ export function privacyDescription(appName: string, lang: Lang) {
     en: `Read how ${appName} handles data processing, use purposes, retention and deletion, external services, user rights, and privacy contact requests.`,
     zh: `查看 ${appName} 如何处理数据、使用目的、保存与删除、外部服务、用户权利和隐私咨询。`,
     ja: `${appName}のデータ処理、利用目的、保持と削除、外部サービス、ユーザーの権利、問い合わせ方法を確認できます。`,
+  };
+  return descriptions[lang];
+}
+
+export function supportTitle(appName: string, lang: Lang) {
+  const titles: Record<Lang, string> = {
+    ko: `${appName} 지원 | KokomaSoft`,
+    en: `${appName} Support | KokomaSoft`,
+    zh: `${appName} 支援 | KokomaSoft`,
+    ja: `${appName} サポート | KokomaSoft`,
+  };
+  return titles[lang];
+}
+
+export function supportDescription(appName: string, lang: Lang) {
+  const descriptions: Record<Lang, string> = {
+    ko: `${appName} 문의, 개인정보처리방침, 건강 정보 계산 기준과 출처 링크를 안내합니다.`,
+    en: `Find ${appName} support contact, privacy policy, health information calculation basis, and source links.`,
+    zh: `查看 ${appName} 支援聯絡方式、隱私權政策、健康資訊計算基準與資料來源連結。`,
+    ja: `${appName}の問い合わせ先、プライバシーポリシー、健康情報の計算基準と出典リンクを案内します。`,
   };
   return descriptions[lang];
 }

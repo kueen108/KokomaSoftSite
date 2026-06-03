@@ -8,6 +8,7 @@ import {
   homeAlternates,
   languageCodes,
   privacyAlternates,
+  supportAlternates,
 } from '../lib/seo';
 
 interface SitemapPage {
@@ -18,7 +19,7 @@ interface SitemapPage {
   priority: string;
 }
 
-const lastmod = '2026-05-18';
+const lastmod = '2026-06-03';
 
 function escapeXml(value: string) {
   return value
@@ -116,13 +117,13 @@ export function GET() {
       }));
     }),
     ...(() => {
-      const paths = privacyAlternates('smartbap');
+      const paths = supportAlternates('smartbap');
       return languageCodes.map((lang) => ({
         path: paths[lang],
         alternates: paths,
         xDefaultPath: paths.ko,
-        changefreq: 'yearly' as const,
-        priority: '0.5',
+        changefreq: 'monthly' as const,
+        priority: '0.6',
       }));
     })(),
     ...apps
