@@ -1,0 +1,18 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import PrivacyPolicy from '../../../components/PrivacyPolicy.astro';
+import { privacyAlternates, privacyDescription, privacyTitle } from '../../../lib/seo';
+
+const appId = 'glowup';
+const appName = 'GlowUp';
+---
+<Layout
+  lang="ko"
+  title={privacyTitle(appName, 'ko')}
+  description={privacyDescription(appName, 'ko')}
+  canonicalPath="/ko/privacy/glowup/"
+  alternates={privacyAlternates(appId)}
+  xDefaultPath="/ko/privacy/glowup/"
+>
+  <PrivacyPolicy lang="ko" appName={appName} appId={appId} />
+</Layout>
