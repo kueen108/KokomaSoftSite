@@ -19,7 +19,7 @@ interface SitemapPage {
   priority: string;
 }
 
-const lastmod = '2026-06-03';
+const lastmod = '2026-06-07';
 
 function escapeXml(value: string) {
   return value
@@ -106,6 +106,16 @@ export function GET() {
         priority: lang === 'ko' ? '0.85' : '0.75',
       }));
     }),
+    ...(() => {
+      const paths = privacyAlternates('glowup');
+      return languageCodes.map((lang) => ({
+        path: paths[lang],
+        alternates: paths,
+        xDefaultPath: paths.ko,
+        changefreq: 'yearly' as const,
+        priority: '0.5',
+      }));
+    })(),
     ...apps.flatMap((app) => {
       const paths = privacyAlternates(app.id);
       return languageCodes.map((lang) => ({
