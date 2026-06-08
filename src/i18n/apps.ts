@@ -490,46 +490,46 @@ export const apps: AppInfo[] = [
     id: 'ungyeol',
     iconUrl: '/app-icons/ungyeol.png',
     name: {
-      ko: 'Ungyeol',
+      ko: '왕꽃선녀',
       en: 'Ungyeol',
       zh: 'Ungyeol',
       ja: 'Ungyeol',
     },
     tagline: {
-      ko: '오늘 운세, 타로, 궁합, 상대 속마음, 답장 추천, 꿈해몽, 관상까지 AI 풀이로 확인합니다.',
-      en: 'Check daily fortune, tarot, compatibility, hidden feelings, reply ideas, dream readings, and face readings with AI.',
-      zh: '通过 AI 查看每日运势、塔罗、配对、对方心意、回复建议、梦境解析和面相解读。',
-      ja: '今日の運勢、タロット、相性、相手の気持ち、返信提案、夢占い、顔相までAIで確認できます。',
+      ko: '생년월일시 기반 오늘 운세, 현재 대운, 자유 질문, 타로, 궁합을 AI로 가볍게 확인합니다.',
+      en: 'Check AI daily fortune, current major fortune, tarot, compatibility, and free-form saju questions from birth details.',
+      zh: '根据出生信息查看 AI 每日运势、当前大运、塔罗、配对和自由提问。',
+      ja: '生年月日時をもとに、今日の運勢、現在の大運、タロット、相性、自由質問をAIで確認できます。',
     },
     description: {
-      ko: '사주 기반 오늘 운세부터 관계 고민, 메시지 답장, 꿈의 상징, 사진 기반 관상까지 한 앱에서 가볍게 참고하세요.',
-      en: 'Use one app for saju-based daily fortune, relationship reflection, message replies, dream symbols, and photo-based face readings.',
-      zh: '从命理每日运势到关系思考、消息回复、梦境象征和照片面相，在一个应用中轻松参考。',
-      ja: '四柱推命にもとづく今日の運勢から関係の悩み、返信文、夢の象徴、写真ベースの顔相まで一つのアプリで気軽に参考できます。',
+      ko: '왕꽃선녀는 생년월일시 기반 사주 정보와 타로 카드를 바탕으로 오늘의 흐름을 살펴보고, 질문과 궁합 풀이를 히스토리로 이어볼 수 있는 AI 운세 앱입니다.',
+      en: 'Ungyeol combines birth-chart based saju readings with tarot and compatibility insights, then keeps your daily fortunes, questions, and readings in history.',
+      zh: 'Ungyeol 结合出生八字、塔罗和配对解读，可查看每日走势、自由提问，并在历史记录中回顾结果。',
+      ja: 'Ungyeolは生年月日時にもとづく四柱推命、タロット、相性鑑定を組み合わせ、今日の運勢や質問の結果を履歴で見返せるAI運勢アプリです。',
     },
     features: {
-      ko: ['생년월일시 기반 오늘 운세와 대운 흐름', '자유 질문, 타로, 궁합을 AI 풀이로 확인', '상대 속마음과 답장 추천으로 관계 대화 정리', '꿈 키워드와 감정을 바탕으로 한 꿈해몽', '사진 동의 기반 관상 풀이와 히스토리 저장'],
-      en: ['Daily fortune and major-fortune flow from birth details', 'AI readings for free-form questions, tarot, and compatibility', 'Hidden-feelings readings and reply recommendations for relationship conversations', 'Dream readings from keywords, emotions, and dream details', 'Consent-based face readings with text results saved to history'],
-      zh: ['基于出生信息的每日运势和大运走势', '自由提问、塔罗和配对的 AI 解读', '用对方心意解读和回复建议整理关系对话', '根据梦境关键词、情绪和内容进行梦境解析', '基于授权照片的面相解读，并保存文字结果历史'],
-      ja: ['生年月日時にもとづく今日の運勢と大運の流れ', '自由質問、タロット、相性をAI鑑定で確認', '相手の気持ちと返信提案で関係の会話を整理', '夢のキーワードと感情をもとにした夢占い', '同意した写真による顔相鑑定とテキスト結果の履歴保存'],
+      ko: ['생년월일시, 성별, 출생 도시 기반 오늘 운세 점수와 분야별 흐름', '현재 대운의 큰 흐름과 필요할 때 펼쳐보는 상세 풀이', '일, 관계, 금전, 학업 등 자유 질문에 대한 AI 사주 풀이', '1장, 3장, 켈틱 스프레드를 지원하는 타로 리딩', '두 사람의 생년월일시를 바탕으로 보는 궁합과 히스토리 저장'],
+      en: ['Daily fortune score, keywords, cautions, and category flows from birth details', 'Current major fortune with optional detailed readings', 'AI saju readings for free-form questions about work, relationships, money, or study', 'One-card, three-card, and Celtic tarot spreads', 'Compatibility readings from two birth profiles with saved history'],
+      zh: ['根据出生日期、时间、性别和出生城市查看每日运势分数、关键词和领域走势', '查看当前大运的大方向，并可展开详细解读', '对工作、关系、金钱、学业等自由提问进行 AI 八字解读', '支持一张牌、三张牌和凯尔特十字塔罗牌阵', '根据两个人的出生信息查看配对，并保存历史记录'],
+      ja: ['生年月日時、性別、出生都市から今日の運勢スコア、キーワード、注意点、分野別の流れを確認', '現在の大運の大きな流れと、必要な時に開ける詳細鑑定', '仕事、関係、お金、学業など自由質問へのAI四柱推命鑑定', '1枚、3枚、ケルト十字スプレッドに対応したタロット', '二人の生年月日時にもとづく相性鑑定と履歴保存'],
     },
     recommendedFor: {
-      ko: ['매일의 운세와 사주 흐름을 짧게 확인하고 싶은 사용자', '애매한 관계의 분위기와 보낼 말을 정리하고 싶은 사용자', '꿈해몽이나 관상을 엔터테인먼트로 가볍게 참고하고 싶은 사용자'],
-      en: ['People who want quick daily fortune and saju flow checks', 'Users who want to organize relationship signals and what to send next', 'Anyone who wants light entertainment readings for dreams or face impressions'],
-      zh: ['想快速查看每日运势和命理走势的用户', '想整理暧昧关系氛围和下一条回复的用户', '想把梦境解析或面相解读作为轻松娱乐参考的用户'],
-      ja: ['毎日の運勢と四柱推命の流れを短く確認したい方', '曖昧な関係の空気感や送る言葉を整理したい方', '夢占いや顔相をエンタメとして気軽に参考したい方'],
+      ko: ['매일의 운세 흐름을 짧고 보기 좋게 확인하고 싶은 사용자', '사주와 타로를 한 앱에서 함께 참고하고 싶은 사용자', '중요한 결정을 앞두고 생각을 정리할 소재가 필요한 사용자', '지난 풀이를 모아보고 흐름을 다시 확인하고 싶은 사용자'],
+      en: ['People who want a quick daily fortune check', 'Anyone who wants saju and tarot in one app', 'Users who want prompts for reflection before an important decision', 'People who want to revisit past readings and notice patterns'],
+      zh: ['想快速查看每日运势走势的用户', '想在一个应用中参考八字和塔罗的用户', '重要决定前需要整理想法素材的用户', '想回顾历史解读并观察走势的用户'],
+      ja: ['毎日の運勢を短く見やすく確認したい方', '四柱推命とタロットを一つのアプリで参考にしたい方', '大切な決断の前に考えを整理する材料が欲しい方', '過去の鑑定を見返して流れを確認したい方'],
     },
     supportNote: {
-      ko: '운세, 관계, 꿈, 관상 풀이는 엔터테인먼트 목적의 참고 정보입니다. 관상은 본인 또는 동의를 받은 사진만 사용하며, 원본 사진은 저장하지 않고 텍스트 결과만 히스토리에 저장됩니다.',
-      en: 'Fortune, relationship, dream, and face readings are for entertainment and reflection only. Face reading should use your own photo or a photo you have permission to use; the original photo is not stored, only the text result is saved to history.',
-      zh: '运势、关系、梦境和面相解读仅用于娱乐和自我反思。面相解读应使用本人照片或已获得授权的照片；原始照片不会保存，只保存文字结果历史。',
-      ja: '運勢、関係、夢、顔相の鑑定はエンタメと振り返り目的の参考情報です。顔相は本人または許可を得た写真のみを使用し、写真原本は保存せずテキスト結果だけを履歴に保存します。',
+      ko: '왕꽃선녀의 모든 풀이는 엔터테인먼트 목적의 참고 정보입니다. 의료, 법률, 투자 등 중요한 의사결정의 전문 자문을 대체하지 않으며, AI 풀이에는 오류나 누락이 포함될 수 있습니다.',
+      en: 'Ungyeol readings are for entertainment and reflection only. They do not replace medical, legal, investment, or other professional advice, and AI responses may contain errors or omissions.',
+      zh: 'Ungyeol 的所有解读仅用于娱乐和自我反思，不替代医疗、法律、投资等专业建议；AI 结果可能包含错误或遗漏。',
+      ja: 'Ungyeolの鑑定はエンターテインメントと振り返り目的の参考情報です。医療、法律、投資などの専門的助言を代替せず、AI回答には誤りや抜けが含まれる場合があります。',
     },
     screenshots: {
       ko: [
         {
           src: '/app-screenshots/ungyeol/ko/home.png',
-          caption: { ko: '오늘 운세', en: 'Daily fortune', zh: '每日运势', ja: '今日の運勢' },
+          caption: { ko: '오늘 운세와 현재 대운', en: 'Daily and major fortune', zh: '每日运势和大运', ja: '今日の運勢と大運' },
         },
         {
           src: '/app-screenshots/ungyeol/ko/question.png',
@@ -541,7 +541,7 @@ export const apps: AppInfo[] = [
         },
         {
           src: '/app-screenshots/ungyeol/ko/compatibility.png',
-          caption: { ko: '궁합과 인연', en: 'Compatibility and relationship', zh: '配对与缘分', ja: '相性と縁' },
+          caption: { ko: '궁합 보기', en: 'Compatibility', zh: '配对', ja: '相性' },
         },
         {
           src: '/app-screenshots/ungyeol/ko/history.png',
@@ -551,7 +551,7 @@ export const apps: AppInfo[] = [
       en: [
         {
           src: '/app-screenshots/ungyeol/en/home.png',
-          caption: { ko: '오늘 운세', en: 'Daily fortune', zh: '每日运势', ja: '今日の運勢' },
+          caption: { ko: '오늘 운세와 현재 대운', en: 'Daily and major fortune', zh: '每日运势和大运', ja: '今日の運勢と大運' },
         },
         {
           src: '/app-screenshots/ungyeol/en/question.png',
@@ -563,7 +563,7 @@ export const apps: AppInfo[] = [
         },
         {
           src: '/app-screenshots/ungyeol/en/compatibility.png',
-          caption: { ko: '궁합과 인연', en: 'Compatibility and relationship', zh: '配对与缘分', ja: '相性と縁' },
+          caption: { ko: '궁합 보기', en: 'Compatibility', zh: '配对', ja: '相性' },
         },
         {
           src: '/app-screenshots/ungyeol/en/history.png',
@@ -573,7 +573,7 @@ export const apps: AppInfo[] = [
       ja: [
         {
           src: '/app-screenshots/ungyeol/ja/home.png',
-          caption: { ko: '오늘 운세', en: 'Daily fortune', zh: '每日运势', ja: '今日の運勢' },
+          caption: { ko: '오늘 운세와 현재 대운', en: 'Daily and major fortune', zh: '每日运势和大运', ja: '今日の運勢と大運' },
         },
         {
           src: '/app-screenshots/ungyeol/ja/question.png',
@@ -585,7 +585,7 @@ export const apps: AppInfo[] = [
         },
         {
           src: '/app-screenshots/ungyeol/ja/compatibility.png',
-          caption: { ko: '궁합과 인연', en: 'Compatibility and relationship', zh: '配对与缘分', ja: '相性と縁' },
+          caption: { ko: '궁합 보기', en: 'Compatibility', zh: '配对', ja: '相性' },
         },
         {
           src: '/app-screenshots/ungyeol/ja/history.png',

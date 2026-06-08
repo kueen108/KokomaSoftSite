@@ -157,26 +157,26 @@ export const appPrivacySections: Partial<Record<string, Record<Lang, { heading: 
   ungyeol: {
     ko: [
       {
-        heading: 'Ungyeol AI 풀이 기능 안내',
-        content: 'Ungyeol은 오늘 운세, 자유 질문, 타로, 궁합, 상대 속마음, 답장 추천, 꿈해몽, 관상 기능 제공을 위해 생년월일시, 질문 및 상황 입력, 상대 메시지, 꿈 키워드·감정·내용, 선택한 사진 데이터를 처리할 수 있습니다. 관상 사진 원본은 저장하지 않으며, AI가 생성한 텍스트 결과와 입력 요약만 히스토리에 저장됩니다. 본인 사진 또는 사용 동의를 받은 사진만 이용해 주세요.',
+        heading: '왕꽃선녀 AI 풀이 기능 안내',
+        content: '왕꽃선녀는 오늘 운세, 현재 대운, 자유 질문, 타로, 궁합, 히스토리 기능 제공을 위해 생년월일시, 성별, 출생 도시, 질문 및 상황 입력, 선택한 타로 카드, 궁합 대상자의 생년월일시와 별칭, AI가 생성한 풀이 결과를 처리할 수 있습니다. 모든 풀이는 엔터테인먼트 목적의 참고 정보이며, 만 14세 미만 사용자는 가입할 수 없습니다.',
       },
     ],
     en: [
       {
         heading: 'Ungyeol AI Reading Features',
-        content: 'Ungyeol may process birth details, questions and situation text, partner messages, dream keywords, emotions and details, and selected photo data to provide daily fortune, free-form question, tarot, compatibility, hidden-feelings, reply recommendation, dream reading, and face-reading features. Original face-reading photos are not stored; only generated text results and input summaries are saved to history. Please use only your own photo or a photo you have permission to use.',
+        content: 'Ungyeol may process birth details, gender, birth city, free-form question text, selected tarot cards, another person’s birth details and nickname for compatibility, and AI-generated reading results to provide daily fortune, current major fortune, free-form question, tarot, compatibility, and history features. All readings are for entertainment and reflection only, and users under 14 are not allowed to sign up.',
       },
     ],
     zh: [
       {
         heading: 'Ungyeol AI 解读功能说明',
-        content: 'Ungyeol 可能会处理出生信息、问题和情境文字、对方消息、梦境关键词、情绪和内容，以及所选照片数据，以提供每日运势、自由提问、塔罗、配对、对方心意、回复建议、梦境解析和面相解读功能。面相解读的原始照片不会保存；仅保存 AI 生成的文字结果和输入摘要到历史记录。请仅使用本人照片或已获得使用许可的照片。',
+        content: 'Ungyeol 可能会处理出生信息、性别、出生城市、自由提问文字、所选塔罗牌、配对对象的出生信息和昵称，以及 AI 生成的解读结果，以提供每日运势、当前大运、自由提问、塔罗、配对和历史记录功能。所有解读仅用于娱乐和自我反思，14 岁以下用户不可注册。',
       },
     ],
     ja: [
       {
         heading: 'Ungyeol AI鑑定機能について',
-        content: 'Ungyeolは、今日の運勢、自由質問、タロット、相性、相手の気持ち、返信提案、夢占い、顔相機能を提供するため、生年月日時、質問や状況の入力、相手のメッセージ、夢のキーワード・感情・内容、選択した写真データを処理する場合があります。顔相用の写真原本は保存せず、AIが生成したテキスト結果と入力要約のみを履歴に保存します。本人の写真、または使用許可を得た写真のみを利用してください。',
+        content: 'Ungyeolは、今日の運勢、現在の大運、自由質問、タロット、相性、履歴機能を提供するため、生年月日時、性別、出生都市、質問や状況の入力、選択したタロットカード、相性相手の生年月日時とニックネーム、AIが生成した鑑定結果を処理する場合があります。すべての鑑定はエンターテインメントと振り返り目的の参考情報であり、14歳未満のユーザーは登録できません。',
       },
     ],
   },

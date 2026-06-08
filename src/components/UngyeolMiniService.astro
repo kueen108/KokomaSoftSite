@@ -131,19 +131,6 @@ const backHref = `/${service.lang}/#ungyeol-tools`;
       inputFallback: '입력한 상황',
       genericAdviceTitle: '오늘의 조언',
       resultReady: (label) => `${label} 결과가 준비되었습니다.`,
-      reply: {
-        summary: (relationship, tone, goal) => `${relationship || '관계'} 관계에서는 ${tone || '선택한 말투'}로 ${goal || '대화 이어가기'}의 목적을 분명히 하되, 한 번에 결론을 요구하지 않는 답장이 좋습니다.`,
-        title: '답장 후보 3개',
-        cautionTitle: '주의할 점',
-        caution: '상대의 반응이 느리다면 같은 메시지를 반복하기보다 하루 정도 간격을 두는 편이 좋습니다.',
-        groups: [
-          ['나도 그 얘기 조금 더 듣고 싶어요. 편할 때 이어서 말해줄래요?', '그 말 들으니까 괜히 신경 쓰이네요. 오늘은 어땠어요?', '나도 너랑 이야기하는 게 편해. 조금 더 얘기해보자.'],
-          ['그럼 말 나온 김에 이번 주에 잠깐 볼까요? 부담 없는 시간으로 맞춰봐요.', '괜찮으면 커피라도 한잔하면서 얘기해요. 가능한 날 있어요?', '메시지로만 말하기 아쉬워서, 시간 맞으면 직접 얘기하고 싶어요.'],
-          ['내가 그 부분은 더 배려했어야 했어요. 불편했다면 미안해요.', '말이 조금 앞섰던 것 같아요. 기분 상했다면 정말 미안해요.', '네 입장에서 생각해보니 내가 놓친 게 있더라고요. 다시 잘 얘기해보고 싶어요.'],
-          ['지금은 서로 조금 차분히 생각할 시간이 필요할 것 같아요. 나중에 다시 얘기해요.', '내가 지금 바로 답을 정하기는 어려워요. 조금만 시간을 두고 볼게요.', '감정적으로 말하고 싶진 않아서 오늘은 여기까지 할게요.'],
-          ['그랬구나. 나는 그 부분이 조금 궁금했어요. 너는 어떻게 느꼈어?', '알겠어요. 그럼 지금은 어떤 쪽이 더 편해요?', '그 얘기 들으니까 상황이 조금 이해돼요. 이어서 말해줘요.'],
-        ],
-      },
       tarot: {
         summary: (topic, first, third) => `${topic || '질문'} 흐름은 ${first}에서 시작해 ${third}의 조언으로 정리됩니다.`,
         current: '현재',
@@ -152,21 +139,6 @@ const backHref = `/${service.lang}/#ungyeol-tools`;
         currentText: (card) => `${card[0]}: ${card[1]}이 보입니다.`,
         flowText: (card) => `${card[0]}: 상황은 ${card[1]} 쪽으로 움직입니다.`,
         adviceText: (card) => `${card[0]}: ${card[1]}을 오늘의 기준으로 삼아보세요.`,
-      },
-      dream: {
-        summary: (keyword, emotion, mood) => `${keyword || '꿈'}은 오늘 마음속 ${mood}과 연결됩니다. ${emotion || '감정'}이 강했다면 최근 신경 쓰던 일이 꿈으로 정리되는 흐름입니다.`,
-        symbolTitle: '상징 해석',
-        symbolText: (keyword, text) => `${keyword || '꿈의 장면'}은 현재 놓치고 있던 감정 신호를 보여줍니다. ${text} 장면은 마음이 정리되고 싶어 하는 부분에 가깝습니다.`,
-        cautionTitle: '주의할 점',
-        cautionText: (caution) => `${caution}에 빠지면 꿈을 과하게 해석할 수 있습니다. 상징은 참고로만 받아들이는 편이 좋습니다.`,
-      },
-      hidden: {
-        summary: (relationship, mood) => `${relationship || '상대'} 관계는 ${mood}의 기류가 강합니다. 상대는 마음을 완전히 닫았다기보다 속도를 조절하려는 쪽에 가깝습니다.`,
-        mindTitle: '상대의 가능성 있는 마음',
-        mindText: (text) => `${text} 상황에서는 호감과 부담이 함께 섞여 보입니다. 지금은 확인받으려는 말보다 편한 대화가 더 유리합니다.`,
-        pointTitle: '관계 포인트',
-        pointText: (status, strength) => `${status || '현재 상황'}에서는 ${strength}을 살리면 분위기가 부드러워집니다.`,
-        actionTitle: '다음 행동',
       },
       fortune: {
         summary: (focus, mood, strength) => `오늘은 ${mood}이 중심이 되는 날입니다. ${focus || '전체'} 흐름에서는 ${strength}을 살리면 기회가 생깁니다.`,
@@ -188,15 +160,6 @@ const backHref = `/${service.lang}/#ungyeol-tools`;
         situationText: (text) => `${text} 문제는 감정, 현실 조건, 타이밍을 나눠서 보면 더 단순해집니다.`,
         directionTitle: '가능한 방향',
         directionText: (strength, caution) => `${strength}을 살리는 선택은 장기적으로 후회가 적고, ${caution}을 피하는 선택은 오늘의 불안을 줄입니다.`,
-      },
-      face: {
-        summary: (impression, mood) => `${impression || '인상'}은 ${mood}의 분위기를 줍니다. 웹에서는 사진 없이 입력한 키워드만 바탕으로 참고 풀이를 제공합니다.`,
-        flowTitle: '인상 흐름',
-        flowText: (focus, strength) => `${focus || '오늘의 조언'} 기준으로 보면 ${strength}이 강점처럼 보입니다. 첫인상에서는 편안함과 선명함의 균형이 중요합니다.`,
-        tipTitle: '활용 팁',
-        tipText: '중요한 만남 전에는 표정, 시선, 말의 속도를 정돈하는 것만으로도 인상이 크게 달라집니다.',
-        photoTitle: '사진 관상 안내',
-        photoText: '사진 기반 관상은 앱에서 동의 후 이용할 수 있습니다. 웹에서는 사진을 업로드하거나 저장하지 않습니다.',
       },
     },
     en: {
@@ -236,19 +199,6 @@ const backHref = `/${service.lang}/#ungyeol-tools`;
       inputFallback: 'the situation you entered',
       genericAdviceTitle: "Today's Advice",
       resultReady: (label) => `${label} result is ready.`,
-      reply: {
-        summary: (relationship, tone, goal) => `For ${relationship || 'this relationship'}, use a ${tone || 'selected'} tone and keep the goal of "${goal || 'keep talking'}" clear without demanding an immediate conclusion.`,
-        title: 'Three reply options',
-        cautionTitle: 'Watch out',
-        caution: 'If the other person responds slowly, avoid repeating the same message. A little time between replies can reduce pressure.',
-        groups: [
-          ['I’d like to hear a little more about that when you feel like sharing.', 'That made me curious about how your day went. How did it feel for you?', 'I feel comfortable talking with you, so I’d like to keep the conversation going.'],
-          ['Since it came up, would you like to meet for coffee sometime this week?', 'If you are free, I’d rather talk about it in person. What day works for you?', 'Messages feel a bit limited for this, so I’d like to catch up when our schedules match.'],
-          ['I should have been more considerate about that. I’m sorry if it made you uncomfortable.', 'I think my words moved faster than I intended. I’m sorry if they hurt you.', 'Thinking from your side, I can see what I missed. I’d like to talk again more carefully.'],
-          ['I think we both may need a little time to think calmly. Let’s talk again later.', 'I can’t decide right away, so I’ll take a bit of time with this.', 'I don’t want to speak emotionally, so I’ll pause here for today.'],
-          ['I see. I’m curious about that part too. How did it feel for you?', 'Got it. Which direction feels more comfortable for you right now?', 'That helps me understand the situation better. Tell me a little more when you can.'],
-        ],
-      },
       tarot: {
         summary: (topic, first, third) => `The flow for ${topic || 'your question'} begins with ${first} and lands on the advice of ${third}.`,
         current: 'Present',
@@ -257,21 +207,6 @@ const backHref = `/${service.lang}/#ungyeol-tools`;
         currentText: (card) => `${card[0]}: This points to ${card[1]}.`,
         flowText: (card) => `${card[0]}: The situation is moving toward ${card[1]}.`,
         adviceText: (card) => `${card[0]}: Use ${card[1]} as today’s standard.`,
-      },
-      dream: {
-        summary: (keyword, emotion, mood) => `${keyword || 'This dream'} connects with ${mood} in your current mind. If ${emotion || 'the emotion'} felt strong, a recent concern may be organizing itself through the dream.`,
-        symbolTitle: 'Symbol reading',
-        symbolText: (keyword, text) => `${keyword || 'The dream scene'} points to an emotional signal you may have missed. The scene "${text}" is close to something your mind wants to organize.`,
-        cautionTitle: 'Watch out',
-        cautionText: (caution) => `${caution} can make the dream feel heavier than it is. Treat symbols as a reference, not as a fixed prediction.`,
-      },
-      hidden: {
-        summary: (relationship, mood) => `${relationship || 'This relationship'} carries a strong tone of ${mood}. The other person may not be fully closed off; they may simply be adjusting the pace.`,
-        mindTitle: 'Possible hidden feelings',
-        mindText: (text) => `In the context of "${text}", interest and pressure may be mixed together. A comfortable conversation is more useful than asking for certainty right now.`,
-        pointTitle: 'Relationship point',
-        pointText: (status, strength) => `For "${status || 'the current situation'}", leaning on ${strength} can soften the mood.`,
-        actionTitle: 'Next action',
       },
       fortune: {
         summary: (focus, mood, strength) => `Today centers on ${mood}. In the area of ${focus || 'overall flow'}, ${strength} can open a useful chance.`,
@@ -293,15 +228,6 @@ const backHref = `/${service.lang}/#ungyeol-tools`;
         situationText: (text) => `The issue "${text}" becomes simpler when separated into emotion, practical conditions, and timing.`,
         directionTitle: 'Possible direction',
         directionText: (strength, caution) => `A choice that uses ${strength} is less likely to create long-term regret, while avoiding ${caution} can reduce today’s anxiety.`,
-      },
-      face: {
-        summary: (impression, mood) => `${impression || 'This impression'} gives a mood of ${mood}. The web version uses only the keywords you select, without receiving photos.`,
-        flowTitle: 'Impression flow',
-        flowText: (focus, strength) => `For ${focus || 'today’s advice'}, ${strength} looks like a useful strength. First impressions benefit from a balance of comfort and clarity.`,
-        tipTitle: 'Practical tip',
-        tipText: 'Before an important meeting, simply organizing your expression, eye contact, and speaking pace can change the impression significantly.',
-        photoTitle: 'Photo face reading',
-        photoText: 'Photo-based face reading is available in the app with consent. The web version does not upload or store photos.',
       },
     },
     zh: {
@@ -341,19 +267,6 @@ const backHref = `/${service.lang}/#ungyeol-tools`;
       inputFallback: '你输入的状况',
       genericAdviceTitle: '今日建议',
       resultReady: (label) => `${label}结果已生成。`,
-      reply: {
-        summary: (relationship, tone, goal) => `在${relationship || '这段关系'}中，建议用${tone || '选择的语气'}明确「${goal || '继续聊天'}」的目的，但不要一次要求对方给出结论。`,
-        title: '三条回复候选',
-        cautionTitle: '注意点',
-        caution: '如果对方回复慢，不要重复发送同样的内容。适当留一点时间，会减少压迫感。',
-        groups: [
-          ['我也想再多听一点这件事，等你方便的时候可以继续说。', '听你这么说，我有点好奇你今天的感受。后来怎么样？', '和你聊天我觉得挺舒服的，可以再多聊一点。'],
-          ['既然说到这里，这周要不要找个时间喝杯咖啡？', '如果你方便，我想当面聊聊。你哪天比较合适？', '只靠消息有点说不清，时间合适的话我想见面聊。'],
-          ['那一点我应该更体谅你。如果让你不舒服了，真的抱歉。', '我刚才说得有点急。如果让你受伤了，对不起。', '换成你的角度想，我发现自己有没注意到的地方。想再好好聊一次。'],
-          ['我觉得我们都需要一点时间冷静想想，之后再聊吧。', '我现在还没办法马上决定，想再给自己一点时间。', '我不想带着情绪继续说，所以今天先到这里。'],
-          ['这样啊。我对这一点也有点好奇，你当时怎么想的？', '明白。那现在你觉得哪种方式更舒服？', '这么说我更能理解状况了，有空再多告诉我一点。'],
-        ],
-      },
       tarot: {
         summary: (topic, first, third) => `${topic || '这个问题'}的走势从${first}开始，并以${third}的建议收束。`,
         current: '现在',
@@ -362,21 +275,6 @@ const backHref = `/${service.lang}/#ungyeol-tools`;
         currentText: (card) => `${card[0]}：这里显示出${card[1]}。`,
         flowText: (card) => `${card[0]}：状况正朝着${card[1]}移动。`,
         adviceText: (card) => `${card[0]}：可以把${card[1]}作为今天的判断标准。`,
-      },
-      dream: {
-        summary: (keyword, emotion, mood) => `${keyword || '这个梦'}与今天内心的${mood}有关。如果${emotion || '情绪'}很强，近期在意的事可能正在通过梦被整理。`,
-        symbolTitle: '象征解读',
-        symbolText: (keyword, text) => `${keyword || '梦里的场景'}显示出你可能忽略的情绪信号。「${text}」这个场景，接近内心想要整理的部分。`,
-        cautionTitle: '注意点',
-        cautionText: (caution) => `如果陷入${caution}，可能会把梦解读得过重。象征只适合作为参考。`,
-      },
-      hidden: {
-        summary: (relationship, mood) => `${relationship || '这段关系'}带有明显的${mood}气氛。对方未必完全关闭心门，更像是在调整速度。`,
-        mindTitle: '对方可能的心意',
-        mindText: (text) => `在「${text}」这个状况里，好感和压力可能同时存在。现在比起要求确认，更适合轻松对话。`,
-        pointTitle: '关系重点',
-        pointText: (status, strength) => `在「${status || '当前状况'}」中，发挥${strength}会让气氛更柔和。`,
-        actionTitle: '下一步行动',
       },
       fortune: {
         summary: (focus, mood, strength) => `今天以${mood}为中心。在${focus || '整体'}方面，发挥${strength}会带来机会。`,
@@ -398,15 +296,6 @@ const backHref = `/${service.lang}/#ungyeol-tools`;
         situationText: (text) => `「${text}」这个问题，把情绪、现实条件和时机分开看，会更简单。`,
         directionTitle: '可能方向',
         directionText: (strength, caution) => `发挥${strength}的选择，长期后悔会更少；避开${caution}，也能减少今天的不安。`,
-      },
-      face: {
-        summary: (impression, mood) => `${impression || '这个印象'}带来${mood}的氛围。网页只根据你选择的关键词进行参考解读，不接收照片。`,
-        flowTitle: '印象走势',
-        flowText: (focus, strength) => `从${focus || '今日建议'}来看，${strength}像是一个强项。第一印象需要舒适感和清晰感的平衡。`,
-        tipTitle: '使用建议',
-        tipText: '重要见面前，只要整理表情、视线和说话速度，印象就会明显不同。',
-        photoTitle: '照片面相说明',
-        photoText: '照片面相可在应用中经同意后使用。网页不会上传或保存照片。',
       },
     },
     ja: {
@@ -446,19 +335,6 @@ const backHref = `/${service.lang}/#ungyeol-tools`;
       inputFallback: '入力した状況',
       genericAdviceTitle: '今日のアドバイス',
       resultReady: (label) => `${label}の結果が用意できました。`,
-      reply: {
-        summary: (relationship, tone, goal) => `${relationship || 'この関係'}では、${tone || '選んだ口調'}で「${goal || '会話を続ける'}」目的をはっきりさせつつ、一度に結論を求めない返信が合います。`,
-        title: '返信候補3つ',
-        cautionTitle: '注意点',
-        caution: '相手の反応が遅い時は、同じ内容を繰り返すより少し時間を置く方が負担になりにくいです。',
-        groups: [
-          ['その話、もう少し聞いてみたいです。話せる時に続き教えてください。', 'そう言われると少し気になります。今日はどんな感じでしたか？', 'あなたと話すのは落ち着くので、もう少し話したいです。'],
-          ['せっかく話に出たので、今週どこかで少し会いませんか？', 'よければコーヒーでも飲みながら話しましょう。都合のいい日はありますか？', 'メッセージだけだと少し惜しいので、時間が合えば直接話したいです。'],
-          ['その部分はもっと配慮すべきでした。不快にさせていたらごめんなさい。', '少し言葉が先走ったと思います。傷つけていたら本当にごめんなさい。', 'あなたの立場で考えると、私が見落としていた部分がありました。もう一度丁寧に話したいです。'],
-          ['今はお互い少し落ち着いて考える時間が必要そうです。また後で話しましょう。', '今すぐ答えを出すのは難しいので、少し時間をください。', '感情的に話したくないので、今日はここまでにします。'],
-          ['そうだったんですね。私はその部分が少し気になります。どう感じましたか？', 'わかりました。今はどちらの形が一番楽ですか？', 'その話を聞いて状況が少しわかりました。よければもう少し教えてください。'],
-        ],
-      },
       tarot: {
         summary: (topic, first, third) => `${topic || '質問'}の流れは${first}から始まり、${third}のアドバイスへまとまります。`,
         current: '現在',
@@ -467,21 +343,6 @@ const backHref = `/${service.lang}/#ungyeol-tools`;
         currentText: (card) => `${card[0]}：${card[1]}が見えます。`,
         flowText: (card) => `${card[0]}：状況は${card[1]}の方向へ動いています。`,
         adviceText: (card) => `${card[0]}：${card[1]}を今日の基準にしてみてください。`,
-      },
-      dream: {
-        summary: (keyword, emotion, mood) => `${keyword || '夢'}は今日の心の中の${mood}とつながっています。${emotion || '感情'}が強かったなら、最近気にしていたことが夢の中で整理されている流れです。`,
-        symbolTitle: '象徴の解釈',
-        symbolText: (keyword, text) => `${keyword || '夢の場面'}は、今見落としていた感情のサインを示します。「${text}」という場面は、心が整理したがっている部分に近いです。`,
-        cautionTitle: '注意点',
-        cautionText: (caution) => `${caution}に入り込むと、夢を重く読みすぎることがあります。象徴は参考として受け取るのがよさそうです。`,
-      },
-      hidden: {
-        summary: (relationship, mood) => `${relationship || '相手'}との関係には${mood}の気配が強くあります。相手は完全に閉じているというより、速度を調整している可能性があります。`,
-        mindTitle: '相手の可能性ある気持ち',
-        mindText: (text) => `「${text}」という状況では、好意と負担が同時に混ざっているように見えます。今は確認を求めるより、楽に話せる空気が有利です。`,
-        pointTitle: '関係のポイント',
-        pointText: (status, strength) => `「${status || '現在の状況'}」では、${strength}を活かすと雰囲気がやわらぎます。`,
-        actionTitle: '次の行動',
       },
       fortune: {
         summary: (focus, mood, strength) => `今日は${mood}が中心になる日です。${focus || '全体'}の流れでは、${strength}を活かすとチャンスが生まれます。`,
@@ -504,15 +365,6 @@ const backHref = `/${service.lang}/#ungyeol-tools`;
         directionTitle: '可能な方向',
         directionText: (strength, caution) => `${strength}を活かす選択は長期的に後悔が少なく、${caution}を避ける選択は今日の不安を減らします。`,
       },
-      face: {
-        summary: (impression, mood) => `${impression || '印象'}は${mood}の雰囲気を与えます。Webでは写真なしで、入力したキーワードだけをもとに参考鑑定を行います。`,
-        flowTitle: '印象の流れ',
-        flowText: (focus, strength) => `${focus || '今日のアドバイス'}を基準にすると、${strength}が強みのように見えます。第一印象では安心感とはっきりした印象のバランスが大切です。`,
-        tipTitle: '活用のコツ',
-        tipText: '大事な場面の前に、表情、視線、話す速さを整えるだけでも印象は大きく変わります。',
-        photoTitle: '写真人相の案内',
-        photoText: '写真ベースの人相鑑定は、アプリで同意後に利用できます。Webでは写真をアップロードしたり保存したりしません。',
-      },
     },
   };
 
@@ -533,27 +385,10 @@ const backHref = `/${service.lang}/#ungyeol-tools`;
     return Object.fromEntries([...data.entries()].map(([key, value]) => [key, String(value).trim()]));
   }
 
-  function optionIndex(fieldName, value) {
-    const field = service.fields?.find((item) => item.name === fieldName);
-    const index = field?.options?.indexOf(value);
-    return typeof index === 'number' && index >= 0 ? index : 0;
-  }
-
   function sentenceFromText(text) {
     if (!text) return copy.inputFallback;
     const compact = text.replace(/\s+/g, ' ').trim();
     return compact.length > 72 ? `${compact.slice(0, 72)}...` : compact;
-  }
-
-  function buildReply(values, seed) {
-    const goalIndex = optionIndex('goal', values.goal);
-    return {
-      summary: copy.reply.summary(values.relationship, values.tone, values.goal),
-      sections: [
-        { title: copy.reply.title, items: copy.reply.groups[goalIndex] || copy.reply.groups[0] },
-        { title: copy.reply.cautionTitle, text: copy.reply.caution },
-      ],
-    };
   }
 
   function buildTarot(values, seed) {
@@ -575,30 +410,7 @@ const backHref = `/${service.lang}/#ungyeol-tools`;
     const caution = pick(copy.cautions, seed, 5);
     const coreAdvice = pick(copy.advice, seed, 9);
 
-    if (service.id === 'reply') return buildReply(values, seed);
     if (service.id === 'tarot') return buildTarot(values, seed);
-
-    if (service.id === 'dream') {
-      return {
-        summary: copy.dream.summary(values.keyword, values.emotion, mood),
-        sections: [
-          { title: copy.dream.symbolTitle, text: copy.dream.symbolText(values.keyword, sentenceFromText(values.dreamText)) },
-          { title: copy.genericAdviceTitle, text: coreAdvice },
-          { title: copy.dream.cautionTitle, text: copy.dream.cautionText(caution) },
-        ],
-      };
-    }
-
-    if (service.id === 'hidden-feelings') {
-      return {
-        summary: copy.hidden.summary(values.relationship, mood),
-        sections: [
-          { title: copy.hidden.mindTitle, text: copy.hidden.mindText(sentenceFromText(values.context)) },
-          { title: copy.hidden.pointTitle, text: copy.hidden.pointText(values.status, strength) },
-          { title: copy.hidden.actionTitle, text: coreAdvice },
-        ],
-      };
-    }
 
     if (service.id === 'fortune') {
       return {
@@ -629,17 +441,6 @@ const backHref = `/${service.lang}/#ungyeol-tools`;
           { title: copy.freeQuestion.situationTitle, text: copy.freeQuestion.situationText(sentenceFromText(values.question)) },
           { title: copy.freeQuestion.directionTitle, text: copy.freeQuestion.directionText(strength, caution) },
           { title: copy.genericAdviceTitle, text: coreAdvice },
-        ],
-      };
-    }
-
-    if (service.id === 'face-reading') {
-      return {
-        summary: copy.face.summary(values.impression, mood),
-        sections: [
-          { title: copy.face.flowTitle, text: copy.face.flowText(values.focus, strength) },
-          { title: copy.face.tipTitle, text: copy.face.tipText },
-          { title: copy.face.photoTitle, text: copy.face.photoText },
         ],
       };
     }
