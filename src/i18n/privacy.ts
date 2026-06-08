@@ -335,11 +335,11 @@ export const appPrivacySectionOverrides: Partial<Record<string, Record<Lang, { h
     ko: [
       {
         heading: '1. 처리하는 정보',
-        content: '스마트밥은 계정 생성 없이 사용할 수 있는 식단 기록 앱입니다. 앱은 사용자가 입력하거나 선택한 식단 기록(날짜, 끼니, 음식명, 섭취량, 칼로리, 영양 성분, 메모), 음식 사진, 개인화 설정(태어난 해, 성별, 키, 몸무게, 활동량, 목표, 하루 목표 칼로리), 앱 설정(테마, 화면 모드, 사진 저장 설정)을 기기 내부에 저장할 수 있습니다.',
+        content: '스마트밥은 계정 생성 없이 사용할 수 있는 식단 기록 앱입니다. 앱은 사용자가 입력하거나 선택한 식단 기록(날짜, 끼니, 음식명, 섭취량, 칼로리, 영양 성분, 메모), 음식 사진, 개인화 설정(태어난 해, 성별, 키, 몸무게, 활동량, 목표, 하루 목표 칼로리), 앱 설정(테마, 화면 모드, 사진 저장 설정)을 기기 내부에 저장할 수 있습니다. 광고 표시와 관련해 Google Mobile Ads SDK가 광고 식별자, 기기 정보, 광고 노출 및 상호작용 정보를 처리할 수 있습니다.',
       },
       {
         heading: '2. 이용 목적',
-        content: '처리되는 정보는 음식 기록 저장 및 표시, 칼로리와 영양 성분 계산, 일/주/월 단위 통계 제공, 최근 식단 기록 기반 브리핑 제공, 개인 신체 정보 기반 하루 목표 칼로리 추정, 사용자 문의 대응을 위해 사용됩니다.',
+        content: '처리되는 정보는 음식 기록 저장 및 표시, 칼로리와 영양 성분 계산, 일/주/월 단위 통계 제공, 최근 식단 기록 기반 브리핑 제공, 개인 신체 정보 기반 하루 목표 칼로리 추정, 광고 표시 및 운영, 사용자 문의 대응을 위해 사용됩니다.',
       },
       {
         heading: '3. 원격 AI 분석',
@@ -347,11 +347,11 @@ export const appPrivacySectionOverrides: Partial<Record<string, Record<Lang, { h
       },
       {
         heading: '4. 제3자 서비스',
-        content: '원격 AI 분석이 활성화된 경우 AI 분석 처리를 위해 Cloudflare Worker와 AI 제공자가 데이터를 처리할 수 있습니다. 스마트밥은 현재 앱 코드에 광고 SDK, 외부 Analytics SDK, 계정 인증 서비스를 포함하지 않습니다.',
+        content: '원격 AI 분석이 활성화된 경우 AI 분석 처리를 위해 Cloudflare Worker와 AI 제공자가 데이터를 처리할 수 있습니다. 광고 표시를 위해 Google Mobile Ads SDK와 Google LLC가 광고 관련 데이터를 처리할 수 있습니다. 스마트밥은 현재 앱 코드에 외부 Analytics SDK나 계정 인증 서비스를 포함하지 않습니다.',
       },
       {
         heading: '5. 보관 및 삭제',
-        content: '식단 기록, 사진, 설정은 기본적으로 사용자의 기기 안에 저장됩니다. 사용자는 앱 내 삭제 기능으로 식단 기록을 삭제할 수 있으며, Android 설정에서 앱 데이터를 삭제하거나 앱을 제거하면 로컬에 저장된 데이터가 삭제됩니다. 원격 AI 처리 데이터와 관련한 문의는 kokomasoft@gmail.com으로 접수할 수 있습니다.',
+        content: '식단 기록, 사진, 설정은 기본적으로 사용자의 기기 안에 저장됩니다. 사용자는 앱 내 삭제 기능으로 식단 기록을 삭제할 수 있으며, Android 설정에서 앱 데이터를 삭제하거나 앱을 제거하면 로컬에 저장된 데이터가 삭제됩니다. 원격 AI 처리 데이터와 광고 관련 데이터 처리에 관한 문의는 kokomasoft@gmail.com으로 접수할 수 있습니다.',
       },
       {
         heading: '6. 보안',
@@ -369,11 +369,11 @@ export const appPrivacySectionOverrides: Partial<Record<string, Record<Lang, { h
     en: [
       {
         heading: '1. Information Processed',
-        content: 'SmartBap is a meal logging app that can be used without creating an account. The app may store meal records you enter or select (date, meal type, food name, serving amount, calories, nutrition values, and notes), food photos, personalization settings (birth year, sex, height, weight, activity level, goal, and daily calorie target), and app preferences (theme, display mode, and photo saving settings) on your device.',
+        content: 'SmartBap is a meal logging app that can be used without creating an account. The app may store meal records you enter or select (date, meal type, food name, serving amount, calories, nutrition values, and notes), food photos, personalization settings (birth year, sex, height, weight, activity level, goal, and daily calorie target), and app preferences (theme, display mode, and photo saving settings) on your device. For ad display, the Google Mobile Ads SDK may process advertising identifiers, device information, ad impressions, and ad interaction information.',
       },
       {
         heading: '2. How Information Is Used',
-        content: 'Information is used to save and display meal records, calculate calories and nutrients, provide daily/weekly/monthly statistics, generate briefings based on recent meal records, estimate daily calorie targets from body profile settings, and respond to user inquiries.',
+        content: 'Information is used to save and display meal records, calculate calories and nutrients, provide daily/weekly/monthly statistics, generate briefings based on recent meal records, estimate daily calorie targets from body profile settings, display and operate ads, and respond to user inquiries.',
       },
       {
         heading: '3. Remote AI Analysis',
@@ -381,11 +381,11 @@ export const appPrivacySectionOverrides: Partial<Record<string, Record<Lang, { h
       },
       {
         heading: '4. Third-Party Services',
-        content: 'When remote AI analysis is enabled, Cloudflare Worker and the AI provider may process data to provide the analysis. SmartBap currently does not include advertising SDKs, external analytics SDKs, or account authentication services in the app code.',
+        content: 'When remote AI analysis is enabled, Cloudflare Worker and the AI provider may process data to provide the analysis. Google Mobile Ads SDK and Google LLC may process ad-related data to display ads. SmartBap currently does not include external analytics SDKs or account authentication services in the app code.',
       },
       {
         heading: '5. Retention and Deletion',
-        content: 'Meal records, photos, and settings are stored locally on your device by default. You can delete meal records in the app. Local data is deleted when you clear the app data in Android settings or uninstall the app. For questions about remote AI processing data, contact kokomasoft@gmail.com.',
+        content: 'Meal records, photos, and settings are stored locally on your device by default. You can delete meal records in the app. Local data is deleted when you clear the app data in Android settings or uninstall the app. For questions about remote AI processing data or ad-related data processing, contact kokomasoft@gmail.com.',
       },
       {
         heading: '6. Security',
@@ -403,11 +403,11 @@ export const appPrivacySectionOverrides: Partial<Record<string, Record<Lang, { h
     zh: [
       {
         heading: '1. 處理的資訊',
-        content: '智慧餐盤是一款不需要建立帳號即可使用的飲食紀錄 App。App 可能會在你的裝置內儲存你輸入或選取的飲食紀錄（日期、餐別、食物名稱、攝取量、熱量、營養成分與備註）、食物照片、個人化設定（出生年份、性別、身高、體重、活動量、目標與每日目標熱量）以及 App 設定（主題、顯示模式與照片保存設定）。',
+        content: '智慧餐盤是一款不需要建立帳號即可使用的飲食紀錄 App。App 可能會在你的裝置內儲存你輸入或選取的飲食紀錄（日期、餐別、食物名稱、攝取量、熱量、營養成分與備註）、食物照片、個人化設定（出生年份、性別、身高、體重、活動量、目標與每日目標熱量）以及 App 設定（主題、顯示模式與照片保存設定）。為了顯示廣告，Google Mobile Ads SDK 可能會處理廣告識別碼、裝置資訊、廣告曝光與互動資訊。',
       },
       {
         heading: '2. 使用目的',
-        content: '這些資訊會用於保存與顯示飲食紀錄、計算熱量與營養成分、提供日/週/月統計、根據近期飲食紀錄提供簡報、依身體資料推估每日目標熱量，以及回覆使用者諮詢。',
+        content: '這些資訊會用於保存與顯示飲食紀錄、計算熱量與營養成分、提供日/週/月統計、根據近期飲食紀錄提供簡報、依身體資料推估每日目標熱量、顯示與營運廣告，以及回覆使用者諮詢。',
       },
       {
         heading: '3. 遠端 AI 分析',
@@ -415,11 +415,11 @@ export const appPrivacySectionOverrides: Partial<Record<string, Record<Lang, { h
       },
       {
         heading: '4. 第三方服務',
-        content: '啟用遠端 AI 分析時，Cloudflare Worker 與 AI 提供者可能會為提供分析功能而處理資料。智慧餐盤目前的 App 程式碼不包含廣告 SDK、外部 Analytics SDK 或帳號驗證服務。',
+        content: '啟用遠端 AI 分析時，Cloudflare Worker 與 AI 提供者可能會為提供分析功能而處理資料。為了顯示廣告，Google Mobile Ads SDK 與 Google LLC 可能會處理廣告相關資料。智慧餐盤目前的 App 程式碼不包含外部 Analytics SDK 或帳號驗證服務。',
       },
       {
         heading: '5. 保存與刪除',
-        content: '飲食紀錄、照片與設定預設會儲存在你的裝置內。你可以在 App 內刪除飲食紀錄。透過 Android 設定清除 App 資料或解除安裝 App 時，本機資料會被刪除。關於遠端 AI 處理資料的問題，請聯絡 kokomasoft@gmail.com。',
+        content: '飲食紀錄、照片與設定預設會儲存在你的裝置內。你可以在 App 內刪除飲食紀錄。透過 Android 設定清除 App 資料或解除安裝 App 時，本機資料會被刪除。關於遠端 AI 處理資料或廣告相關資料處理的問題，請聯絡 kokomasoft@gmail.com。',
       },
       {
         heading: '6. 安全性',
@@ -437,11 +437,11 @@ export const appPrivacySectionOverrides: Partial<Record<string, Record<Lang, { h
     ja: [
       {
         heading: '1. 処理する情報',
-        content: 'スマートごはんは、アカウント作成なしで利用できる食事記録アプリです。アプリは、ユーザーが入力または選択した食事記録（日付、食事区分、食品名、摂取量、カロリー、栄養成分、メモ）、食事写真、パーソナライズ設定（生年、性別、身長、体重、活動量、目標、1日の目標カロリー）、アプリ設定（テーマ、表示モード、写真保存設定）を端末内に保存する場合があります。',
+        content: 'スマートごはんは、アカウント作成なしで利用できる食事記録アプリです。アプリは、ユーザーが入力または選択した食事記録（日付、食事区分、食品名、摂取量、カロリー、栄養成分、メモ）、食事写真、パーソナライズ設定（生年、性別、身長、体重、活動量、目標、1日の目標カロリー）、アプリ設定（テーマ、表示モード、写真保存設定）を端末内に保存する場合があります。広告表示に関連して、Google Mobile Ads SDK が広告識別子、端末情報、広告表示および広告操作情報を処理する場合があります。',
       },
       {
         heading: '2. 利用目的',
-        content: 'これらの情報は、食事記録の保存と表示、カロリーと栄養成分の計算、日/週/月単位の統計提供、最近の食事記録にもとづくブリーフィング、身体プロフィールにもとづく1日の目標カロリー推定、ユーザーからのお問い合わせ対応に使用されます。',
+        content: 'これらの情報は、食事記録の保存と表示、カロリーと栄養成分の計算、日/週/月単位の統計提供、最近の食事記録にもとづくブリーフィング、身体プロフィールにもとづく1日の目標カロリー推定、広告の表示と運用、ユーザーからのお問い合わせ対応に使用されます。',
       },
       {
         heading: '3. リモートAI分析',
@@ -449,11 +449,11 @@ export const appPrivacySectionOverrides: Partial<Record<string, Record<Lang, { h
       },
       {
         heading: '4. 第三者サービス',
-        content: 'リモートAI分析が有効な場合、分析機能を提供するために Cloudflare Worker と AI 提供者がデータを処理することがあります。スマートごはんの現在のアプリコードには、広告 SDK、外部 Analytics SDK、アカウント認証サービスは含まれていません。',
+        content: 'リモートAI分析が有効な場合、分析機能を提供するために Cloudflare Worker と AI 提供者がデータを処理することがあります。広告表示のため、Google Mobile Ads SDK と Google LLC が広告関連データを処理する場合があります。スマートごはんの現在のアプリコードには、外部 Analytics SDK やアカウント認証サービスは含まれていません。',
       },
       {
         heading: '5. 保持と削除',
-        content: '食事記録、写真、設定は原則としてユーザーの端末内に保存されます。ユーザーはアプリ内の削除機能で食事記録を削除できます。Android 設定でアプリデータを削除する、またはアプリをアンインストールすると、ローカルに保存されたデータは削除されます。リモートAI処理データに関するお問い合わせは kokomasoft@gmail.com までご連絡ください。',
+        content: '食事記録、写真、設定は原則としてユーザーの端末内に保存されます。ユーザーはアプリ内の削除機能で食事記録を削除できます。Android 設定でアプリデータを削除する、またはアプリをアンインストールすると、ローカルに保存されたデータは削除されます。リモートAI処理データまたは広告関連データの処理に関するお問い合わせは kokomasoft@gmail.com までご連絡ください。',
       },
       {
         heading: '6. セキュリティ',
@@ -601,10 +601,10 @@ export const appPrivacyLastUpdated: Partial<Record<string, Record<Lang, string>>
     ja: '最終更新日：2026年6月7日',
   },
   smartbap: {
-    ko: '최종 수정일: 2026년 6월 2일',
-    en: 'Last updated: June 2, 2026',
-    zh: '最後更新：2026年6月2日',
-    ja: '最終更新日：2026年6月2日',
+    ko: '최종 수정일: 2026년 6월 8일',
+    en: 'Last updated: June 8, 2026',
+    zh: '最後更新：2026年6月8日',
+    ja: '最終更新日：2026年6月8日',
   },
   marknote: {
     ko: '최종 수정일: 2026년 5월 11일',

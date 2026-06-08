@@ -34,6 +34,40 @@ const appDisplayOrder: Record<string, number> = {
   smartbap: 6,
 };
 
+const smartBapScreenshots = [
+  {
+    file: '01-diary.png',
+    caption: { ko: '날짜별 식단 기록', en: 'Date-based meal diary', zh: '依日期管理飲食', ja: '日付別の食事記録' },
+  },
+  {
+    file: '02-stats.png',
+    caption: { ko: '일/주/월 통계', en: 'Daily, weekly, and monthly stats', zh: '日/週/月統計', ja: '日/週/月の統計' },
+  },
+  {
+    file: '03-briefing.png',
+    caption: { ko: '최근 7일 식단 브리핑', en: '7-day diet briefing', zh: '最近 7 天飲食簡報', ja: '直近7日間の食事ブリーフィング' },
+  },
+  {
+    file: '04-settings.png',
+    caption: { ko: '테마와 개인화 목표', en: 'Themes and personalized goals', zh: '主題與個人化目標', ja: 'テーマと個人化目標' },
+  },
+  {
+    file: '05-meal-detail.png',
+    caption: { ko: '음식 구성과 양 편집', en: 'Food and portion editing', zh: '編輯食物與份量', ja: '食品構成と量の編集' },
+  },
+  {
+    file: '06-capture.png',
+    caption: { ko: '사진/검색으로 음식 추가', en: 'Add food by photo or search', zh: '用照片或搜尋新增食物', ja: '写真や検索で食事を追加' },
+  },
+] satisfies Array<{ file: string; caption: Record<Lang, string> }>;
+
+function smartBapLocalizedScreenshots(locale: 'ko' | 'ja' | 'zh'): AppScreenshot[] {
+  return smartBapScreenshots.map((screenshot) => ({
+    src: `/app-screenshots/smartbap/${locale}/${screenshot.file}`,
+    caption: screenshot.caption,
+  }));
+}
+
 export const apps: AppInfo[] = [
   {
     id: 'marknote',
@@ -454,37 +488,45 @@ export const apps: AppInfo[] = [
       ja: 'スマートごはん',
     },
     tagline: {
-      ko: '사진, 검색, 직접 입력으로 식사를 기록하고 칼로리와 영양 균형을 확인하는 식단 기록 앱입니다.',
-      en: 'A meal diary for logging food by photo, search, or manual entry and reviewing calories and nutrition balance.',
-      zh: '可透過照片、搜尋或手動輸入記錄餐點，並查看熱量與營養均衡的飲食紀錄 App。',
-      ja: '写真、検索、直接入力で食事を記録し、カロリーと栄養バランスを確認する食事記録アプリです。',
+      ko: '사진, 검색, 직접 입력으로 식사를 기록하고 최근 7일 브리핑과 일/주/월 통계로 영양 균형을 확인합니다.',
+      en: 'Log meals by photo, search, or manual entry, then review nutrition balance with 7-day briefings and daily, weekly, and monthly stats.',
+      zh: '可透過照片、搜尋或手動輸入記錄餐點，並用最近 7 天簡報與日/週/月統計查看營養均衡。',
+      ja: '写真、検索、直接入力で食事を記録し、直近7日間のブリーフィングと日/週/月の統計で栄養バランスを確認できます。',
     },
     description: {
-      ko: '스마트밥은 음식 사진 AI 분석과 식품영양성분 DB를 활용해 식사 기록, 칼로리 통계, 최근 식단 브리핑을 제공합니다.',
-      en: 'SmartBap uses food-photo AI analysis and a food nutrition database to provide meal records, calorie stats, and recent diet briefings.',
-      zh: '智慧餐盤使用食物照片 AI 分析與食物營養資料庫，提供餐點紀錄、熱量統計與近期飲食簡報。',
-      ja: 'スマートごはんは食品写真AI分析と食品栄養成分DBを使い、食事記録、カロリー統計、最近の食事ブリーフィングを提供します。',
+      ko: '스마트밥은 음식 사진 AI 분석과 14만 건 이상의 식품영양성분 DB를 활용해 날짜별 식단, 칼로리 통계, 개인화 목표, 최근 식단 브리핑을 한곳에서 관리하는 식단 기록 앱입니다.',
+      en: 'SmartBap combines food-photo AI analysis with a 140,000+ item nutrition database so you can manage date-based meal records, calorie stats, personalized goals, and recent diet briefings in one place.',
+      zh: '智慧餐盤結合食物照片 AI 分析與 14 萬筆以上食物營養資料庫，集中管理依日期的飲食紀錄、熱量統計、個人化目標與近期飲食簡報。',
+      ja: 'スマートごはんは食品写真AI分析と14万件以上の食品栄養成分DBを組み合わせ、日付別の食事記録、カロリー統計、個人化目標、最近の食事ブリーフィングを一か所で管理できます。',
     },
     features: {
-      ko: ['카메라, 갤러리, 검색, 직접 입력으로 식사 기록', '일/주/월 단위 칼로리와 끼니별 통계', '최근 기록 기반 식단 브리핑과 생활 제안', '테마, 다크 모드, 목표 칼로리, 프로필 기반 목표 설정', '건강 정보 계산 기준과 출처 링크 제공'],
-      en: ['Log meals from camera, gallery, search, or manual entry', 'Daily, weekly, and monthly calorie and meal statistics', 'Recent-record diet briefings with lifestyle suggestions', 'Themes, dark mode, calorie goals, and profile-based goal settings', 'Calculation basis and source links for health-related information'],
-      zh: ['可用相機、相簿、搜尋或手動輸入記錄餐點', '日、週、月熱量與餐別統計', '根據近期紀錄產生飲食簡報與生活建議', '主題、深色模式、目標熱量與個人化目標設定', '提供健康資訊計算基準與資料來源連結'],
-      ja: ['カメラ、ギャラリー、検索、直接入力で食事を記録', '日・週・月単位のカロリーと食事別統計', '最近の記録に基づく食事ブリーフィングと生活提案', 'テーマ、ダークモード、目標カロリー、プロフィール基準目標設定', '健康情報の計算基準と出典リンクを提供'],
+      ko: ['카메라 촬영, 갤러리 선택, 음식 검색, 직접 입력으로 아침/점심/저녁/간식 기록', '14만 건 이상의 식품영양성분 DB 기준 칼로리, 탄수화물, 단백질, 지방 계산과 그램 단위 조정', '달력 기반 날짜 선택, 끼니별 카드, 식사 상세 화면에서 음식 구성과 양 편집', '일/주/월 칼로리 추이, 끼니별 통계, 목표 대비 진행률 확인', '최근 7일 식단 브리핑, 프로필 기반 하루 목표 칼로리, 6개 테마와 라이트/다크/다이내믹 컬러'],
+      en: ['Log breakfast, lunch, dinner, and snacks from camera capture, gallery import, food search, or manual entry', 'Calculate calories, carbs, protein, and fat from a 140,000+ item nutrition database with gram-level adjustments', 'Pick dates from the calendar, review meal cards, and edit food composition and portions on the meal detail screen', 'Review daily, weekly, and monthly calorie trends, meal splits, and progress against your target', 'Use 7-day diet briefings, profile-based daily calorie targets, six themes, and light, dark, or dynamic color modes'],
+      zh: ['可透過相機、相簿、食物搜尋或手動輸入記錄早餐、午餐、晚餐與點心', '依 14 萬筆以上食物營養資料庫計算熱量、碳水、蛋白質與脂肪，並可用克數調整', '用日曆選擇日期，查看各餐卡片，並在餐點詳細畫面編輯食物組成與份量', '查看日/週/月熱量趨勢、餐別統計與目標達成進度', '提供最近 7 天飲食簡報、依個人資料推估每日目標熱量、6 種主題與淺色/深色/動態色彩模式'],
+      ja: ['カメラ撮影、ギャラリー選択、食品検索、直接入力で朝食・昼食・夕食・間食を記録', '14万件以上の食品栄養成分DBにもとづき、カロリー、炭水化物、たんぱく質、脂質を計算し、グラム単位で調整', 'カレンダーで日付を選び、食事カードを確認し、食事詳細画面で食品構成と量を編集', '日/週/月のカロリー推移、食事別統計、目標に対する進捗を確認', '直近7日間の食事ブリーフィング、プロフィールにもとづく1日の目標カロリー、6つのテーマとライト/ダーク/ダイナミックカラーに対応'],
     },
     recommendedFor: {
-      ko: ['사진으로 빠르게 식사를 남기고 싶은 사용자', '하루 목표 칼로리와 최근 섭취 패턴을 확인하고 싶은 사용자', '식단 기록 기반 생활 참고 정보를 원하는 사용자'],
-      en: ['People who want to log meals quickly from photos', 'Users who want to review daily calorie goals and recent intake patterns', 'Anyone who wants lifestyle reference information based on meal records'],
-      zh: ['想用照片快速留下餐點紀錄的使用者', '想查看每日目標熱量與近期攝取模式的使用者', '需要根據飲食紀錄取得生活參考資訊的使用者'],
-      ja: ['写真で素早く食事を記録したい方', '1日の目標カロリーと最近の摂取パターンを確認したい方', '食事記録に基づく生活参考情報が欲しい方'],
+      ko: ['사진으로 빠르게 식사를 남기고 저장 전 음식과 양을 직접 확인하고 싶은 사용자', '하루 목표 칼로리와 끼니별 섭취 패턴을 일/주/월로 비교하고 싶은 사용자', '최근 7일 식단을 바탕으로 식사량과 영양 균형을 가볍게 점검하고 싶은 사용자', '계정 없이 로컬 중심으로 식단 기록을 관리하고 싶은 사용자'],
+      en: ['People who want to log meals quickly from photos while checking food names and portions before saving', 'Users who want to compare daily calorie targets and meal-by-meal intake patterns by day, week, and month', 'Anyone who wants a light 7-day review of meal volume and nutrition balance', 'Users who prefer local-first meal records without creating an account'],
+      zh: ['想用照片快速記錄餐點，並在儲存前確認食物名稱與份量的使用者', '想用日/週/月比較每日目標熱量與各餐攝取模式的使用者', '想根據最近 7 天飲食輕量檢查食量與營養均衡的使用者', '偏好不建立帳號、以本機為中心管理飲食紀錄的使用者'],
+      ja: ['写真で素早く食事を記録し、保存前に食品名と量を確認したい方', '1日の目標カロリーと食事別の摂取パターンを日/週/月で比較したい方', '直近7日間の食事をもとに、食事量と栄養バランスを軽く見直したい方', 'アカウントなしでローカル中心に食事記録を管理したい方'],
     },
     supportNote: {
-      ko: '스마트밥의 칼로리 목표, 통계, 브리핑은 의료 진단이 아닌 기록 기반 생활 참고 정보입니다. 앱의 건강 정보 출처 화면과 이 지원 페이지에서 계산 기준과 출처 링크를 확인할 수 있습니다.',
-      en: 'SmartBap calorie goals, statistics, and briefings are record-based lifestyle reference information, not medical diagnosis. The app and this support page provide calculation basis and source links.',
-      zh: '智慧餐盤的熱量目標、統計與簡報是根據紀錄提供的生活參考資訊，不是醫療診斷。App 與此支援頁面提供計算基準與來源連結。',
-      ja: 'スマートごはんのカロリー目標、統計、ブリーフィングは医療診断ではなく、記録に基づく生活参考情報です。アプリとこのサポートページで計算基準と出典リンクを確認できます。',
+      ko: '스마트밥의 칼로리 목표, 통계, 브리핑은 기록 기반 생활 참고 정보이며 의료 진단이나 전문 영양 상담을 대체하지 않습니다. 원격 AI 분석과 광고 표시가 활성화된 빌드에서는 관련 제3자 서비스가 데이터를 처리할 수 있습니다.',
+      en: 'SmartBap calorie goals, statistics, and briefings are record-based lifestyle references and do not replace medical diagnosis or professional nutrition advice. Builds with remote AI analysis and ads enabled may process data through related third-party services.',
+      zh: '智慧餐盤的熱量目標、統計與簡報是根據紀錄提供的生活參考資訊，不會取代醫療診斷或專業營養諮詢。啟用遠端 AI 分析與廣告顯示的版本，可能會由相關第三方服務處理資料。',
+      ja: 'スマートごはんのカロリー目標、統計、ブリーフィングは記録にもとづく生活参考情報であり、医療診断や専門的な栄養相談の代わりではありません。リモートAI分析と広告表示が有効なビルドでは、関連する第三者サービスがデータを処理する場合があります。',
+    },
+    screenshots: {
+      ko: smartBapLocalizedScreenshots('ko'),
+      en: smartBapLocalizedScreenshots('ko'),
+      zh: smartBapLocalizedScreenshots('zh'),
+      ja: smartBapLocalizedScreenshots('ja'),
     },
     category: 'lifestyle',
     operatingSystem: 'iOS, iPadOS, Android',
+    googlePlayUrl: 'https://play.google.com/store/apps/details?id=com.kokomasoft.smartbap',
+    appStoreUrl: 'https://apps.apple.com/kr/app/%EC%8A%A4%EB%A7%88%ED%8A%B8%EB%B0%A5/id6752108069',
   },
   {
     id: 'ungyeol',
