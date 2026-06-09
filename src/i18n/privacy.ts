@@ -209,6 +209,128 @@ export const appPrivacySections: Partial<Record<string, Record<Lang, { heading: 
 };
 
 export const appPrivacySectionOverrides: Partial<Record<string, Record<Lang, { heading: string; content: string }[]>>> = {
+  checkme: {
+    ko: [
+      {
+        heading: '1. 처리하는 정보',
+        content: 'CheckMe는 카메라 기반 AI 바이브 체크 앱입니다. 앱은 사용자가 촬영하거나 선택한 사진, 분석 요청을 위해 최적화·압축된 이미지 데이터, 체크 타입, 생성된 점수·바이브 라벨·근거·추천 팁·공유 문구, 로컬 히스토리, 공유 카드 이미지, 앱 설정, 알림 및 광고 설정을 처리할 수 있습니다.',
+      },
+      {
+        heading: '2. 이용 목적',
+        content: '처리되는 정보는 사진 기반 컨디션·스타일·무드 피드백 제공, 촬영 가이드와 결과 화면 표시, 공유 카드 생성, 히스토리와 리포트 제공, 알림 및 앱 설정 유지, 광고 표시와 서비스 안정성 개선, 사용자 문의 대응을 위해 사용됩니다.',
+      },
+      {
+        heading: '3. 사진 분석과 원격 AI 처리',
+        content: '사용자가 분석을 요청하면 앱은 네트워크와 AI 처리 비용을 줄이기 위해 사진을 적절한 크기로 리사이즈·압축하고 가능한 경우 메타데이터를 제거한 뒤 Cloudflare Worker로 전송합니다. Worker는 OpenAI 또는 호환 가능한 멀티모달 모델 제공자에게 분석 요청을 전달할 수 있습니다. API 키는 앱에 포함되지 않고 서버 측 Secret으로 관리됩니다.',
+      },
+      {
+        heading: '4. 로컬 저장과 삭제',
+        content: '체크 히스토리, 리포트, 설정, 공유용 미리보기 이미지는 사용자의 기기에 저장될 수 있습니다. 사용자는 앱 내 삭제 기능으로 기록을 삭제할 수 있으며, Android 설정에서 앱 데이터를 삭제하거나 앱을 제거하면 로컬 데이터가 삭제됩니다. CheckMe는 원본 고해상도 사진을 서버에 보관하기 위한 서비스가 아닙니다.',
+      },
+      {
+        heading: '5. 광고, 분석 및 제3자 서비스',
+        content: 'CheckMe는 원격 분석을 위해 Cloudflare Worker와 외부 멀티모달 모델 제공자를 사용할 수 있습니다. 앱 안정성, 원격 설정, 사용 통계 분석을 위해 Firebase 서비스가 사용될 수 있으며, 광고 표시를 위해 Google Mobile Ads SDK, AdMob, Google UMP 동의 관리 기능이 광고 식별자, 기기 정보, 광고 노출 및 상호작용 정보를 처리할 수 있습니다.',
+      },
+      {
+        heading: '6. 얼굴, 생체정보 및 민감 속성',
+        content: 'CheckMe는 사용자를 식별하거나 생체 식별자를 생성·저장하기 위한 서비스가 아닙니다. 결과는 사진에서 보이는 조명, 프레이밍, 표정 신호, 스타일 인상에 기반한 참고용 피드백이며, 인종, 민족, 건강 상태, 정확한 나이, 매력도 또는 의학적 상태를 단정하도록 설계되지 않았습니다.',
+      },
+      {
+        heading: '7. 보안, 아동 및 변경',
+        content: '원격 분석이 사용되는 경우 네트워크 전송은 HTTPS를 사용합니다. CheckMe는 아동을 대상으로 하지 않으며, 미성년자의 사진 사용은 보호자의 동의와 지도가 필요합니다. 앱 기능, 데이터 처리 방식, 외부 서비스 사용이 변경되면 본 방침을 업데이트합니다.',
+      },
+    ],
+    en: [
+      {
+        heading: '1. Information Processed',
+        content: 'CheckMe is a camera-based AI vibe check app. The app may process photos you take or select, optimized and compressed image data needed for analysis, check type, generated scores, vibe labels, evidence, tips, share captions, local history, share card images, app preferences, notification settings, and ad preferences.',
+      },
+      {
+        heading: '2. How Information Is Used',
+        content: 'Information is used to provide photo-based condition, style, and mood feedback, show capture guidance and result screens, generate share cards, provide history and reports, maintain notifications and app settings, display ads, improve service stability, and respond to user inquiries.',
+      },
+      {
+        heading: '3. Photo Analysis and Remote AI Processing',
+        content: 'When you request analysis, the app resizes and compresses the photo to an appropriate size and, where possible, removes metadata to reduce network and AI processing cost before sending it to a Cloudflare Worker. The Worker may forward the analysis request to OpenAI or a compatible multimodal model provider. API keys are not included in the app and are managed as server-side secrets.',
+      },
+      {
+        heading: '4. Local Storage and Deletion',
+        content: 'Check history, reports, preferences, and share preview images may be stored on your device. You can delete records in the app. Local data is deleted when you clear app data in Android settings or uninstall the app. CheckMe is not designed to store original full-resolution photos on its servers.',
+      },
+      {
+        heading: '5. Ads, Analytics, and Third-Party Services',
+        content: 'CheckMe may use Cloudflare Worker and an external multimodal model provider for remote analysis. Firebase services may be used for stability, remote configuration, and usage analytics. Google Mobile Ads SDK, AdMob, and Google UMP consent management may process advertising identifiers, device information, ad impressions, and ad interaction information to display ads.',
+      },
+      {
+        heading: '6. Face, Biometric Data, and Sensitive Attributes',
+        content: 'CheckMe is not a service for identifying users or creating or storing biometric identifiers. Results are reference feedback based on visible lighting, framing, expression signals, and style impression in the photo, and are not designed to determine race, ethnicity, health condition, exact age, attractiveness, or medical status.',
+      },
+      {
+        heading: '7. Security, Children, and Changes',
+        content: 'When remote analysis is used, network transmission uses HTTPS. CheckMe is not directed to children, and photos of minors should be used only with guardian consent and guidance. This policy will be updated if app features, data handling, or external service usage changes.',
+      },
+    ],
+    zh: [
+      {
+        heading: '1. 处理的信息',
+        content: 'CheckMe 是一款基于相机的 AI vibe check 应用。应用可能会处理你拍摄或选择的照片、分析所需的优化和压缩图片数据、检查类型、生成的分数、vibe 标签、依据、建议、分享文案、本地历史记录、分享卡片图片、应用偏好设置、通知设置和广告偏好。',
+      },
+      {
+        heading: '2. 使用目的',
+        content: '这些信息用于提供基于照片的状态、风格和情绪反馈，显示拍摄指引和结果页面，生成分享卡片，提供历史记录和报告，维护通知和应用设置，展示广告，提升服务稳定性，并回应用户咨询。',
+      },
+      {
+        heading: '3. 照片分析与远程 AI 处理',
+        content: '当你请求分析时，应用会将照片调整到合适大小并压缩，并在可能的情况下移除元数据，以降低网络和 AI 处理成本，然后发送到 Cloudflare Worker。Worker 可能会将分析请求转发给 OpenAI 或兼容的多模态模型提供方。API 密钥不会包含在应用内，而是作为服务器端 Secret 管理。',
+      },
+      {
+        heading: '4. 本地保存与删除',
+        content: '检查历史、报告、偏好设置和分享预览图片可能会保存在你的设备上。你可以在应用内删除记录。通过 Android 设置清除应用数据或卸载应用时，本地数据会被删除。CheckMe 并不是用于在服务器上保存原始完整分辨率照片的服务。',
+      },
+      {
+        heading: '5. 广告、分析与第三方服务',
+        content: 'CheckMe 可能会使用 Cloudflare Worker 和外部多模态模型提供方进行远程分析。Firebase 服务可能用于稳定性、远程配置和使用情况分析。Google Mobile Ads SDK、AdMob 和 Google UMP 同意管理功能可能会处理广告标识符、设备信息、广告展示和广告互动信息以展示广告。',
+      },
+      {
+        heading: '6. 面部、生物识别信息和敏感属性',
+        content: 'CheckMe 不是用于识别用户或创建、保存生物识别标识的服务。结果是基于照片中可见的光线、构图、表情信号和风格印象提供的参考反馈，并非用于判断种族、民族、健康状况、准确年龄、吸引力或医疗状态。',
+      },
+      {
+        heading: '7. 安全、儿童与变更',
+        content: '使用远程分析时，网络传输会使用 HTTPS。CheckMe 并非面向儿童；未成年人照片应仅在监护人同意和指导下使用。如应用功能、数据处理方式或外部服务使用发生变化，本政策将更新。',
+      },
+    ],
+    ja: [
+      {
+        heading: '1. 処理する情報',
+        content: 'CheckMe は、カメラベースの AI vibe check アプリです。アプリは、ユーザーが撮影または選択した写真、分析に必要な最適化・圧縮済み画像データ、チェックタイプ、生成されたスコア、vibe ラベル、根拠、ヒント、共有用キャプション、ローカル履歴、共有カード画像、アプリ設定、通知設定、広告設定を処理する場合があります。',
+      },
+      {
+        heading: '2. 利用目的',
+        content: 'これらの情報は、写真にもとづくコンディション・スタイル・ムードのフィードバック提供、撮影ガイドと結果画面の表示、共有カード生成、履歴とレポート提供、通知とアプリ設定の維持、広告表示、サービス安定性の改善、ユーザーからのお問い合わせ対応に使用されます。',
+      },
+      {
+        heading: '3. 写真分析とリモート AI 処理',
+        content: 'ユーザーが分析を依頼すると、アプリはネットワークと AI 処理コストを抑えるため写真を適切なサイズにリサイズ・圧縮し、可能な場合はメタデータを削除してから Cloudflare Worker に送信します。Worker は OpenAI または互換性のあるマルチモーダルモデル提供者へ分析リクエストを転送する場合があります。API キーはアプリに含まれず、サーバー側 Secret として管理されます。',
+      },
+      {
+        heading: '4. ローカル保存と削除',
+        content: 'チェック履歴、レポート、設定、共有プレビュー画像はユーザーの端末に保存される場合があります。ユーザーはアプリ内で記録を削除できます。Android 設定でアプリデータを削除する、またはアプリをアンインストールすると、ローカルデータは削除されます。CheckMe は元のフル解像度写真をサーバーに保存するためのサービスではありません。',
+      },
+      {
+        heading: '5. 広告、分析、第三者サービス',
+        content: 'CheckMe はリモート分析のため Cloudflare Worker と外部マルチモーダルモデル提供者を使用する場合があります。安定性、リモート設定、利用状況分析のため Firebase サービスを使用する場合があります。広告表示のため、Google Mobile Ads SDK、AdMob、Google UMP 同意管理機能が広告識別子、端末情報、広告表示および広告操作情報を処理する場合があります。',
+      },
+      {
+        heading: '6. 顔、生体情報、センシティブ属性',
+        content: 'CheckMe はユーザーを識別したり生体識別子を作成・保存したりするためのサービスではありません。結果は、写真で見える照明、フレーミング、表情のシグナル、スタイル印象にもとづく参考フィードバックであり、人種、民族、健康状態、正確な年齢、魅力度、医療状態を判断するようには設計されていません。',
+      },
+      {
+        heading: '7. セキュリティ、子ども、変更',
+        content: 'リモート分析が使用される場合、ネットワーク通信には HTTPS を使用します。CheckMe は子どもを対象としておらず、未成年者の写真は保護者の同意と指導のもとで使用してください。アプリ機能、データ処理方法、外部サービスの利用状況に変更がある場合、本ポリシーを更新します。',
+      },
+    ],
+  },
   glowup: {
     ko: [
       {
@@ -594,6 +716,12 @@ export const appPrivacySectionOverrides: Partial<Record<string, Record<Lang, { h
 };
 
 export const appPrivacyLastUpdated: Partial<Record<string, Record<Lang, string>>> = {
+  checkme: {
+    ko: '최종 수정일: 2026년 6월 9일',
+    en: 'Last updated: June 9, 2026',
+    zh: '最后更新：2026年6月9日',
+    ja: '最終更新日：2026年6月9日',
+  },
   glowup: {
     ko: '최종 수정일: 2026년 6월 7일',
     en: 'Last updated: June 7, 2026',

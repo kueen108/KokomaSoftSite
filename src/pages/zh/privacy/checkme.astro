@@ -1,0 +1,19 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import PrivacyPolicy from '../../../components/PrivacyPolicy.astro';
+import { privacyAlternates, privacyDescription, privacyTitle } from '../../../lib/seo';
+
+const appId = 'checkme';
+const appName = 'CheckMe';
+---
+
+<Layout
+  lang="zh"
+  title={privacyTitle(appName, 'zh')}
+  description={privacyDescription(appName, 'zh')}
+  canonicalPath="/zh/privacy/checkme/"
+  alternates={privacyAlternates(appId)}
+  xDefaultPath="/ko/privacy/checkme/"
+>
+  <PrivacyPolicy lang="zh" appName={appName} appId={appId} />
+</Layout>
