@@ -65,6 +65,17 @@ A short but opinionated reading recommendation, plus when to read the original.
 1. Pull latest main branch.
 2. If today's post already exists, update it instead of creating a duplicate.
 3. Create/update the markdown post.
-4. Run `npm run build`.
-5. Commit with `blog: publish daily medium digest YYYY-MM-DD`.
-6. Push to origin so Cloudflare deploys automatically.
+4. Run `node scripts/publish-medium-digest.mjs --date YYYY-MM-DD`. This script validates the post schema and required headings, runs `npm run build`, commits only the post when changed, pushes the current branch, and checks the public URL once.
+5. Report only the script's concise result.
+
+## Cron wrapper
+For the actual OpenClaw cron job, prefer the single command below. It performs bounded Medium feed selection, creates the post when needed, then calls the publish script above:
+
+```sh
+node scripts/run-medium-digest-codex.mjs --date YYYY-MM-DD
+```
+
+## Reliability guardrails
+- The Astro content collection schema is in `src/content.config.ts`. Do not read `src/content/config.ts`; that file does not exist in this repository.
+- Do not run build, commit, push, or URL checks by hand unless `scripts/publish-medium-digest.mjs` itself fails and the failure message asks for a specific fix.
+- Keep terminal output small. The publish script writes command details to `output/medium-digest-cron.log` and prints only a short summary.
