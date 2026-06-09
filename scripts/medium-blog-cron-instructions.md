@@ -62,7 +62,7 @@ A short but opinionated reading recommendation, plus when to read the original.
 ```
 
 ## Publish steps
-1. Pull latest main branch.
+1. Run `git pull --ff-only origin main` before editing. If the pull fails because the branch diverged or local changes are dirty, stop and report the sync problem instead of generating a post.
 2. If today's post already exists, update it instead of creating a duplicate.
 3. Create/update the markdown post.
 4. Run `node scripts/publish-medium-digest.mjs --date YYYY-MM-DD`. This script validates the post schema and required headings, runs `npm run build`, commits only the post when changed, pushes the current branch, and checks the public URL once.

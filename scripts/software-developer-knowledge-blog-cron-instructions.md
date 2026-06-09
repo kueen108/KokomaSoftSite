@@ -72,7 +72,7 @@ One memorable takeaway sentence.
 ```
 
 ## Publish steps
-1. Pull latest main branch.
+1. Run `git pull --ff-only origin main` before editing. If the pull fails because the branch diverged or local changes are dirty, stop and report the sync problem instead of generating a post.
 2. Inspect recent `developer-knowledge-` posts to avoid repeating subjects.
 3. If today's `developer-knowledge-YYYY-MM-DD-...md` post already exists, update it instead of creating a duplicate.
 4. Create/update the markdown post.
