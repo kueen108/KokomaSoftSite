@@ -42,6 +42,7 @@ const schema = {
 ---
 
 <Layout
+  theme="dark"
   lang="ko"
   title={title}
   description={post.data.description}
@@ -138,9 +139,9 @@ const schema = {
     gap: 0.25rem;
     margin-top: 1.4rem;
     padding: 1rem;
-    border: 1px solid var(--color-border);
-    border-radius: 10px;
-    background: var(--color-surface);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-lg);
+    background: rgba(255, 255, 255, 0.04);
   }
 
   .source-card span {
@@ -210,7 +211,7 @@ const schema = {
   .content :global(blockquote) {
     margin: 1.6rem 0;
     padding: 1rem 1.2rem;
-    border-left: 4px solid var(--color-primary);
+    border-left: 4px solid var(--neon-purple);
     background: var(--color-bg-alt);
     border-radius: 0 8px 8px 0;
   }
@@ -218,5 +219,58 @@ const schema = {
   .content :global(a) {
     color: var(--color-primary);
     font-weight: 800;
+  }
+
+  .content :global(pre) {
+    margin: 1.4rem 0;
+    padding: 1rem 1.2rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    background: var(--color-bg-alt);
+    overflow-x: auto;
+    line-height: 1.6;
+    font-size: 0.9rem;
+  }
+
+  .content :global(:not(pre) > code) {
+    padding: 0.12rem 0.4rem;
+    border-radius: 6px;
+    background: var(--color-bg-alt);
+    border: 1px solid var(--color-border);
+    color: #a5ecfb;
+    font-size: 0.88em;
+  }
+
+  .content :global(table) {
+    width: 100%;
+    margin: 1.6rem 0;
+    border-collapse: collapse;
+    font-size: 0.94rem;
+  }
+
+  .content :global(th),
+  .content :global(td) {
+    padding: 0.65rem 0.8rem;
+    border: 1px solid var(--color-border);
+    text-align: left;
+  }
+
+  .content :global(th) {
+    background: var(--color-bg-alt);
+    color: var(--color-ink);
+    font-weight: 800;
+  }
+
+  .content :global(img) {
+    max-width: 100%;
+    height: auto;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--color-border);
+  }
+
+  .content :global(hr) {
+    margin: 2rem 0;
+    border: 0;
+    border-top: 1px solid var(--color-border);
   }
 </style>

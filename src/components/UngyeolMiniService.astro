@@ -502,9 +502,11 @@ const backHref = `/${service.lang}/#ungyeol-tools`;
   .service-hero {
     padding: 5rem 0 4rem;
     background:
-      linear-gradient(120deg, rgba(16, 24, 39, 0.96), rgba(31, 24, 64, 0.9)),
-      radial-gradient(circle at 85% 15%, rgba(245, 174, 84, 0.22), transparent 34%);
-    color: white;
+      radial-gradient(55% 90% at 12% 0%, rgba(139, 92, 246, 0.26), transparent 60%),
+      radial-gradient(45% 80% at 88% 20%, rgba(236, 72, 153, 0.18), transparent 60%),
+      radial-gradient(40% 70% at 60% 100%, rgba(34, 211, 238, 0.12), transparent 60%),
+      var(--ink-deep);
+    color: #f1f0fa;
   }
 
   .service-hero-layout,
@@ -532,12 +534,14 @@ const backHref = `/${service.lang}/#ungyeol-tools`;
   .eyebrow {
     width: fit-content;
     margin-bottom: 0.85rem;
-    padding: 0.32rem 0.72rem;
+    padding: 0.32rem 0.78rem;
     border-radius: 999px;
-    background: rgba(245, 174, 84, 0.14);
-    color: #fbd38d;
+    border: 1px solid rgba(236, 72, 153, 0.35);
+    background: rgba(236, 72, 153, 0.14);
+    color: #ffd1e8;
     font-size: 0.78rem;
-    font-weight: 800;
+    font-weight: 700;
+    letter-spacing: 0.06em;
   }
 
   .service-hero h1 {
@@ -557,9 +561,9 @@ const backHref = `/${service.lang}/#ungyeol-tools`;
 
   .service-note {
     padding: 1.25rem;
-    border: 1px solid rgba(255, 255, 255, 0.16);
-    border-radius: 8px;
-    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-lg);
+    background: var(--glass-bg);
   }
 
   .service-note h2 {
@@ -579,10 +583,9 @@ const backHref = `/${service.lang}/#ungyeol-tools`;
 
   .tool-form,
   .result-panel {
-    border: 1px solid var(--color-border);
-    border-radius: 8px;
-    background: rgba(255, 255, 255, 0.82);
-    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.9) inset;
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-lg);
+    background: rgba(255, 255, 255, 0.04);
   }
 
   .tool-form {
@@ -635,12 +638,17 @@ const backHref = `/${service.lang}/#ungyeol-tools`;
   textarea {
     width: 100%;
     min-height: 46px;
-    border: 1px solid rgba(15, 23, 42, 0.18);
-    border-radius: 8px;
-    background: white;
+    border: 1px solid var(--glass-border);
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.06);
     color: var(--color-text);
     font: inherit;
     padding: 0.7rem 0.8rem;
+  }
+
+  input::placeholder,
+  textarea::placeholder {
+    color: var(--color-text-muted);
   }
 
   textarea {
@@ -650,8 +658,9 @@ const backHref = `/${service.lang}/#ungyeol-tools`;
   input:focus,
   select:focus,
   textarea:focus {
-    outline: 2px solid rgba(15, 118, 110, 0.24);
-    border-color: var(--color-primary);
+    outline: none;
+    border-color: var(--neon-cyan);
+    box-shadow: 0 0 0 3px rgba(34, 211, 238, 0.22);
   }
 
   .submit-button,
@@ -661,18 +670,21 @@ const backHref = `/${service.lang}/#ungyeol-tools`;
     justify-content: center;
     min-height: 48px;
     border: 0;
-    border-radius: 8px;
-    background: var(--color-primary);
-    color: white;
+    border-radius: 999px;
+    background: var(--gradient-neon);
+    color: #0a0a14;
     font-size: 0.95rem;
-    font-weight: 850;
+    font-weight: 800;
     text-decoration: none;
     cursor: pointer;
+    box-shadow: 0 0 20px rgba(139, 92, 246, 0.35);
+    transition: transform 0.3s var(--ease-spring), box-shadow 0.3s ease;
   }
 
   .submit-button:hover,
   .app-button:hover {
-    background: var(--color-primary-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 0 30px rgba(236, 72, 153, 0.5);
   }
 
   .result-panel {
@@ -695,9 +707,9 @@ const backHref = `/${service.lang}/#ungyeol-tools`;
 
   .result-item {
     padding: 1rem;
-    border: 1px solid rgba(15, 23, 42, 0.1);
-    border-radius: 8px;
-    background: #fbfcf8;
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-lg);
+    background: rgba(255, 255, 255, 0.05);
   }
 
   .result-item h3 {
@@ -730,8 +742,10 @@ const backHref = `/${service.lang}/#ungyeol-tools`;
 
   .app-cta {
     padding: 4rem 0;
-    background: #101827;
-    color: white;
+    background:
+      radial-gradient(70% 120% at 100% 0%, rgba(139, 92, 246, 0.12), transparent 60%),
+      var(--color-bg-alt);
+    color: var(--color-text);
   }
 
   .app-cta-layout {
@@ -739,21 +753,12 @@ const backHref = `/${service.lang}/#ungyeol-tools`;
   }
 
   .app-cta h2 {
-    color: white;
+    color: var(--color-ink);
   }
 
   .app-cta p {
     max-width: 760px;
-    color: rgba(255, 255, 255, 0.72);
-  }
-
-  .app-button {
-    background: #f5ae54;
-    color: #111827;
-  }
-
-  .app-button:hover {
-    background: #f8c374;
+    color: var(--color-text-muted);
   }
 
   @media (max-width: 900px) {
