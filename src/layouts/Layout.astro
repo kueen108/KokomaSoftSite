@@ -20,6 +20,7 @@ interface Props {
   headerNavBaseHref?: string;
   ogType?: 'website' | 'article';
   structuredData?: StructuredData | StructuredData[];
+  theme?: 'light' | 'dark';
 }
 
 const {
@@ -37,6 +38,7 @@ const {
   headerNavBaseHref,
   ogType = 'website',
   structuredData,
+  theme = 'light',
 } = Astro.props;
 const tr = t(lang);
 const pageTitle = title ?? `${tr.siteTitle} - ${tr.siteDescription}`;
@@ -59,13 +61,13 @@ const structuredDataList = Array.isArray(structuredData)
 ---
 
 <!doctype html>
-<html lang={lang}>
+<html lang={lang} data-theme={theme}>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content={pageDescription} />
     <meta name="robots" content="index, follow" />
-    <meta name="theme-color" content="#101827" />
+    <meta name="theme-color" content={theme === 'dark' ? '#0a0a14' : '#101827'} />
     <link rel="canonical" href={canonicalUrl} />
     {alternateEntries.map(([code, path]) => (
       <link rel="alternate" hreflang={code} href={absoluteUrl(path)} />
@@ -91,8 +93,13 @@ const structuredDataList = Array.isArray(structuredData)
     {favicon && <link rel="apple-touch-icon" href={faviconPath} />}
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;700&family=Noto+Sans+JP:wght@400;500;700&family=Noto+Sans+SC:wght@400;500;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Noto+Sans+JP:wght@400;500;700&family=Noto+Sans+SC:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"
       rel="stylesheet"
     />
     {structuredDataList.map((schema) => (
@@ -179,6 +186,17 @@ const structuredDataList = Array.isArray(structuredData)
         --color-border: rgba(15, 23, 42, 0.12);
         --shadow-soft: 0 24px 80px rgba(15, 23, 42, 0.12);
         --max-width: 1180px;
+        --neon-purple: #8b5cf6;
+        --neon-pink: #ec4899;
+        --neon-cyan: #22d3ee;
+        --gradient-neon: linear-gradient(110deg, #8b5cf6, #ec4899 50%, #22d3ee);
+        --ink-deep: #0a0a14;
+        --glass-bg: rgba(255, 255, 255, 0.06);
+        --glass-border: rgba(255, 255, 255, 0.12);
+        --radius-lg: 20px;
+        --radius-xl: 28px;
+        --ease-spring: cubic-bezier(0.22, 1, 0.36, 1);
+        --dur-reveal: 0.7s;
       }
 
       html {
@@ -186,12 +204,24 @@ const structuredDataList = Array.isArray(structuredData)
       }
 
       body {
-        font-family: 'Inter', 'Noto Sans KR', 'Noto Sans JP', 'Noto Sans SC',
+        font-family: 'Inter', 'Pretendard Variable', 'Noto Sans JP', 'Noto Sans SC',
           system-ui, sans-serif;
         color: var(--color-text);
         background: var(--color-bg);
         line-height: 1.6;
         text-rendering: optimizeLegibility;
+      }
+
+      html[lang='ko'] body {
+        font-family: 'Pretendard Variable', Pretendard, 'Inter', system-ui, sans-serif;
+      }
+
+      html[lang='ja'] body {
+        font-family: 'Inter', 'Noto Sans JP', system-ui, sans-serif;
+      }
+
+      html[lang='zh'] body {
+        font-family: 'Inter', 'Noto Sans SC', system-ui, sans-serif;
       }
 
       .container {
@@ -370,6 +400,54 @@ const structuredDataList = Array.isArray(structuredData)
 
         .mobile-menu-btn {
           display: flex;
+        }
+      }
+
+      /* Dark theme overrides — only pages passing theme="dark" opt in */
+      html[data-theme='dark'] {
+        --color-primary: var(--neon-cyan);
+        --color-primary-dark: #67e8f9;
+        --color-bg: var(--ink-deep);
+        --color-bg-alt: #11111e;
+        --color-surface: rgba(255, 255, 255, 0.05);
+        --color-ink: #f1f0fa;
+        --color-ink-soft: #c9c6e4;
+        --color-text: #f1f0fa;
+        --color-text-muted: #9b98b8;
+        --color-border: rgba(255, 255, 255, 0.12);
+        --shadow-soft: 0 24px 80px rgba(0, 0, 0, 0.55);
+        color-scheme: dark;
+      }
+
+      html[data-theme='dark'] .header {
+        background: rgba(10, 10, 20, 0.72);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      }
+
+      html[data-theme='dark'] .logo-icon {
+        background: var(--gradient-neon);
+        color: #0a0a14;
+      }
+
+      html[data-theme='dark'] .lang-link.active {
+        background: var(--gradient-neon);
+        color: #0a0a14 !important;
+        font-weight: 700;
+      }
+
+      html[data-theme='dark'] .mobile-menu-btn span {
+        background: #f1f0fa;
+      }
+
+      html[data-theme='dark'] .footer {
+        background: #0d0d1a;
+        border-top: 1px solid rgba(255, 255, 255, 0.08);
+      }
+
+      @media (max-width: 768px) {
+        html[data-theme='dark'] .nav {
+          background: #11111e;
+          box-shadow: 0 4px 24px rgba(0, 0, 0, 0.6);
         }
       }
     </style>
