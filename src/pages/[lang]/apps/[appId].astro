@@ -2,7 +2,7 @@
 import AppDetail from '../../../components/AppDetail.astro';
 import Layout from '../../../layouts/Layout.astro';
 import { apps, type AppInfo } from '../../../i18n/apps';
-import { languages, type Lang } from '../../../i18n/translations';
+import { languages, t, type Lang } from '../../../i18n/translations';
 import {
   appAlternates,
   appTitle,
@@ -25,10 +25,17 @@ export function getStaticPaths() {
 }
 
 const { app, lang } = Astro.props;
+const tr = t(lang);
+// Footer shows this app's own legal links instead of the SnsPublisher defaults
+const appFooterLinks = [
+  ...(app.hasTermsPage ? [{ href: `/${lang}/terms/${app.id}/`, label: tr.termsOfService }] : []),
+  { href: `/${lang}/privacy/${app.id}/`, label: tr.privacyPolicy },
+];
 ---
 
 <Layout
   theme="dark"
+  footerLinks={appFooterLinks}
   lang={lang}
   title={appTitle(app, lang)}
   description={app.description[lang]}

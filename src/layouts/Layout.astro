@@ -21,6 +21,7 @@ interface Props {
   ogType?: 'website' | 'article';
   structuredData?: StructuredData | StructuredData[];
   theme?: 'light' | 'dark';
+  footerLinks?: { href: string; label: string }[];
 }
 
 const {
@@ -39,6 +40,7 @@ const {
   ogType = 'website',
   structuredData,
   theme = 'light',
+  footerLinks,
 } = Astro.props;
 const tr = t(lang);
 const pageTitle = title ?? `${tr.siteTitle} - ${tr.siteDescription}`;
@@ -53,6 +55,10 @@ const navBaseHref = headerNavBaseHref ?? '';
 const navHref = (path: string) => `${navBaseHref}${path}`;
 const logoText = headerBrandName ?? 'KokomaSoft';
 const alternateEntries = Object.entries(alternates ?? {}) as [Lang, string][];
+const footerLinkItems = footerLinks ?? [
+  { href: navHref('/sns-publisher/terms/'), label: tr.snsPublisherTerms },
+  { href: navHref('/sns-publisher/privacy/'), label: tr.snsPublisherPrivacy },
+];
 const structuredDataList = Array.isArray(structuredData)
   ? structuredData
   : structuredData
@@ -148,8 +154,9 @@ const structuredDataList = Array.isArray(structuredData)
     <footer class="footer">
       <div class="container">
         <div class="footer-links">
-          <a href={navHref('/sns-publisher/terms/')}>{tr.snsPublisherTerms}</a>
-          <a href={navHref('/sns-publisher/privacy/')}>{tr.snsPublisherPrivacy}</a>
+          {footerLinkItems.map((link) => (
+            <a href={link.href}>{link.label}</a>
+          ))}
         </div>
         <p>{tr.footerRights}</p>
       </div>

@@ -22,6 +22,8 @@ export interface AppInfo {
   webUrl?: string;
   introVideoUrl?: string;
   supportsAccountDeletion?: boolean;
+  /** True when /{lang}/terms/{id}/ pages exist for this app */
+  hasTermsPage?: boolean;
 }
 
 const appDisplayOrder: Record<string, number> = {
@@ -72,6 +74,7 @@ export const apps: AppInfo[] = [
   {
     id: 'marknote',
     iconUrl: '/app-icons/marknote.png',
+    hasTermsPage: true,
     name: {
       ko: 'MarkNote',
       en: 'MarkNote',
