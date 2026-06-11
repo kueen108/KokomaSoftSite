@@ -394,7 +394,8 @@ mkdirSync(outputDir, { recursive: true });
 mkdirSync(postDir, { recursive: true });
 
 if (!hasFlag('--skip-pull')) {
-  run('git', ['pull', '--ff-only', 'origin', 'main']);
+  run('git', ['fetch', 'origin', 'main']);
+  run('git', ['merge', '--ff-only', 'FETCH_HEAD']);
 }
 
 let filename = firstExistingForDate(workflow.prefix, date);
@@ -409,10 +410,11 @@ if (!filename) {
 
 run('npm', ['run', 'build']);
 
-const status = run('git', ['status', '--short']).trim();
+const postPath = join('src/content/medium-digest', filename);
+const status = run('git', ['status', '--short', '--', postPath]).trim();
 let commit = 'no new commit';
 if (status) {
-  run('git', ['add', join('src/content/medium-digest', filename)]);
+  run('git', ['add', postPath]);
   const commitOutput = run('git', ['commit', '-m', workflow.commit(date)]);
   commit = commitOutput.match(/\[[^\]]+\s+([a-f0-9]+)\]/)?.[1] ?? 'committed';
 }
