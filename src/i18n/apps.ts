@@ -34,6 +34,7 @@ const appDisplayOrder: Record<string, number> = {
   onul: 4,
   marknote: 5,
   smartbap: 6,
+  checkme: 7,
 };
 
 const smartBapScreenshots = [
@@ -66,6 +67,36 @@ const smartBapScreenshots = [
 function smartBapLocalizedScreenshots(locale: 'ko' | 'ja' | 'zh'): AppScreenshot[] {
   return smartBapScreenshots.map((screenshot) => ({
     src: `/app-screenshots/smartbap/${locale}/${screenshot.file}`,
+    caption: screenshot.caption,
+  }));
+}
+
+const checkMeScreenshots = [
+  {
+    file: '01_camera_ai_mirror.png',
+    caption: { ko: '카메라에서 바로 체크하는 AI 미러', en: 'AI mirror checks right from the camera', zh: '直接在相机中进行 AI 镜像检查', ja: 'カメラからすぐ実行できるAIミラー' },
+  },
+  {
+    file: '02_result_vibe_read.png',
+    caption: { ko: '근거와 팁을 담은 바이브 리드 결과', en: 'Vibe read results with evidence and tips', zh: '附带依据与建议的氛围解读结果', ja: '根拠とヒント付きのバイブリード結果' },
+  },
+  {
+    file: '03_daily_report.png',
+    caption: { ko: '오늘의 리포트로 하루 흐름 확인', en: 'Daily report for today’s flow', zh: '用每日报告查看一天的状态', ja: '今日のレポートで1日の流れを確認' },
+  },
+  {
+    file: '04_history_patterns.png',
+    caption: { ko: '히스토리와 패턴으로 변화 추적', en: 'Track changes with history and patterns', zh: '通过历史与模式追踪变化', ja: '履歴とパターンで変化を追跡' },
+  },
+  {
+    file: '05_rewards_ranking.png',
+    caption: { ko: '리워드, streak, 랭킹', en: 'Rewards, streaks, and rankings', zh: '奖励、连续打卡与排行榜', ja: 'リワード、streak、ランキング' },
+  },
+] satisfies Array<{ file: string; caption: Record<Lang, string> }>;
+
+function checkMeLocalizedScreenshots(locale: 'ko' | 'en' | 'ja'): AppScreenshot[] {
+  return checkMeScreenshots.map((screenshot) => ({
+    src: `/app-screenshots/checkme/${locale}/${screenshot.file}`,
     caption: screenshot.caption,
   }));
 }
@@ -641,6 +672,54 @@ export const apps: AppInfo[] = [
     category: 'lifestyle',
     googlePlayUrl: 'https://play.google.com/store/apps/details?id=com.kokomasoft.ungyeol',
     introVideoUrl: 'https://www.youtube.com/shorts/WO983G2cULg',
+  },
+  {
+    id: 'checkme',
+    iconUrl: '/app-icons/checkme.png',
+    name: {
+      ko: '체크미',
+      en: 'CheckMe',
+      zh: 'CheckMe',
+      ja: 'CheckMe',
+    },
+    tagline: {
+      ko: '사진 한 장으로 오늘의 바이브를 가볍게 확인하고, 공유하기 좋은 결과 카드와 컨디션 팁을 받아보는 AI 미러 앱입니다.',
+      en: 'An AI mirror for daily vibe checks — snap a photo to get share-ready result cards and lightweight condition tips.',
+      zh: '一款 AI 镜像应用，用一张照片轻松确认今日氛围，并获得适合分享的结果卡片与轻量状态建议。',
+      ja: '写真1枚で今日のバイブを気軽にチェックし、シェアしやすい結果カードとコンディションのヒントが届くAIミラーアプリです。',
+    },
+    description: {
+      ko: '체크미는 카메라를 열고 체크 타입을 고르면 조명, 프레이밍, 표정 에너지, 스타일 밸런스, 분위기 같은 사진 속 신호를 AI가 가볍게 읽어주고, 결과를 공유 카드와 짧은 캡션, 바로 해볼 수 있는 팁으로 정리해 주는 데일리 바이브 체크 앱입니다.',
+      en: 'CheckMe is a daily vibe check app: open the camera, choose a check type, and AI reads visible photo signals such as lighting, framing, expression energy, style balance, and mood, then turns each check into a share-ready card with a short caption and practical tips.',
+      zh: 'CheckMe 是一款每日氛围检查应用：打开相机并选择检查类型，AI 会轻松解读照片中的光线、构图、表情能量、风格平衡与氛围等可见信号，并将结果整理成适合分享的卡片、简短文案与可立即尝试的建议。',
+      ja: 'CheckMeは、カメラを開いてチェックタイプを選ぶと、光、フレーミング、表情のエネルギー、スタイルバランス、ムードなど写真で見えるサインをAIが軽く読み取り、結果をシェアしやすいカード、短いキャプション、すぐ試せるヒントとして表示するデイリーバイブチェックアプリです。',
+    },
+    features: {
+      ko: ['컨디션, 스타일, 분위기, 랜덤 체크를 카메라에서 바로 실행', '보이는 근거와 부드러운 다음 액션을 담은 AI 바이브 리드', '오늘의 리포트, 히스토리, 패턴으로 변화 흐름 확인', '리워드, streak, 랭킹으로 다시 체크하고 싶은 루프 제공', '공유하기 좋은 결과 카드와 캡션 생성'],
+      en: ['Run Condition, Style, Mood, or Random checks from the camera', 'Review an AI vibe read with visible evidence and gentle next steps', 'Follow changes through daily reports, history, and patterns', 'Build repeat-check motivation with rewards, streaks, and rankings', 'Generate share-ready result cards with auto captions'],
+      zh: ['从相机直接运行状态、风格、氛围或随机检查', '查看附带可见依据与温和后续建议的 AI 氛围解读', '通过每日报告、历史与模式查看变化趋势', '通过奖励、连续打卡与排行榜保持再次检查的动力', '生成适合分享的结果卡片与自动文案'],
+      ja: ['コンディション、スタイル、ムード、ランダムチェックをカメラから実行', '見える根拠とやさしい次のアクションを含むAIバイブリード', '今日のレポート、履歴、パターンで変化を確認', 'リワード、streak、ランキングで続けやすいループ', 'シェアしやすい結果カードとキャプションを作成'],
+    },
+    recommendedFor: {
+      ko: ['하루를 시작하기 전 컨디션과 스타일을 가볍게 점검하고 싶은 사용자', '체크 결과를 카드와 캡션으로 SNS에 바로 공유하고 싶은 사용자', '리포트와 히스토리로 무드 변화 패턴을 추적하고 싶은 사용자', 'streak과 랭킹으로 데일리 루틴을 재미있게 유지하고 싶은 사용자'],
+      en: ['People who want a light condition and style check before starting the day', 'Users who want to share check results on social media as cards with captions', 'Anyone who wants to track mood patterns through reports and history', 'Users who enjoy keeping a daily routine fun with streaks and rankings'],
+      zh: ['想在开始一天之前轻松检查状态与风格的用户', '想把检查结果以卡片和文案直接分享到社交媒体的用户', '想通过报告与历史追踪心情变化模式的用户', '想用连续打卡与排行榜让每日习惯更有趣的用户'],
+      ja: ['1日を始める前にコンディションとスタイルを気軽にチェックしたい方', 'チェック結果をカードとキャプションでSNSにすぐ共有したい方', 'レポートと履歴でムードの変化パターンを追いたい方', 'streakとランキングでデイリールーティンを楽しく続けたい方'],
+    },
+    supportNote: {
+      ko: '체크미는 의학적 진단이나 민감한 특성 판단을 제공하지 않으며, 사진에서 보이는 비진단적 신호를 바탕으로 셀프 체크 피드백을 제공합니다. 일부 AI 분석은 최적화된 이미지를 Cloudflare 백엔드로 전송해 처리하며, 앱 운영과 개선을 위해 광고 및 Firebase 서비스를 사용합니다.',
+      en: 'CheckMe does not provide medical advice or identify sensitive traits; feedback is based on visible, non-diagnostic photo cues. Some AI analysis sends an optimized image to a secure Cloudflare backend, and the app uses ads and Firebase services to operate and improve the experience.',
+      zh: 'CheckMe 不提供医疗诊断，也不判断敏感特征；反馈基于照片中可见的非诊断性信号。部分 AI 分析会将优化后的图像发送到 Cloudflare 后端处理，应用还使用广告与 Firebase 服务以运营和改进体验。',
+      ja: 'CheckMeは医療アドバイスやセンシティブな特性の判断を行わず、写真で見える非診断的なサインをもとにセルフチェックのフィードバックを提供します。一部のAI分析では最適化された画像をCloudflareバックエンドで処理し、アプリ運用と改善のために広告とFirebaseサービスを使用します。',
+    },
+    screenshots: {
+      ko: checkMeLocalizedScreenshots('ko'),
+      en: checkMeLocalizedScreenshots('en'),
+      ja: checkMeLocalizedScreenshots('ja'),
+    },
+    category: 'lifestyle',
+    operatingSystem: 'Android',
+    googlePlayUrl: 'https://play.google.com/store/apps/details?id=com.kokomasoft.checkme',
   },
 ].sort(
   (a, b) =>
