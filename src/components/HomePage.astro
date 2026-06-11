@@ -47,6 +47,11 @@ const tileClass = (id: string) =>
     : id === 'lifelotto' || id === 'lifepension'
       ? 'tile-md'
       : 'tile-sm';
+// Hero tile gets more chips to fill its height; sm tiles get fewer to keep rows short
+const chipCount = (id: string) => {
+  const cls = tileClass(id);
+  return cls === 'tile-hero' ? 5 : cls === 'tile-sm' ? 2 : 3;
+};
 const ungyeolShot = localizedShots(apps.find((app) => app.id === 'ungyeol')!)[0];
 const floatingIcons = apps.map((app) => app.iconUrl);
 ---
@@ -148,7 +153,7 @@ const floatingIcons = apps.map((app) => app.iconUrl);
             <h3>{app.name[lang]}</h3>
             <p class="tile-tagline">{app.tagline[lang]}</p>
             <ul class="feature-chips">
-              {app.features[lang].slice(0, 3).map((feature) => <li>{feature}</li>)}
+              {app.features[lang].slice(0, chipCount(app.id)).map((feature) => <li>{feature}</li>)}
             </ul>
             <div class="app-links">
               <a href={`/${lang}/apps/${app.id}/`} class="details-link">
@@ -793,10 +798,10 @@ const floatingIcons = apps.map((app) => app.iconUrl);
 
   .tile-shot {
     position: absolute;
-    right: -1.5rem;
-    bottom: -22%;
-    width: min(38%, 230px);
-    transform: rotate(6deg);
+    right: -1.2rem;
+    top: 50%;
+    width: min(36%, 240px);
+    transform: translateY(-46%) rotate(6deg);
     z-index: 0;
     margin: 0;
   }
