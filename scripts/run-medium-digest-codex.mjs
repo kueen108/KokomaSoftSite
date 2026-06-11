@@ -50,7 +50,8 @@ function run(command, args) {
 const date = argValue('--date', todayInSeoul());
 mkdirSync(outputDir, { recursive: true });
 
-run('git', ['pull', '--ff-only', 'origin', 'main']);
+run('git', ['fetch', 'origin', 'main']);
+run('git', ['merge', '--ff-only', 'FETCH_HEAD']);
 
 if (!mediumPostFor(date)) {
   run('node', ['scripts/generate-medium-digest.mjs', '--date', date]);
