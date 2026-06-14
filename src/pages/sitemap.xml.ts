@@ -19,7 +19,7 @@ interface SitemapPage {
   priority: string;
 }
 
-const lastmod = '2026-06-09';
+const lastmod = '2026-06-14';
 
 function escapeXml(value: string) {
   return value
@@ -104,16 +104,6 @@ export function GET() {
         xDefaultPath: paths.ko,
         changefreq: 'weekly' as const,
         priority: lang === 'ko' ? '0.85' : '0.75',
-      }));
-    }),
-    ...['glowup', 'checkme'].flatMap((appId) => {
-      const paths = privacyAlternates(appId);
-      return languageCodes.map((lang) => ({
-        path: paths[lang],
-        alternates: paths,
-        xDefaultPath: paths.ko,
-        changefreq: 'yearly' as const,
-        priority: '0.5',
       }));
     }),
     ...apps.flatMap((app) => {

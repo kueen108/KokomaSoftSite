@@ -18,9 +18,10 @@ type AppEntry = (typeof apps)[number];
 const localizedShots = (app: AppEntry) =>
   app.screenshots?.[lang] ?? app.screenshots?.en ?? app.screenshots?.ko ?? [];
 
-// Marquee strip: 10 hand-picked 9:16 screenshots (lifepension excluded — different ratio)
+// Marquee strip: hand-picked 9:16 screenshots (lifepension excluded — different ratio)
 const marqueePicks: Record<string, number> = {
   ungyeol: 2,
+  glowup: 2,
   checkme: 2,
   smartbap: 2,
   marknote: 2,
@@ -35,9 +36,8 @@ const marqueeShots = apps.flatMap((app) => {
 const marqueeRowA = marqueeShots.filter((_, i) => i % 2 === 0);
 const marqueeRowB = marqueeShots.filter((_, i) => i % 2 === 1);
 
-// Bento grid: explicit render order so auto-placement fills without holes
-// 6-col math: hero(4x2) + 2 sm fill rows 1-2, 3 sm fill row 3, 2 md fill row 4
-const bentoOrder = ['ungyeol', 'smartbap', 'checkme', 'onul', 'marknote', 'mytube', 'lifelotto', 'lifepension'];
+// Bento grid: explicit render order keeps the hero and newest lifestyle apps prominent.
+const bentoOrder = ['ungyeol', 'smartbap', 'glowup', 'checkme', 'onul', 'marknote', 'mytube', 'lifelotto', 'lifepension'];
 const bentoApps = bentoOrder
   .map((id) => apps.find((app) => app.id === id))
   .filter((app): app is AppEntry => Boolean(app));
@@ -406,6 +406,7 @@ const floatingIcons = apps.map((app) => app.iconUrl);
   .hero-icons img:nth-child(6) { top: 44%; right: 24%; width: 64px; height: 64px; animation-delay: -5.5s; }
   .hero-icons img:nth-child(7) { top: 26%; right: 40%; width: 38px; height: 38px; animation-delay: -6.3s; }
   .hero-icons img:nth-child(8) { top: 58%; right: 42%; width: 46px; height: 46px; animation-delay: -3.8s; }
+  .hero-icons img:nth-child(9) { top: 80%; right: 8%; width: 42px; height: 42px; animation-delay: -4.9s; }
 
   @keyframes float {
     0%, 100% {
