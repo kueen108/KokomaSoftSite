@@ -80,7 +80,60 @@ function validatePost(filePath, date) {
   if (/챨리|Eunjin Kwon|kueen108/i.test(body)) {
     throw new Error(`${basename(filePath)} appears to include private owner context`);
   }
+  validateNoDuplicatePost(filePath, content, data);
   return data;
+}
+
+function validateNoDuplicatePost(filePath, content, data) {
+  const currentName = basename(filePath);
+  const currentFingerprint = topicTokens(
+    `${data.title} ${data.description} ${data.sourceTitle} ${content.replace(/^---\n[\s\S]*?\n---\n?/, '').slice(0, 2200)}`,
+  );
+  for (const name of readdirSync(postDir)) {
+    if (name === currentName || !/^\d{4}-\d{2}-\d{2}-.*\.md$/.test(name)) continue;
+    const otherContent = readFileSync(join(postDir, name), 'utf8');
+    const otherData = parseFrontmatter(otherContent);
+    if (otherData.title && otherData.title === data.title) {
+      throw new Error(`${currentName} duplicates title from ${name}`);
+    }
+    if (otherData.sourceUrl && otherData.sourceUrl === data.sourceUrl) {
+      throw new Error(`${currentName} duplicates sourceUrl from ${name}`);
+    }
+    const otherFingerprint = topicTokens(
+      `${otherData.title} ${otherData.description} ${otherData.sourceTitle} ${otherContent.replace(/^---\n[\s\S]*?\n---\n?/, '').slice(0, 2200)}`,
+    );
+    const similarity = jaccard(currentFingerprint, otherFingerprint);
+    if (similarity >= 0.42) {
+      throw new Error(`${currentName} is too similar to ${name} (topic similarity ${similarity.toFixed(2)})`);
+    }
+  }
+}
+
+function topicTokens(value) {
+  const stopwords = new Set([
+    'the', 'and', 'for', 'with', 'from', 'that', 'this', 'your', 'you', 'are', 'was', 'were', 'have', 'has',
+    'into', 'what', 'why', 'how', 'when', 'will', 'can', 'all', 'about', 'after', 'before', 'today', 'medium',
+    'ai', 'artificial', 'intelligence', '글', '오늘의', '원문', '도구', '개발자', '중요한', '포인트', '요약',
+    '것이다', '있다', '한다', '된다', '사용자', '업무', '실제', '도입', '결과', '검증',
+  ]);
+  return new Set(
+    value
+      .toLowerCase()
+      .replace(/<[^>]+>/g, ' ')
+      .replace(/[^a-z0-9가-힣]+/g, ' ')
+      .split(/\s+/)
+      .filter((word) => word.length >= 3 && !stopwords.has(word))
+      .slice(0, 120),
+  );
+}
+
+function jaccard(a, b) {
+  if (a.size === 0 || b.size === 0) return 0;
+  let intersection = 0;
+  for (const token of a) {
+    if (b.has(token)) intersection += 1;
+  }
+  return intersection / (a.size + b.size - intersection);
 }
 
 function findPost(date) {
