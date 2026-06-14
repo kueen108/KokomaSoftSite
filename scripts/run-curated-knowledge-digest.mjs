@@ -68,6 +68,7 @@ function frontmatter(post, date, workflow) {
   return [
     '---',
     `title: ${yamlString(post.title)}`,
+    `canonicalSlug: ${yamlString(`${tagPrefix === '개발자가 알아야 할 지식' ? 'developer-knowledge' : 'knowledge'}-${date}-${post.slug}`)}`,
     `description: ${yamlString(post.description)}`,
     `pubDate: ${yamlString(date)}`,
     `sourceTitle: ${yamlString(post.sourceTitle)}`,

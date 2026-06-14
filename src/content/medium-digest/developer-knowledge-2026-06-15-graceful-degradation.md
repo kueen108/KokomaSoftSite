@@ -1,5 +1,6 @@
 ---
 title: "개발자가 알아야 할 지식: 레이트 리미팅, 친절한 거절도 시스템 설계다"
+canonicalSlug: "developer-knowledge-2026-06-15-rate-limiting"
 description: "트래픽 폭주와 남용을 막기 위한 rate limit 설계 원칙, 429 응답, Retry-After, 사용자 경험을 정리합니다."
 pubDate: "2026-06-15"
 sourceTitle: "RFC 6585: Additional HTTP Status Codes"

@@ -4,6 +4,7 @@ const mediumDigest = defineCollection({
   type: 'content',
   schema: z.object({
     title: z.string(),
+    canonicalSlug: z.string().optional(),
     description: z.string(),
     pubDate: z.string(),
     sourceTitle: z.string(),

@@ -31,7 +31,7 @@ export async function getMediumDigestPosts(): Promise<BlogPost[]> {
 }
 
 export function getBlogPostSlug(post: BlogPost) {
-  return post.id.replace(/\.md$/, '');
+  return post.data.canonicalSlug ?? post.id.replace(/\.md$/, '');
 }
 
 export function getBlogPostCategory(post: BlogPost): BlogCategory {

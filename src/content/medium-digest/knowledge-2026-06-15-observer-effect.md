@@ -1,5 +1,6 @@
 ---
 title: "오늘의 지식: 검증 가능성, 틀릴 수 있어야 배울 수 있다"
+canonicalSlug: "knowledge-2026-06-15-falsifiability"
 description: "과학철학의 검증 가능성 개념을 일상 판단, 조직 지표, 제품 실험에 연결해 설명합니다."
 pubDate: "2026-06-15"
 sourceTitle: "Stanford Encyclopedia of Philosophy: Karl Popper"
