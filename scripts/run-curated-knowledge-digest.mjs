@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import { spawnSync } from 'node:child_process';
 import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
-import { join } from 'node:path';
+import { basename, join } from 'node:path';
 
 const repoRoot = new URL('..', import.meta.url).pathname.replace(/\/$/, '');
 const postDir = join(repoRoot, 'src/content/medium-digest');
@@ -47,6 +47,22 @@ function yamlString(value) {
   return `"${String(value).replaceAll('\\', '\\\\').replaceAll('"', '\\"')}"`;
 }
 
+function parseFrontmatter(content) {
+  const match = content.match(/^---\n([\s\S]*?)\n---/);
+  if (!match) throw new Error('frontmatter block is missing');
+  const data = {};
+  for (const line of match[1].split('\n')) {
+    const field = line.match(/^([A-Za-z][A-Za-z0-9]*):\s*(.*)$/);
+    if (!field) continue;
+    data[field[1]] = field[2].replace(/^"|"$/g, '').replace(/^'|'$/g, '');
+  }
+  return data;
+}
+
+function stripFrontmatter(content) {
+  return content.replace(/^---\n[\s\S]*?\n---\n?/, '').trim();
+}
+
 function frontmatter(post, date, workflow) {
   const tagPrefix = workflow === 'developer' ? '개발자가 알아야 할 지식' : '오늘의 지식';
   return [
@@ -71,8 +87,98 @@ function firstExistingForDate(prefix, date) {
 }
 
 function selectTopic(prefix, posts) {
-  const existingNames = existsSync(postDir) ? readdirSync(postDir) : [];
-  return posts.find((post) => !existingNames.some((name) => name.includes(`-${post.slug}.md`))) ?? posts[0];
+  const existingPosts = readExistingPosts(prefix);
+  const candidate = posts.find((post) => !isDuplicateTopic(post, existingPosts));
+  if (!candidate) {
+    const used = existingPosts.map((post) => post.slug ?? post.title).filter(Boolean).join(', ');
+    throw new Error(`no unused ${prefix} topic remains. Add new curated topics before publishing. Used: ${used}`);
+  }
+  return candidate;
+}
+
+function readExistingPosts(prefix) {
+  if (!existsSync(postDir)) return [];
+  return readdirSync(postDir)
+    .filter((name) => name.startsWith(`${prefix}-`) && name.endsWith('.md'))
+    .map((name) => {
+      const content = readFileSync(join(postDir, name), 'utf8');
+      const data = parseFrontmatter(content);
+      return {
+        file: name,
+        title: data.title,
+        description: data.description,
+        sourceTitle: data.sourceTitle,
+        sourceUrl: data.sourceUrl,
+        slug: slugFromFilename(name, prefix),
+        tokens: topicTokens(`${data.title} ${data.description} ${data.sourceTitle} ${stripFrontmatter(content).slice(0, 2200)}`),
+      };
+    });
+}
+
+function slugFromFilename(name, prefix) {
+  const match = name.match(new RegExp(`^${prefix}-\\d{4}-\\d{2}-\\d{2}-(.+)\\.md$`));
+  return match?.[1] ?? null;
+}
+
+function isDuplicateTopic(post, existingPosts, currentFile = null) {
+  const candidateTokens = topicTokens(`${post.title} ${post.description} ${post.sourceTitle}`);
+  return existingPosts.some((existing) => {
+    if (existing.file === currentFile) return false;
+    if (existing.slug && existing.slug === post.slug) return true;
+    if (existing.title && existing.title === post.title) return true;
+    if (existing.sourceUrl && existing.sourceUrl === post.sourceUrl) return true;
+    return jaccard(candidateTokens, existing.tokens) >= 0.42;
+  });
+}
+
+function validateNoDuplicateCuratedPost(filePath, prefix) {
+  const currentName = basename(filePath);
+  const content = readFileSync(filePath, 'utf8');
+  const data = parseFrontmatter(content);
+  const post = {
+    slug: slugFromFilename(currentName, prefix),
+    title: data.title,
+    description: data.description,
+    sourceTitle: data.sourceTitle,
+    sourceUrl: data.sourceUrl,
+  };
+  const duplicate = readExistingPosts(prefix).find((existing) => {
+    if (existing.file === currentName) return false;
+    if (existing.title && existing.title === post.title) return true;
+    if (existing.sourceUrl && existing.sourceUrl === post.sourceUrl) return true;
+    const currentTokens = topicTokens(`${data.title} ${data.description} ${data.sourceTitle} ${stripFrontmatter(content).slice(0, 2200)}`);
+    return jaccard(currentTokens, existing.tokens) >= 0.42;
+  });
+  if (duplicate) {
+    throw new Error(`${currentName} duplicates or is too similar to ${duplicate.file}`);
+  }
+}
+
+function topicTokens(value) {
+  const stopwords = new Set([
+    'the', 'and', 'for', 'with', 'from', 'that', 'this', 'your', 'you', 'are', 'was', 'were', 'have', 'has',
+    'into', 'what', 'why', 'how', 'when', 'will', 'can', 'all', 'about', 'after', 'before', 'today',
+    '오늘의', '지식', '개발자가', '알아야', '중요한', '실무', '서비스', '사용자', '시스템', '정리합니다',
+    '것입니다', '있습니다', '합니다', '됩니다', '때문입니다', '개념', '방법', '체크리스트',
+  ]);
+  return new Set(
+    String(value)
+      .toLowerCase()
+      .replace(/<[^>]+>/g, ' ')
+      .replace(/[^a-z0-9가-힣]+/g, ' ')
+      .split(/\s+/)
+      .filter((word) => word.length >= 3 && !stopwords.has(word))
+      .slice(0, 140),
+  );
+}
+
+function jaccard(a, b) {
+  if (a.size === 0 || b.size === 0) return 0;
+  let intersection = 0;
+  for (const token of a) {
+    if (b.has(token)) intersection += 1;
+  }
+  return intersection / (a.size + b.size - intersection);
 }
 
 function developerArticle(post) {
@@ -144,6 +250,52 @@ ${post.takeaway}
 }
 
 const developerPosts = [
+  {
+    slug: 'rate-limiting',
+    title: '개발자가 알아야 할 지식: 레이트 리미팅, 친절한 거절도 시스템 설계다',
+    description: '트래픽 폭주와 남용을 막기 위한 rate limit 설계 원칙, 429 응답, Retry-After, 사용자 경험을 정리합니다.',
+    sourceTitle: 'RFC 6585: Additional HTTP Status Codes',
+    sourceUrl: 'https://www.rfc-editor.org/rfc/rfc6585.html',
+    sourceAuthor: 'IETF',
+    tags: ['HTTP', 'Reliability', 'API Design'],
+    intro: '서비스를 안정적으로 운영하려면 모든 요청을 끝까지 받아주는 것만큼, 일부 요청을 제때 거절하는 능력도 중요합니다.',
+    why: [
+      '레이트 리미팅은 일정 시간 동안 허용할 요청 수를 제한하는 기법입니다. 로그인 시도, 검색 API, 파일 업로드, 메시지 발송, 결제 검증, AI 추론 호출처럼 비용이 크거나 남용될 수 있는 기능에서 특히 중요합니다.',
+      '개발자가 이 개념을 알아야 하는 이유는 레이트 리밋이 단순한 방화벽 설정이 아니기 때문입니다. 어디를 기준으로 제한할지, 초과했을 때 어떤 응답을 줄지, 정상 사용자와 공격자를 어떻게 구분할지, 클라이언트가 언제 재시도해야 할지까지 제품과 API 계약이 함께 걸려 있습니다.',
+      '제한이 없으면 작은 버그도 장애가 됩니다. 모바일 앱의 자동 재시도 루프, 배치 작업의 잘못된 스케줄, 봇의 반복 요청, 외부 파트너의 급격한 트래픽 증가가 모두 같은 하위 시스템을 압박할 수 있습니다. 좋은 레이트 리밋은 시스템을 보호하면서도 정상 사용자가 무엇을 해야 하는지 알게 해줍니다.',
+    ],
+    concepts: [
+      '첫 번째 결정은 기준입니다. IP 주소, 사용자 ID, API 키, 조직 ID, 디바이스, 엔드포인트, 비용 단위 중 무엇으로 제한할지 정해야 합니다. 로그인 실패는 계정과 IP를 함께 봐야 하고, 유료 API는 고객 조직이나 API 키 단위가 더 자연스러울 수 있습니다.',
+      '두 번째는 알고리즘입니다. 고정 윈도우는 단순하지만 경계 시점에 요청이 몰릴 수 있습니다. 슬라이딩 윈도우는 더 부드럽지만 구현 비용이 있습니다. 토큰 버킷은 평소에는 토큰을 채우고 순간적인 burst를 일정 부분 허용할 수 있어 API에서 자주 쓰입니다.',
+      '세 번째는 응답 계약입니다. HTTP에서는 너무 많은 요청을 의미하는 `429 Too Many Requests`가 쓰입니다. 가능하면 `Retry-After` 헤더나 남은 한도 정보를 함께 제공해 클라이언트가 무작정 재시도하지 않게 해야 합니다. 제한은 서버 내부 사정이 아니라 클라이언트와 맺는 계약입니다.',
+    ],
+    example: '예를 들어 이미지 생성 API가 있다고 합시다. 요청 하나가 비싸고 처리 시간이 길다면 사용자별 분당 요청 수, 조직별 일일 총량, 동시 실행 수를 따로 제한할 수 있습니다. 초과 시에는 `429`와 함께 “몇 초 뒤 다시 시도하라”는 정보를 주고, UI는 버튼을 잠시 비활성화하거나 대기열 상태를 보여주는 편이 낫습니다.',
+    checklist: [
+      '제한 기준이 IP 하나에만 묶여 있어 공유 네트워크 사용자를 과하게 막고 있지 않은가?',
+      '로그인, 검색, 업로드, 알림 발송처럼 비용과 남용 위험이 큰 경로에 별도 정책이 있는가?',
+      '초과 응답이 `429`와 재시도 힌트를 명확히 제공하는가?',
+      '클라이언트가 `429`를 받았을 때 즉시 반복 재시도하지 않는가?',
+      '운영자가 한도 초과율, 차단 대상, 상위 호출자를 볼 수 있는가?',
+      '유료 플랜, 내부 관리자, 파트너 API처럼 서로 다른 사용량 정책이 코드에 명확히 표현되어 있는가?',
+    ],
+    misconceptions: [
+      '“CDN이나 WAF에서 막으면 끝난다”는 오해가 있습니다. 엣지 제한은 중요하지만 사용자 ID, 조직 ID, 기능별 비용처럼 애플리케이션만 아는 기준도 있습니다.',
+      '“429는 장애다”라고만 보는 것도 부족합니다. 정상적으로 설계된 제한은 장애가 아니라 보호 장치입니다. 다만 한도 초과가 급증하면 사용자 경험 문제나 클라이언트 버그를 의심해야 합니다.',
+      '“강하게 막을수록 안전하다”도 항상 맞지 않습니다. 너무 낮은 한도는 정상 사용자를 밀어내고, 너무 불친절한 응답은 클라이언트의 공격적인 재시도를 부릅니다.',
+      '“읽기 요청은 제한하지 않아도 된다”는 생각도 위험합니다. 검색, 추천, 리포트, AI 요약처럼 읽기라도 계산 비용이 큰 요청은 충분히 시스템을 무너뜨릴 수 있습니다.',
+    ],
+    actions: [
+      '먼저 최근 장애나 느린 API 하나를 골라 호출자별 요청 분포를 확인해보세요. 평균 요청 수보다 상위 1% 호출자가 시스템에 주는 압박을 보는 것이 중요합니다.',
+      '다음으로 `429` 응답을 클라이언트가 어떻게 처리하는지 확인하세요. 웹, 앱, 배치, 파트너 SDK가 같은 방식으로 재시도하지 않을 수 있습니다. 특히 즉시 재시도 루프가 있으면 레이트 리밋이 오히려 부하 증폭기가 됩니다.',
+      '마지막으로 한도 정책을 문서화하세요. 어떤 기준으로, 어느 시간 창에서, 초과 시 어떤 응답을 주는지 적어두면 운영자와 클라이언트 개발자가 같은 계약을 보고 움직일 수 있습니다.',
+    ],
+    links: [
+      { title: 'RFC 6585: Additional HTTP Status Codes', url: 'https://www.rfc-editor.org/rfc/rfc6585.html' },
+      { title: 'MDN: 429 Too Many Requests', url: 'https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429' },
+      { title: 'Cloudflare: Rate limiting rules', url: 'https://developers.cloudflare.com/waf/rate-limiting-rules/' },
+    ],
+    takeaway: '좋은 레이트 리밋은 사용자를 막는 장벽이 아니라, 시스템이 모두에게 계속 응답하기 위한 질서입니다.',
+  },
   {
     slug: 'graceful-degradation',
     title: '개발자가 알아야 할 지식: 그레이스풀 디그라데이션, 일부가 망가져도 서비스는 계속되어야 한다',
@@ -285,6 +437,47 @@ const developerPosts = [
 
 const knowledgePosts = [
   {
+    slug: 'falsifiability',
+    title: '오늘의 지식: 검증 가능성, 틀릴 수 있어야 배울 수 있다',
+    description: '과학철학의 검증 가능성 개념을 일상 판단, 조직 지표, 제품 실험에 연결해 설명합니다.',
+    sourceTitle: 'Stanford Encyclopedia of Philosophy: Karl Popper',
+    sourceUrl: 'https://plato.stanford.edu/entries/popper/',
+    sourceAuthor: 'Stanford Encyclopedia of Philosophy',
+    tags: ['Philosophy', 'Science', 'Thinking'],
+    intro: '좋은 설명은 그럴듯한 말이 아니라, 틀렸는지 확인할 수 있는 말입니다. 이 차이를 놓치면 우리는 오래 설득력 있어 보이는 주장 곁에서 계속 제자리걸음을 하게 됩니다.',
+    explain: [
+      '검증 가능성, 더 정확히는 반증 가능성은 어떤 주장이나 이론이 경험적 관찰을 통해 틀렸다고 판정될 수 있어야 한다는 생각입니다. 카를 포퍼는 과학과 비과학을 가르는 중요한 기준으로 이 관점을 제시했습니다. 핵심은 “언젠가 증명될 수 있느냐”보다 “어떤 결과가 나오면 이 주장을 버릴 것인가”입니다.',
+      '예를 들어 “모든 백조는 희다”는 주장은 검은 백조 한 마리가 발견되면 틀릴 수 있습니다. 반대로 “보이지 않는 힘이 언제나 모든 일을 적절히 조정한다”처럼 어떤 결과가 나와도 설명을 바꿔 살아남는 주장은 경험으로 배우기 어렵습니다.',
+      '이 개념은 실험실 밖에서도 중요합니다. 제품 가설, 투자 판단, 조직 전략, 개인 습관까지 우리는 매일 작고 큰 주장을 세웁니다. 그 주장이 틀릴 조건을 미리 정하지 않으면, 결과가 나빠도 해석만 바꿔 같은 판단을 반복하게 됩니다.',
+    ],
+    why: [
+      '현대의 정보 환경은 그럴듯한 설명으로 가득합니다. 시장이 오른 이유, 사용자가 떠난 이유, 팀이 느린 이유, 콘텐츠가 퍼지지 않은 이유를 우리는 빠르게 설명합니다. 문제는 많은 설명이 사후 해석이라는 점입니다. 일이 벌어진 뒤에는 거의 모든 결과를 그럴듯하게 이야기할 수 있습니다.',
+      '검증 가능성은 이런 사후 해석의 함정을 줄입니다. “다음 배포에서 가입 전환율이 5% 이상 오르지 않으면 이 온보딩 가설은 틀린 것으로 본다”처럼 판단 기준을 앞에 놓으면, 우리는 결과를 더 정직하게 배울 수 있습니다.',
+      '조직에서도 같은 원칙이 필요합니다. “브랜드 인지도를 높이자”는 말은 방향일 수 있지만 검증 기준이 없으면 회의 때마다 살아남습니다. 어떤 대상에게, 어떤 기간 안에, 어떤 지표가 어떻게 움직이면 성공인지 정해야 다음 결정을 개선할 수 있습니다.',
+    ],
+    examples: [
+      '제품팀이 “사용자가 기능을 몰라서 쓰지 않는다”고 믿는다고 해봅시다. 이 주장은 맞을 수도 있습니다. 하지만 검증 가능하게 만들려면 “기능 발견률을 높이는 안내를 추가하면 2주 안에 신규 사용자의 첫 사용률이 10% 이상 오른다”처럼 바꿔야 합니다. 결과가 오르지 않으면 문제는 인지가 아니라 필요성, 성능, 가격, 신뢰일 수 있습니다.',
+      '채용에서도 “좋은 사람은 면접에서 바로 보인다”는 말은 위험합니다. 어떤 면접 질문이 입사 후 성과와 연결되는지 추적하지 않으면, 면접관의 확신만 남습니다. 검증 가능한 기준은 사람을 기계처럼 보자는 뜻이 아니라, 우리의 직감을 계속 교정하자는 뜻입니다.',
+      '개인 습관도 마찬가지입니다. “나는 아침형 인간이 아니라서 운동을 못 한다”는 설명은 편하지만 잘 틀리지 않습니다. “2주 동안 저녁 8시에 운동복을 입어도 운동 횟수가 늘지 않으면 시간대가 문제가 아니라고 본다”처럼 바꾸면 다음 실험으로 넘어갈 수 있습니다.',
+    ],
+    misconceptions: [
+      '검증 가능성은 “숫자로 못 재면 의미 없다”는 뜻이 아닙니다. 질적 관찰도 기준을 미리 정하면 배움의 재료가 됩니다.',
+      '모든 주장이 과학 이론처럼 엄격해야 한다는 뜻도 아닙니다. 다만 중요한 결정일수록 틀릴 조건을 더 분명히 해야 합니다.',
+      '한 번의 실험으로 영원한 결론을 내리자는 말도 아닙니다. 좋은 검증은 결론을 닫는 것이 아니라 다음 질문을 더 좋게 만듭니다.',
+    ],
+    actions: [
+      '중요한 주장 하나를 “무엇이 나오면 이 생각을 바꿀 것인가”라는 문장으로 다시 써보세요.',
+      '회의에서 전략을 말할 때 성공 기준뿐 아니라 실패 기준도 함께 정하세요.',
+      '지표가 나빠졌을 때 설명을 덧붙이기 전에, 원래 세운 예측이 무엇이었는지 먼저 확인하세요.',
+    ],
+    links: [
+      { title: 'Stanford Encyclopedia of Philosophy: Karl Popper', url: 'https://plato.stanford.edu/entries/popper/' },
+      { title: 'Encyclopaedia Britannica: Karl Popper', url: 'https://www.britannica.com/biography/Karl-Popper' },
+      { title: 'Internet Encyclopedia of Philosophy: Karl Popper', url: 'https://iep.utm.edu/pop-sci/' },
+    ],
+    takeaway: '틀릴 수 없는 설명은 마음을 편하게 하지만, 틀릴 수 있는 설명만 우리를 앞으로 움직입니다.',
+  },
+  {
     slug: 'observer-effect',
     title: '오늘의 지식: 관찰자 효과, 측정하는 순간 대상도 달라진다',
     description: '물리학에서 출발해 조직, 제품, 데이터 분석까지 이어지는 관찰자 효과의 의미를 정리합니다.',
@@ -407,6 +600,8 @@ if (!filename) {
   writeFileSync(join(postDir, filename), content);
   created = true;
 }
+
+validateNoDuplicateCuratedPost(join(postDir, filename), workflow.prefix);
 
 run('npm', ['run', 'build']);
 
