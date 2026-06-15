@@ -791,9 +791,10 @@ const fileContent = readFileSync(join(postDir, filename), 'utf8');
 const title = fileContent.match(/^title:\s+"(.+)"$/m)?.[1]?.replaceAll('\\"', '"') ?? filename;
 const sourceUrl = fileContent.match(/^sourceUrl:\s+"(.+)"$/m)?.[1] ?? '';
 const slug = filename.replace(/\.md$/, '');
+const publicUrl = `https://blog.kokomasoft.com/blog/${slug}/`;
 let publicStatus = 'not checked';
 try {
-  const response = spawnSync('curl', ['-L', '-s', '-o', '/dev/null', '-w', '%{http_code}', `https://blog.kokomasoft.com/${slug}/`], {
+  const response = spawnSync('curl', ['-L', '-s', '-o', '/dev/null', '-w', '%{http_code}', publicUrl], {
     cwd: repoRoot,
     encoding: 'utf8',
     timeout: 20000,
@@ -806,7 +807,7 @@ try {
 console.log([
   created ? '발행 생성 완료' : '기존 글 검증 완료',
   `제목: ${title}`,
-  `URL: https://blog.kokomasoft.com/${slug}/`,
+  `URL: ${publicUrl}`,
   `주요 참고: ${sourceUrl}`,
   `빌드: 통과`,
   `커밋/푸시: ${commit}, origin HEAD push 완료`,
