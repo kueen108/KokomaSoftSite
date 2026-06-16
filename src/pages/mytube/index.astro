@@ -108,11 +108,6 @@ const description = 'Explore country-by-country YouTube trending videos on an in
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
     <script>
-      import * as THREE from 'three';
-      import { geoEquirectangular, geoPath } from 'd3-geo';
-      import { feature, mesh } from 'topojson-client';
-      import worldTopology from 'world-atlas/countries-50m.json';
-
       const MYTUBE_API_ORIGIN = 'https://mytube-api.kueen108.workers.dev/api';
       const API_ROOT = window.location.hostname === 'mytube.kokomasoft.com'
         ? '/api'
@@ -159,6 +154,12 @@ const description = 'Explore country-by-country YouTube trending videos on an in
       let isDragging = false;
       let lastPointer = null;
       const targetRotation = { x: 0, y: 0 };
+      let THREE;
+      let geoEquirectangular;
+      let geoPath;
+      let feature;
+      let mesh;
+      let worldTopology;
 
       const stage = document.getElementById('globeStage');
       const canvas = document.getElementById('globeCanvas');
@@ -184,11 +185,32 @@ const description = 'Explore country-by-country YouTube trending videos on an in
       const playerChannel = document.getElementById('playerChannel');
       const toast = document.getElementById('toast');
 
-      initGlobe();
-      renderCountryStrip();
-      selectCountry(selectedCode, { rotate: true });
-      bindEvents();
-      loadAllCountries();
+      bootstrap();
+
+      async function bootstrap() {
+        try {
+          const [threeModule, d3GeoModule, topojsonModule, worldTopologyModule] = await Promise.all([
+            import('three'),
+            import('d3-geo'),
+            import('topojson-client'),
+            import('world-atlas/countries-50m.json'),
+          ]);
+          THREE = threeModule;
+          ({ geoEquirectangular, geoPath } = d3GeoModule);
+          ({ feature, mesh } = topojsonModule);
+          worldTopology = worldTopologyModule.default ?? worldTopologyModule;
+
+          initGlobe();
+          renderCountryStrip();
+          selectCountry(selectedCode, { rotate: true });
+          bindEvents();
+          loadAllCountries();
+        } catch (error) {
+          console.error(error);
+          globeLoading.textContent = 'Unable to load globe';
+          loadStatus.textContent = 'Globe unavailable';
+        }
+      }
 
       function chooseDefaultCountry() {
         const language = navigator.language || '';

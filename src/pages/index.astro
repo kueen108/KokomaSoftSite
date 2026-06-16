@@ -1,7 +1,9 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import HomePage from '../components/HomePage.astro';
+import { apps } from '../i18n/apps';
 import {
+  appItemListSchema,
   homeAlternates,
   homeDescription,
   homeTitle,
@@ -18,7 +20,7 @@ import {
   alternates={homeAlternates()}
   xDefaultPath="/"
   image="/app-icons/ungyeol.png"
-  structuredData={[organizationSchema('ko'), websiteSchema('ko')]}
+  structuredData={[organizationSchema('ko'), websiteSchema('ko'), appItemListSchema(apps, 'ko')]}
   theme="dark"
 >
   <HomePage lang="ko" />

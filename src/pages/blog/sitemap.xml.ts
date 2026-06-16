@@ -1,6 +1,7 @@
 import { getBlogPostSlug, getMediumDigestPosts } from '../../lib/blog';
 
 const BLOG_URL = 'https://blog.kokomasoft.com';
+const blogIndexLastmod = import.meta.env.PUBLIC_BLOG_LASTMOD ?? new Date().toISOString().slice(0, 10);
 
 function escapeXml(value: string) {
   return value
@@ -27,7 +28,7 @@ function renderUrl(path: string, lastmod: string, changefreq: 'daily' | 'weekly'
 export async function GET() {
   const posts = await getMediumDigestPosts();
   const urls = [
-    renderUrl('/', new Date().toISOString().slice(0, 10), 'daily', '0.9'),
+    renderUrl('/', blogIndexLastmod, 'daily', '0.9'),
     ...posts.map((post) =>
       renderUrl(`/${getBlogPostSlug(post)}/`, post.data.pubDate, 'weekly', '0.8'),
     ),

@@ -11,8 +11,8 @@ export const translations = {
   ko: {
     siteTitle: 'KokomaSoft',
     siteDescription: '모바일 앱 개발 전문 기업',
-    heroTitle: '더 나은 모바일 경험을 만듭니다',
-    heroSubtitle: 'KokomaSoft는 사용자 중심의 혁신적인 모바일 애플리케이션을 개발합니다.',
+    heroTitle: 'KokomaSoft 모바일 앱 스튜디오',
+    heroSubtitle: '왕꽃선녀, 스마트밥, MarkNote, GlowUp 등 일상과 생산성을 위한 앱을 만들고 공식 다운로드, 지원, 개인정보 안내를 제공합니다.',
     appsTitle: '우리의 앱',
     blogTitle: '오늘의 지식, 개발 지식, AI 지식',
     blogSubtitle: '매일 읽기 좋은 지식을 세 가지 테마로 나누어 한국어로 정리합니다.',
@@ -44,6 +44,22 @@ export const translations = {
     recommendedForTitle: '이런 분께 추천',
     screenshotsTitle: '앱 화면',
     supportAndPrivacyTitle: '지원 및 개인정보',
+    officialAppPageNote: '공식 스토어 링크, 개인정보처리방침, 지원 문의 경로를 함께 제공하는 KokomaSoft 공식 앱 페이지입니다.',
+    landingTrustTitle: '설치 전 확인할 정보',
+    landingTrustItems: [
+      {
+        title: '공식 다운로드',
+        description: 'Google Play, App Store, 웹앱 링크를 앱별로 확인할 수 있습니다.',
+      },
+      {
+        title: '앱별 사용 맥락',
+        description: '주요 기능과 추천 사용 사례를 설치 전에 살펴볼 수 있습니다.',
+      },
+      {
+        title: '정책과 문의',
+        description: '개인정보처리방침, 계정 삭제 안내, 이메일 문의 경로를 연결합니다.',
+      },
+    ],
     supportHubTitle: '안심하고 사용할 수 있도록',
     supportHubSubtitle: '설치 전후에 필요한 정보와 문의 경로를 한곳에 정리했습니다.',
     supportHighlights: [
@@ -80,8 +96,8 @@ export const translations = {
   en: {
     siteTitle: 'KokomaSoft',
     siteDescription: 'Mobile App Development Company',
-    heroTitle: 'Creating Better Mobile Experiences',
-    heroSubtitle: 'KokomaSoft develops innovative, user-centered mobile applications.',
+    heroTitle: 'KokomaSoft Mobile App Studio',
+    heroSubtitle: 'KokomaSoft builds everyday and productivity apps including Ungyeol, SmartBap, MarkNote, and GlowUp, with official downloads, support, and privacy information.',
     appsTitle: 'Our Apps',
     blogTitle: 'Knowledge, Developer Notes, and AI Briefings',
     blogSubtitle: 'Korean briefings organized into three daily themes for readers who want useful context fast.',
@@ -113,6 +129,22 @@ export const translations = {
     recommendedForTitle: 'Recommended for',
     screenshotsTitle: 'App screens',
     supportAndPrivacyTitle: 'Support and privacy',
+    officialAppPageNote: 'This official KokomaSoft app page provides store links, privacy information, and support contact details in one place.',
+    landingTrustTitle: 'Information before installing',
+    landingTrustItems: [
+      {
+        title: 'Official downloads',
+        description: 'Find each app on Google Play, the App Store, or its official web app link.',
+      },
+      {
+        title: 'Clear use cases',
+        description: 'Review key features and recommended workflows before installing.',
+      },
+      {
+        title: 'Policies and contact',
+        description: 'Access privacy policies, account deletion guidance, and direct email support.',
+      },
+    ],
     supportHubTitle: 'Built for clearer support',
     supportHubSubtitle: 'Find the app links, privacy pages, account deletion guidance, and contact path before or after installing.',
     supportHighlights: [
@@ -149,8 +181,8 @@ export const translations = {
   zh: {
     siteTitle: 'KokomaSoft',
     siteDescription: '移动应用开发公司',
-    heroTitle: '创造更好的移动体验',
-    heroSubtitle: 'KokomaSoft 开发以用户为中心的创新移动应用。',
+    heroTitle: 'KokomaSoft 移动应用工作室',
+    heroSubtitle: 'KokomaSoft 开发 Ungyeol、智慧餐盘、MarkNote、GlowUp 等日常与效率应用，并提供官方下载、支持和隐私信息。',
     appsTitle: '我们的应用',
     blogTitle: '今日知识、开发知识与 AI 知识',
     blogSubtitle: '以三个每日主题，用韩语整理值得快速了解的知识内容。',
@@ -182,6 +214,22 @@ export const translations = {
     recommendedForTitle: '适合人群',
     screenshotsTitle: '应用界面',
     supportAndPrivacyTitle: '支持与隐私',
+    officialAppPageNote: '这是 KokomaSoft 官方应用页面，集中提供商店链接、隐私信息和支持联系方式。',
+    landingTrustTitle: '安装前可确认的信息',
+    landingTrustItems: [
+      {
+        title: '官方下载',
+        description: '可查看每个应用的 Google Play、App Store 或官方网页应用链接。',
+      },
+      {
+        title: '清晰使用场景',
+        description: '安装前可了解主要功能和推荐使用方式。',
+      },
+      {
+        title: '政策与联系',
+        description: '连接隐私政策、账号删除指南和邮件支持。',
+      },
+    ],
     supportHubTitle: '让使用前后都更安心',
     supportHubSubtitle: '安装前后需要的应用链接、隐私政策、账号删除说明和联系方式都集中在这里。',
     supportHighlights: [
@@ -218,8 +266,8 @@ export const translations = {
   ja: {
     siteTitle: 'KokomaSoft',
     siteDescription: 'モバイルアプリ開発会社',
-    heroTitle: 'より良いモバイル体験を創造します',
-    heroSubtitle: 'KokomaSoftは、ユーザー中心の革新的なモバイルアプリケーションを開発しています。',
+    heroTitle: 'KokomaSoft モバイルアプリスタジオ',
+    heroSubtitle: 'KokomaSoftはUngyeol、スマートごはん、MarkNote、GlowUpなどの日常・生産性アプリを開発し、公式ダウンロード、サポート、プライバシー情報を案内します。',
     appsTitle: '私たちのアプリ',
     blogTitle: '今日の知識、開発知識、AI知識',
     blogSubtitle: '毎日読みたい知識を3つのテーマに分け、韓国語で整理します。',
@@ -251,6 +299,22 @@ export const translations = {
     recommendedForTitle: 'おすすめの方',
     screenshotsTitle: 'アプリ画面',
     supportAndPrivacyTitle: 'サポートとプライバシー',
+    officialAppPageNote: 'このKokomaSoft公式アプリページでは、ストアリンク、プライバシー情報、問い合わせ先をまとめて確認できます。',
+    landingTrustTitle: 'インストール前に確認できる情報',
+    landingTrustItems: [
+      {
+        title: '公式ダウンロード',
+        description: '各アプリのGoogle Play、App Store、公式Webアプリリンクを確認できます。',
+      },
+      {
+        title: '明確な利用シーン',
+        description: '主な機能とおすすめの使い方をインストール前に確認できます。',
+      },
+      {
+        title: 'ポリシーと問い合わせ',
+        description: 'プライバシーポリシー、アカウント削除案内、メールサポートにつながります。',
+      },
+    ],
     supportHubTitle: '安心して使える情報を整理',
     supportHubSubtitle: 'インストール前後に必要なストアリンク、プライバシー、アカウント削除、問い合わせ先をまとめています。',
     supportHighlights: [

@@ -19,13 +19,29 @@ const ungyeolTools = getUngyeolLandingCopy(lang);
 <section class="app-hero">
   <div class="detail-backdrop" aria-hidden="true">
     {screenshots.slice(0, 2).map((screenshot, index) => (
-      <img class={`backdrop-shot backdrop-shot-${index + 1}`} src={screenshot.src} alt="" />
+      <img
+        class={`backdrop-shot backdrop-shot-${index + 1}`}
+        src={screenshot.src}
+        alt=""
+        width="540"
+        height="960"
+        loading="lazy"
+        decoding="async"
+      />
     ))}
   </div>
   <div class="container">
     <a class="back-link" href={`/${lang}/#apps`}>{tr.backToApps}</a>
     <div class="app-heading">
-      <img src={app.iconUrl} alt={`${app.name[lang]} icon`} width="96" height="96" />
+      <img
+        src={app.iconUrl}
+        alt={`${app.name[lang]} icon`}
+        width="96"
+        height="96"
+        loading="eager"
+        decoding="async"
+        fetchpriority="high"
+      />
       <div>
         <span class="app-category">{tr.appCategories[app.category]}</span>
         <h1>{app.name[lang]}</h1>
@@ -34,26 +50,51 @@ const ungyeolTools = getUngyeolLandingCopy(lang);
     </div>
     <div class="store-actions">
       {app.webUrl && (
-        <a href={app.webUrl} target="_blank" rel="noopener noreferrer" class="store-btn web-app">
+        <a
+          href={app.webUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="store-btn web-app"
+          aria-label={`${app.name[lang]} ${tr.openWebApp}`}
+        >
           {tr.openWebApp}
         </a>
       )}
       {app.googlePlayUrl && (
-        <a href={app.googlePlayUrl} target="_blank" rel="noopener noreferrer" class="store-btn google-play">
+        <a
+          href={app.googlePlayUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="store-btn google-play"
+          aria-label={`${app.name[lang]} ${tr.googlePlay}`}
+        >
           {tr.googlePlay}
         </a>
       )}
       {app.appStoreUrl && (
-        <a href={app.appStoreUrl} target="_blank" rel="noopener noreferrer" class="store-btn app-store">
+        <a
+          href={app.appStoreUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="store-btn app-store"
+          aria-label={`${app.name[lang]} ${tr.appStore}`}
+        >
           {tr.appStore}
         </a>
       )}
       {lang === 'ko' && app.introVideoUrl && (
-        <a href={app.introVideoUrl} target="_blank" rel="noopener noreferrer" class="store-btn video-link">
+        <a
+          href={app.introVideoUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="store-btn video-link"
+          aria-label={`${app.name[lang]} ${tr.appIntroVideo}`}
+        >
           {tr.appIntroVideo}
         </a>
       )}
     </div>
+    <p class="store-note">{tr.officialAppPageNote}</p>
   </div>
 </section>
 
@@ -82,7 +123,14 @@ const ungyeolTools = getUngyeolLandingCopy(lang);
       <div class="screenshots-row">
         {screenshots.map((screenshot) => (
           <figure class="screenshot">
-            <img src={screenshot.src} alt={`${app.name[lang]} - ${screenshot.caption[lang]}`} loading="lazy" />
+            <img
+              src={screenshot.src}
+              alt={`${app.name[lang]} - ${screenshot.caption[lang]}`}
+              width="540"
+              height="960"
+              loading="lazy"
+              decoding="async"
+            />
             <figcaption>{screenshot.caption[lang]}</figcaption>
           </figure>
         ))}
@@ -105,6 +153,20 @@ const ungyeolTools = getUngyeolLandingCopy(lang);
         {app.recommendedFor[lang].map((item) => <li>{item}</li>)}
       </ul>
     </article>
+  </div>
+</section>
+
+<section class="trust-section" aria-labelledby="trust-title">
+  <div class="container">
+    <h2 id="trust-title">{tr.landingTrustTitle}</h2>
+    <div class="trust-grid">
+      {tr.landingTrustItems.map((item) => (
+        <article class="trust-item">
+          <h3>{item.title}</h3>
+          <p>{item.description}</p>
+        </article>
+      ))}
+    </div>
   </div>
 </section>
 
@@ -256,6 +318,14 @@ const ungyeolTools = getUngyeolLandingCopy(lang);
     margin-top: 2rem;
   }
 
+  .store-note {
+    max-width: 700px;
+    margin-top: 1rem;
+    color: #d8d5ef;
+    font-size: 0.95rem;
+    line-height: 1.7;
+  }
+
   .store-btn,
   .support-links a {
     display: inline-flex;
@@ -301,6 +371,36 @@ const ungyeolTools = getUngyeolLandingCopy(lang);
   .detail-section {
     padding: 5rem 0;
     background: var(--color-bg);
+  }
+
+  .trust-section {
+    padding: 0 0 5rem;
+    background: var(--color-bg);
+  }
+
+  .trust-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1rem;
+  }
+
+  .trust-item {
+    padding: 1.35rem;
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    background: var(--color-surface);
+  }
+
+  .trust-item h3 {
+    color: var(--color-ink);
+    font-size: 1rem;
+    margin-bottom: 0.55rem;
+  }
+
+  .trust-item p {
+    color: var(--color-text-muted);
+    font-size: 0.92rem;
+    line-height: 1.65;
   }
 
   .mini-tools-section {
@@ -478,16 +578,16 @@ const ungyeolTools = getUngyeolLandingCopy(lang);
   }
 
   .support-links a {
-    border: 1px solid var(--glass-border);
-    background: var(--glass-bg);
-    color: #f1f0fa;
+    border: 1px solid var(--color-border);
+    background: var(--color-surface);
+    color: var(--color-primary-dark);
   }
 
   .support-links a:hover {
     border-color: rgba(34, 211, 238, 0.5);
-    background: rgba(255, 255, 255, 0.09);
+    background: rgba(255, 255, 255, 0.9);
     box-shadow: 0 0 16px rgba(34, 211, 238, 0.18);
-    color: #ffffff;
+    color: var(--color-ink);
   }
 
   @media (max-width: 768px) {
@@ -531,6 +631,10 @@ const ungyeolTools = getUngyeolLandingCopy(lang);
     .detail-grid {
       grid-template-columns: 1fr;
       gap: 1rem;
+    }
+
+    .trust-grid {
+      grid-template-columns: 1fr;
     }
 
     .mini-tools-grid {

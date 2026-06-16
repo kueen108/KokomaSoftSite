@@ -13,6 +13,13 @@ export const localeMap: Record<Lang, string> = {
 
 export const languageCodes = Object.keys(languages) as Lang[];
 
+const applicationCategoryMap: Record<AppInfo['category'], string> = {
+  productivity: 'ProductivityApplication',
+  lifestyle: 'LifestyleApplication',
+  utility: 'UtilitiesApplication',
+  entertainment: 'EntertainmentApplication',
+};
+
 export function absoluteUrl(path: string) {
   return new URL(path, SITE_URL).href;
 }
@@ -143,11 +150,18 @@ export function organizationSchema(lang: Lang) {
   return {
     '@context': 'https://schema.org',
     '@type': 'Organization',
+    '@id': `${SITE_URL}/#organization`,
     name: 'KokomaSoft',
     url: SITE_URL,
     logo: absoluteUrl('/favicon.svg'),
     description: tr.siteDescription,
     email: 'kokomasoft@gmail.com',
+    contactPoint: {
+      '@type': 'ContactPoint',
+      contactType: 'customer support',
+      email: 'kokomasoft@gmail.com',
+      availableLanguage: languageCodes,
+    },
   };
 }
 
@@ -155,26 +169,43 @@ export function websiteSchema(lang: Lang) {
   return {
     '@context': 'https://schema.org',
     '@type': 'WebSite',
+    '@id': `${SITE_URL}/#website`,
     name: 'KokomaSoft',
     url: SITE_URL,
     inLanguage: lang,
     publisher: {
       '@type': 'Organization',
+      '@id': `${SITE_URL}/#organization`,
       name: 'KokomaSoft',
     },
   };
 }
 
+function appStoreUrls(app: AppInfo) {
+  return [app.webUrl, app.googlePlayUrl, app.appStoreUrl].filter(
+    (url): url is string => Boolean(url),
+  );
+}
+
 export function mobileApplicationSchema(app: AppInfo, lang: Lang) {
+  const pageUrl = absoluteUrl(localizedPath(lang, `/apps/${app.id}/`));
+  const storeUrls = appStoreUrls(app);
   return {
     '@context': 'https://schema.org',
     '@type': 'MobileApplication',
+    '@id': `${pageUrl}#app`,
     name: app.name[lang],
     description: app.description[lang],
-    applicationCategory: app.category,
+    applicationCategory: applicationCategoryMap[app.category],
+    applicationSubCategory: t(lang).appCategories[app.category],
     operatingSystem: app.operatingSystem ?? (app.appStoreUrl ? 'Android, iOS' : 'Android'),
     image: absoluteUrl(app.iconUrl),
-    url: absoluteUrl(localizedPath(lang, `/apps/${app.id}/`)),
+    url: pageUrl,
+    mainEntityOfPage: pageUrl,
+    isAccessibleForFree: true,
+    featureList: app.features[lang],
+    downloadUrl: storeUrls,
+    installUrl: storeUrls,
     offers: {
       '@type': 'Offer',
       price: '0',
@@ -182,6 +213,7 @@ export function mobileApplicationSchema(app: AppInfo, lang: Lang) {
     },
     publisher: {
       '@type': 'Organization',
+      '@id': `${SITE_URL}/#organization`,
       name: 'KokomaSoft',
       url: SITE_URL,
     },
@@ -190,6 +222,40 @@ export function mobileApplicationSchema(app: AppInfo, lang: Lang) {
       app.appStoreUrl,
       lang === 'ko' ? app.introVideoUrl : undefined,
     ].filter(Boolean),
+  };
+}
+
+export function appItemListSchema(apps: AppInfo[], lang: Lang) {
+  const tr = t(lang);
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: `${tr.siteTitle} ${tr.appsTitle}`,
+    itemListOrder: 'https://schema.org/ItemListOrderAscending',
+    numberOfItems: apps.length,
+    itemListElement: apps.map((app, index) => {
+      const pageUrl = absoluteUrl(localizedPath(lang, `/apps/${app.id}/`));
+      return {
+        '@type': 'ListItem',
+        position: index + 1,
+        url: pageUrl,
+        item: {
+          '@type': 'MobileApplication',
+          '@id': `${pageUrl}#app`,
+          name: app.name[lang],
+          description: app.description[lang],
+          applicationCategory: applicationCategoryMap[app.category],
+          operatingSystem: app.operatingSystem ?? (app.appStoreUrl ? 'Android, iOS' : 'Android'),
+          image: absoluteUrl(app.iconUrl),
+          url: pageUrl,
+          publisher: {
+            '@type': 'Organization',
+            '@id': `${SITE_URL}/#organization`,
+            name: 'KokomaSoft',
+          },
+        },
+      };
+    }),
   };
 }
 

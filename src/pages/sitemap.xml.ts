@@ -9,6 +9,7 @@ import {
   languageCodes,
   privacyAlternates,
   supportAlternates,
+  termsAlternates,
 } from '../lib/seo';
 
 interface SitemapPage {
@@ -17,9 +18,11 @@ interface SitemapPage {
   xDefaultPath: string;
   changefreq: 'weekly' | 'monthly' | 'yearly';
   priority: string;
+  lastmod?: string;
 }
 
-const lastmod = '2026-06-14';
+const fallbackLastmod = new Date().toISOString().slice(0, 10);
+const defaultLastmod = import.meta.env.PUBLIC_SITE_LASTMOD ?? fallbackLastmod;
 
 function escapeXml(value: string) {
   return value
@@ -41,7 +44,7 @@ function renderUrl(page: SitemapPage) {
 
   return `<url>
     <loc>${escapeXml(absoluteUrl(page.path))}</loc>
-    <lastmod>${lastmod}</lastmod>
+    <lastmod>${page.lastmod ?? defaultLastmod}</lastmod>
     <changefreq>${page.changefreq}</changefreq>
     <priority>${page.priority}</priority>
     ${alternateLinks}
@@ -126,6 +129,18 @@ export function GET() {
         priority: '0.6',
       }));
     })(),
+    ...apps
+      .filter((app) => app.hasTermsPage)
+      .flatMap((app) => {
+        const paths = termsAlternates(app.id);
+        return languageCodes.map((lang) => ({
+          path: paths[lang],
+          alternates: paths,
+          xDefaultPath: paths.ko,
+          changefreq: 'yearly' as const,
+          priority: '0.5',
+        }));
+      }),
     ...apps
       .filter((app) => app.supportsAccountDeletion)
       .flatMap((app) => {

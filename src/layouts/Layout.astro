@@ -64,6 +64,15 @@ const structuredDataList = Array.isArray(structuredData)
   : structuredData
     ? [structuredData]
     : [];
+const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
+const googleAdsId = import.meta.env.PUBLIC_GOOGLE_ADS_ID;
+const gtagId = gaMeasurementId ?? googleAdsId;
+const gtagConfigIds = [gaMeasurementId, googleAdsId].filter(
+  (id): id is string => Boolean(id),
+);
+const gtagConfigScript = gtagConfigIds
+  .map((id) => `gtag('config', ${JSON.stringify(id)});`)
+  .join('\n');
 ---
 
 <!doctype html>
@@ -73,6 +82,8 @@ const structuredDataList = Array.isArray(structuredData)
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content={pageDescription} />
     <meta name="robots" content="index, follow" />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <meta name="format-detection" content="telephone=no" />
     <meta name="theme-color" content={theme === 'dark' ? '#0a0a14' : '#101827'} />
     <link rel="canonical" href={canonicalUrl} />
     {alternateEntries.map(([code, path]) => (
@@ -89,17 +100,20 @@ const structuredDataList = Array.isArray(structuredData)
       .filter(([code]) => code !== lang)
       .map(([, locale]) => <meta property="og:locale:alternate" content={locale} />)}
     {imageUrl && <meta property="og:image" content={imageUrl} />}
+    {imageUrl && <meta property="og:image:secure_url" content={imageUrl} />}
     {imageUrl && <meta property="og:image:alt" content={pageTitle} />}
     <meta name="twitter:card" content={imageUrl ? 'summary_large_image' : 'summary'} />
     <meta name="twitter:title" content={pageTitle} />
     <meta name="twitter:description" content={pageDescription} />
     {imageUrl && <meta name="twitter:image" content={imageUrl} />}
+    {imageUrl && <meta name="twitter:image:alt" content={pageTitle} />}
     <title>{pageTitle}</title>
     <link rel="icon" type={faviconType} href={faviconPath} />
     {favicon && <link rel="apple-touch-icon" href={faviconPath} />}
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+    {gtagId && <link rel="preconnect" href="https://www.googletagmanager.com" />}
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Noto+Sans+JP:wght@400;500;700&family=Noto+Sans+SC:wght@400;500;700&display=swap"
       rel="stylesheet"
@@ -111,19 +125,29 @@ const structuredDataList = Array.isArray(structuredData)
     {structuredDataList.map((schema) => (
       <script type="application/ld+json" set:html={JSON.stringify(schema)} />
     ))}
+    {gtagId && <script async src={`https://www.googletagmanager.com/gtag/js?id=${gtagId}`}></script>}
+    {gtagId && (
+      <script
+        is:inline
+        set:html={`window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+${gtagConfigScript}`}
+      />
+    )}
   </head>
   <body>
     <header class="header">
       <div class="container">
         <a href={logoHref} class="logo">
           {headerIcon ? (
-            <img class="logo-image" src={headerIcon} alt={`${logoText} app icon`} width="36" height="36" />
+            <img class="logo-image" src={headerIcon} alt={`${logoText} app icon`} width="36" height="36" decoding="async" />
           ) : (
             <span class="logo-icon">K</span>
           )}
           <span class="logo-text">{logoText}</span>
         </a>
-        <nav class="nav">
+        <nav id="site-nav" class="nav" aria-label="Primary">
           <a href={navHref(`/${lang}/#apps`)}>{tr.appsTitle}</a>
           <a href={navHref(`/${lang}/#support`)}>{tr.supportAndPrivacyTitle}</a>
           <a href={navHref(`/${lang}/#about`)}>{tr.aboutTitle}</a>
@@ -133,13 +157,14 @@ const structuredDataList = Array.isArray(structuredData)
               <a
                 href={alternates?.[code as Lang] ?? navHref(`/${code}/`)}
                 class:list={['lang-link', { active: code === lang }]}
+                aria-current={code === lang ? 'page' : undefined}
               >
                 {label}
               </a>
             ))}
           </div>
         </nav>
-        <button class="mobile-menu-btn" aria-label="Menu">
+        <button class="mobile-menu-btn" aria-label="Menu" aria-controls="site-nav" aria-expanded="false">
           <span></span>
           <span></span>
           <span></span>
@@ -166,8 +191,9 @@ const structuredDataList = Array.isArray(structuredData)
       const btn = document.querySelector('.mobile-menu-btn');
       const nav = document.querySelector('.nav');
       btn?.addEventListener('click', () => {
-        nav?.classList.toggle('open');
-        btn.classList.toggle('open');
+        const isOpen = btn.classList.toggle('open');
+        nav?.classList.toggle('open', isOpen);
+        btn.setAttribute('aria-expanded', String(isOpen));
       });
     </script>
 
@@ -210,6 +236,12 @@ const structuredDataList = Array.isArray(structuredData)
         scroll-behavior: smooth;
       }
 
+      a:focus-visible,
+      button:focus-visible {
+        outline: 3px solid #22d3ee;
+        outline-offset: 3px;
+      }
+
       body {
         font-family: 'Inter', 'Pretendard Variable', 'Noto Sans JP', 'Noto Sans SC',
           system-ui, sans-serif;
@@ -217,6 +249,21 @@ const structuredDataList = Array.isArray(structuredData)
         background: var(--color-bg);
         line-height: 1.6;
         text-rendering: optimizeLegibility;
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        html {
+          scroll-behavior: auto;
+        }
+
+        *,
+        *::before,
+        *::after {
+          animation-duration: 0.01ms !important;
+          animation-iteration-count: 1 !important;
+          scroll-behavior: auto !important;
+          transition-duration: 0.01ms !important;
+        }
       }
 
       html[lang='ko'] body {
