@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import { spawnSync } from 'node:child_process';
-import { existsSync, mkdirSync, readdirSync, writeFileSync } from 'node:fs';
-import { join } from 'node:path';
+import { existsSync, mkdirSync, readdirSync, readFileSync, renameSync, writeFileSync } from 'node:fs';
+import { basename, join } from 'node:path';
 
 const repoRoot = new URL('..', import.meta.url).pathname.replace(/\/$/, '');
 const postDir = join(repoRoot, 'src/content/medium-digest');
@@ -47,14 +47,65 @@ function run(command, args) {
   return output;
 }
 
+function gitStatus(command, args) {
+  return spawnSync(command, args, {
+    cwd: repoRoot,
+    encoding: 'utf8',
+    maxBuffer: 1024 * 1024 * 8,
+  }).status ?? 1;
+}
+
+function frontmatterValue(content, field) {
+  return content.match(new RegExp(`^${field}:\\s*["']?(.+?)["']?$`, 'm'))?.[1] ?? '';
+}
+
+function archiveUntrackedPost(filename, reason) {
+  const postPath = join(postDir, filename);
+  const relativePath = join('src/content/medium-digest', filename);
+  if (gitStatus('git', ['ls-files', '--error-unmatch', relativePath]) === 0) {
+    throw new Error(`refusing to archive tracked post after publish failure: ${filename}`);
+  }
+
+  const rejectedDir = join(outputDir, 'rejected-medium-digest');
+  mkdirSync(rejectedDir, { recursive: true });
+  const archivedPath = join(rejectedDir, `${Date.now()}-${filename}`);
+  renameSync(postPath, archivedPath);
+  writeFileSync(logPath, `\n\nArchived rejected Medium post: ${filename}\nReason: ${reason}\nPath: ${archivedPath}\n`, { flag: 'a' });
+  return {
+    archivedPath,
+    sourceUrl: frontmatterValue(readFileSync(archivedPath, 'utf8'), 'sourceUrl'),
+  };
+}
+
 const date = argValue('--date', todayInSeoul());
 mkdirSync(outputDir, { recursive: true });
 
 run('git', ['fetch', 'origin', 'main']);
 run('git', ['merge', '--ff-only', 'FETCH_HEAD']);
 
-if (!mediumPostFor(date)) {
-  run('node', ['scripts/generate-medium-digest.mjs', '--date', date]);
+const excludedSourceUrls = [];
+let lastError = null;
+
+const maxAttempts = 20;
+for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
+  if (!mediumPostFor(date)) {
+    run('node', ['scripts/generate-medium-digest.mjs', '--date', date, ...excludedSourceUrls.flatMap((url) => ['--exclude-source-url', url])]);
+  }
+
+  try {
+    console.log(run('node', ['scripts/publish-medium-digest.mjs', '--date', date]).trim());
+    process.exit(0);
+  } catch (error) {
+    lastError = error;
+    const message = error.message;
+    if (!/too similar|duplicates sourceUrl|duplicates title/.test(message)) throw error;
+
+    const filename = mediumPostFor(date);
+    if (!filename) throw error;
+    const archived = archiveUntrackedPost(filename, message.split('\n').slice(-1)[0] || message);
+    if (archived.sourceUrl) excludedSourceUrls.push(archived.sourceUrl);
+    console.warn(`rejected ${filename}; retrying with another Medium candidate (${attempt}/${maxAttempts})`);
+  }
 }
 
-console.log(run('node', ['scripts/publish-medium-digest.mjs', '--date', date]).trim());
+throw lastError ?? new Error('Medium digest retry attempts exhausted');

@@ -29,6 +29,14 @@ function argValue(name, fallback) {
   return index >= 0 ? process.argv[index + 1] : fallback;
 }
 
+function argValues(name) {
+  const values = [];
+  for (let i = 0; i < process.argv.length; i += 1) {
+    if (process.argv[i] === name && process.argv[i + 1]) values.push(process.argv[i + 1]);
+  }
+  return values;
+}
+
 function decodeXml(value = '') {
   return value
     .replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g, '$1')
@@ -106,6 +114,24 @@ function recentSourceUrls(posts) {
 
 function recentGeneratedTitles(posts) {
   return new Set(posts.map((post) => post.title).filter(Boolean));
+}
+
+function validateCandidatePost(candidate, content, recent) {
+  if (recent.sourceTitles.has(candidate.title)) throw new Error('duplicate source title');
+  if (recent.sourceUrls.has(candidate.link)) throw new Error('duplicate source URL');
+  if (recent.generatedTitles.has(generatedKoreanTitle(candidate))) throw new Error('duplicate generated title');
+
+  const fingerprint = topicTokens(
+    `${generatedKoreanTitle(candidate)} ${candidate.title} ${candidate.summary} ${content.replace(/^---\n[\s\S]*?\n---\n?/, '').slice(0, 2200)}`,
+  );
+  let closest = { name: '', similarity: 0 };
+  for (const post of recent.posts) {
+    const similarity = jaccard(fingerprint, post.fingerprint);
+    if (similarity > closest.similarity) closest = { name: post.name, similarity };
+  }
+  if (closest.similarity >= 0.35) {
+    throw new Error(`too similar to ${closest.name} (${closest.similarity.toFixed(2)})`);
+  }
 }
 
 async function fetchText(url) {
@@ -189,6 +215,72 @@ function jaccard(a, b) {
 
 function digestTheme(candidate) {
   const haystack = `${candidate.title} ${candidate.summary} ${candidate.categories.join(' ')}`.toLowerCase();
+  if (/conway/.test(haystack)) {
+    return {
+      title: '오늘의 AI 글: 콘웨이 법칙으로 보는 AI 도구와 조직 설계',
+      descriptionFocus: 'AI 도구 도입이 팀 구조, 커뮤니케이션 경로, 책임 경계와 맞물릴 때 생기는 효과를 콘웨이 법칙 관점에서 정리한다.',
+      openingFrame: 'AI 도구는 혼자 성능만 좋아진다고 조직에 잘 붙지 않는다. 팀이 어떻게 나뉘고, 누가 무엇을 검토하고, 어떤 경로로 결정하는지가 도구의 실제 모양을 바꾼다.',
+      sourcePhrase: 'AI 툴링을 모델 성능 문제가 아니라 조직 구조와 커뮤니케이션의 문제로 보자는 관점을 제시한다.',
+      summaryBridge: '이 요지는 AI 도구 도입을 “무엇을 살까”가 아니라 “우리 팀의 협업 구조가 어떤 결과를 만들까”라는 질문으로 바꾼다.',
+      stepHeadings: ['조직 구조의 영향', '책임 경계의 설계', '커뮤니케이션 비용', '도구와 팀의 맞물림'],
+      finalLine: 'AI 도구의 성패는 모델만이 아니라, 그 도구가 들어갈 팀 구조와 책임 경계가 얼마나 또렷한지에 달려 있다.',
+    };
+  }
+  if (/handoff|checklist/.test(haystack)) {
+    return {
+      title: '오늘의 AI 글: 코딩 에이전트 인수인계는 체크리스트가 품질을 지킨다',
+      descriptionFocus: 'AI 코딩 에이전트 작업을 이어받을 때 목표, 변경 파일, 검증 로그, 남은 위험을 잃지 않는 인수인계 방법을 정리한다.',
+      openingFrame: 'AI 코딩 에이전트가 만든 결과는 다음 사람이 이어받는 순간 진짜 품질이 드러난다. 무엇을 바꿨고, 어디까지 검증했고, 남은 위험이 무엇인지 없으면 속도는 금방 혼란이 된다.',
+      sourcePhrase: 'Codex 스타일 작업을 끊기지 않게 이어가기 위한 인수인계와 체크리스트의 중요성을 다룬다.',
+      summaryBridge: '이 요지는 코딩 에이전트 운영에서 결과물만큼 작업 맥락의 전달이 중요하다는 점을 보여준다.',
+      stepHeadings: ['작업 목표의 보존', '변경 파일과 이유', '검증 로그의 역할', '다음 작업자의 판단'],
+      finalLine: '코딩 에이전트의 작업은 코드가 아니라, 다음 사람이 이어받을 수 있는 맥락까지 남겼을 때 끝난다.',
+    };
+  }
+  if (/loop engineer|anthropic|workflow/.test(haystack) && /loop/.test(haystack)) {
+    return {
+      title: '오늘의 AI 글: 프롬프트 엔지니어보다 루프 엔지니어가 중요해진다',
+      descriptionFocus: 'AI 활용이 한 번의 프롬프트에서 반복 루프, 피드백, 검증 절차를 설계하는 방식으로 이동하는 흐름을 정리한다.',
+      openingFrame: '좋은 AI 사용은 한 번에 완벽한 지시를 쓰는 일이 아니다. 목표를 주고, 결과를 보고, 기준에 맞게 다시 돌리는 루프를 설계하는 일이 점점 더 중요해진다.',
+      sourcePhrase: 'AI 업무 방식이 프롬프트 작성에서 반복 가능한 루프 설계로 이동하고 있음을 보여준다.',
+      summaryBridge: '이 요지는 AI 생산성을 문장 실력이 아니라 피드백 구조와 완료 조건의 문제로 보게 만든다.',
+      stepHeadings: ['프롬프트의 한계', '피드백 루프', '검증 기준', '업무 흐름으로의 정착'],
+      finalLine: 'AI 시대의 실력은 멋진 프롬프트보다, 결과를 계속 개선하는 루프를 설계하는 능력에서 나온다.',
+    };
+  }
+  if (/cognitive|intent|clarity/.test(haystack)) {
+    return {
+      title: '오늘의 AI 글: AI 생성 코드 시대에는 의도 명료성이 기술 부채를 줄인다',
+      descriptionFocus: 'AI가 코드를 빠르게 늘리는 환경에서 개발자의 의도, 설계 이유, 인지 비용을 명확히 남기는 방법을 정리한다.',
+      openingFrame: 'AI가 코드를 빠르게 만들수록 팀이 감당해야 할 것은 줄 수만은 아니다. 코드가 왜 존재하는지, 어떤 의도를 따른 것인지 흐려지면 읽는 비용이 조용히 커진다.',
+      sourcePhrase: 'AI 생성 코드가 늘어날수록 기술 부채뿐 아니라 인지 비용과 의도 명료성을 관리해야 한다고 말한다.',
+      summaryBridge: '이 요지는 생성 속도보다 이해 가능한 구조가 장기 유지보수의 핵심이라는 점을 강조한다.',
+      stepHeadings: ['생성 속도의 그림자', '의도의 기록', '인지 비용', '명료한 아키텍처'],
+      finalLine: 'AI가 코드를 더 빨리 만들수록, 사람이 더 빨리 이해할 수 있게 의도를 남기는 일이 중요해진다.',
+    };
+  }
+  if (/grill me|critique|review/.test(haystack)) {
+    return {
+      title: '오늘의 AI 글: AI에게 비판을 맡기면 아이디어의 약점이 빨리 드러난다',
+      descriptionFocus: 'AI를 칭찬하는 조수보다 반박과 검토를 맡는 리뷰어로 사용할 때 얻을 수 있는 사고 품질 개선법을 정리한다.',
+      openingFrame: 'AI를 항상 친절한 조수로만 쓰면 놓치는 것이 있다. 때로는 내 아이디어를 일부러 세게 검토하고, 빠진 전제와 약한 논리를 찾아주는 역할이 더 값지다.',
+      sourcePhrase: 'AI를 답변 생성기가 아니라 아이디어를 검증하는 비판적 파트너로 쓰는 방법을 다룬다.',
+      summaryBridge: '이 요지는 AI 활용의 초점을 더 많은 산출물에서 더 나은 판단으로 옮긴다.',
+      stepHeadings: ['친절한 답변의 한계', '반박의 설계', '약점 찾기', '판단 품질의 개선'],
+      finalLine: 'AI가 진짜 도움이 되는 순간은 내 말을 잘 포장할 때가 아니라, 내가 놓친 약점을 먼저 보여줄 때다.',
+    };
+  }
+  if (/ai-native|software engineer/.test(haystack)) {
+    return {
+      title: '오늘의 AI 글: AI 네이티브 개발자는 도구보다 작업 방식을 바꾼다',
+      descriptionFocus: 'AI 시대의 개발자가 단순히 도구를 쓰는 단계를 넘어 문제 분해, 검증, 협업 방식을 바꾸는 방법을 정리한다.',
+      openingFrame: 'AI 네이티브 개발자는 특정 도구 하나를 잘 쓰는 사람이 아니다. 문제를 나누고, 맥락을 정리하고, 결과를 검증하는 방식을 AI와 함께 일하기 좋게 바꾸는 사람에 가깝다.',
+      sourcePhrase: 'AI 시대의 소프트웨어 엔지니어가 어떤 습관과 작업 방식을 갖춰야 하는지 묻는다.',
+      summaryBridge: '이 요지는 개발자의 경쟁력이 코드 작성 속도보다 문제 정의와 검증 루프에 더 가까워지고 있음을 보여준다.',
+      stepHeadings: ['역할의 변화', '문제 분해', '검증 습관', '협업 방식'],
+      finalLine: 'AI 네이티브 개발자의 핵심은 도구 목록이 아니라, AI가 만든 결과를 다룰 수 있는 작업 습관이다.',
+    };
+  }
   if (/parallel|dozens|64|128|multi[-\s]?agent|swarm/.test(haystack)) {
     return {
       title: '오늘의 AI 글: 병렬 코딩 에이전트는 속도가 아니라 조율의 문제다',
@@ -351,6 +443,7 @@ ${publicNote} 자동화된 블로그 발행 작업에서도 같은 교훈이 보
 
 const date = argValue('--date', todayInSeoul());
 const force = process.argv.includes('--force');
+const excludedSourceUrls = new Set(argValues('--exclude-source-url'));
 const existing = existingPostFor(date);
 if (existing && !force) {
   console.log(`existing post: ${existing}`);
@@ -359,6 +452,10 @@ if (existing && !force) {
 
 const posts = recentPosts().filter((post) => !post.name.startsWith(`${date}-`));
 const recent = {
+  posts: posts.map((post) => ({
+    ...post,
+    fingerprint: topicTokens(`${post.title} ${post.description} ${post.sourceTitle} ${post.bodySample}`),
+  })),
   sourceTitles: recentSourceTitles(posts),
   sourceUrls: recentSourceUrls(posts),
   generatedTitles: recentGeneratedTitles(posts),
@@ -367,21 +464,47 @@ const recent = {
 const candidates = await collectCandidates();
 if (candidates.length === 0) throw new Error('no Medium candidates found');
 
-const candidate = candidates
+const rankedCandidates = candidates
+  .filter((item) => !excludedSourceUrls.has(item.link))
   .map((item) => ({ item, score: score(item, recent) }))
-  .sort((a, b) => b.score - a.score)[0].item;
+  .sort((a, b) => b.score - a.score);
 
+let candidate = null;
 let accessNote = true;
-try {
-  const readerUrl = `https://r.jina.ai/http://${candidate.link.replace(/^https?:\/\//, '')}`;
-  const readerText = await fetchText(readerUrl);
-  accessNote = readerText.length < 2500 || /sign up|sign in|get app/i.test(readerText);
-} catch {
-  accessNote = true;
+let content = '';
+const rejected = [];
+
+for (const ranked of rankedCandidates) {
+  const item = ranked.item;
+  let candidateAccessNote = true;
+  try {
+    const readerUrl = `https://r.jina.ai/http://${item.link.replace(/^https?:\/\//, '')}`;
+    const readerText = await fetchText(readerUrl);
+    candidateAccessNote = readerText.length < 2500 || /sign up|sign in|get app/i.test(readerText);
+  } catch {
+    candidateAccessNote = true;
+  }
+
+  const candidateSlug = `${date}-${slugify(item.title)}.md`;
+  const candidateContent = koreanPost({ date, slug: candidateSlug, candidate: item, accessNote: candidateAccessNote });
+  try {
+    validateCandidatePost(item, candidateContent, recent);
+    candidate = item;
+    accessNote = candidateAccessNote;
+    content = candidateContent;
+    break;
+  } catch (error) {
+    rejected.push(`${item.title}: ${error.message}`);
+  }
+}
+
+if (!candidate) {
+  throw new Error(`no Medium candidate passed duplicate checks${rejected.length ? `\n${rejected.slice(0, 8).join('\n')}` : ''}`);
 }
 
 const slug = `${date}-${slugify(candidate.title)}.md`;
 const postPath = existing && force ? existing : join(postDir, slug);
-writeFileSync(postPath, koreanPost({ date, slug, candidate, accessNote }));
+writeFileSync(postPath, content || koreanPost({ date, slug, candidate, accessNote }));
 console.log(`created ${postPath}`);
 console.log(`source ${candidate.link}`);
+if (rejected.length) console.log(`rejected ${rejected.length} similar candidate(s) before selecting this post`);

@@ -158,7 +158,7 @@ const date = argValue('--date', todayInSeoul());
 const postPath = findPost(date);
 const meta = validatePost(postPath, date);
 const slug = basename(postPath, '.md');
-const url = `https://blog.kokomasoft.com/${slug}/`;
+const url = `https://blog.kokomasoft.com/blog/${slug}/`;
 
 run('npm', ['run', 'build']);
 
