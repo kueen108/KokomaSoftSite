@@ -769,7 +769,7 @@ export const apps: AppInfo[] = [
     iconUrl: '/app-icons/glowup.png',
     name: {
       ko: 'GlowUp',
-      en: 'GlowUp',
+      en: 'StyleCue',
       zh: 'GlowUp',
       ja: 'GlowUp',
     },
@@ -781,7 +781,7 @@ export const apps: AppInfo[] = [
     },
     description: {
       ko: 'GlowUp은 한 장의 사진으로 사진 분위기, 옷차림 밸런스, 그루밍, 헤어 방향, 조명, 구도, 배경을 살펴보고 바로 시도할 수 있는 실용적인 팁으로 정리하는 스타일 리포트 앱입니다.',
-      en: 'GlowUp creates a supportive photo-based style report from one clear picture, helping you understand photo mood, outfit balance, grooming details, hair direction, lighting, framing, and practical next steps.',
+      en: 'StyleCue creates a supportive photo-based style report from one clear picture, helping you understand photo mood, outfit balance, grooming details, hair direction, lighting, framing, and practical next steps.',
       zh: 'GlowUp 可用一张清晰照片生成支持性的照片风格报告，帮助你了解照片氛围、穿搭平衡、整理细节、发型方向、光线、构图和可立即尝试的下一步建议。',
       ja: 'GlowUpは、1枚のクリアな写真から写真の雰囲気、服装バランス、グルーミング、ヘアの方向、照明、構図、背景を確認し、すぐ試せる実用的なヒントにまとめるスタイルレポートアプリです。',
     },
@@ -799,7 +799,7 @@ export const apps: AppInfo[] = [
     },
     supportNote: {
       ko: 'GlowUp은 외모 비교나 랭킹이 아니라 사진에서 보이는 요소를 바탕으로 스타일과 촬영 인상을 정리하는 참고용 코칭 리포트를 제공합니다. 원본 고해상도 사진은 리포트 사본으로 보관하지 않으며, 저장된 리포트와 로컬 미리보기는 히스토리에서 삭제할 수 있습니다.',
-      en: 'GlowUp is a style coach experience, not a comparison or ranking tool. Reports focus on visible photo details and turn them into practical coaching. Original full-resolution photos are not kept as report copies, and saved reports plus local previews can be deleted from history.',
+      en: 'StyleCue is a style coach experience, not a comparison or ranking tool. Reports focus on visible photo details and turn them into practical coaching. Original full-resolution photos are not kept as report copies, and saved reports plus local previews can be deleted from history.',
       zh: 'GlowUp 是一种风格教练体验，而不是比较或排名工具。报告聚焦照片中可见的细节，并将其转化为实用建议。原始完整分辨率照片不会作为报告副本保留，已保存报告和本地预览可从历史记录中删除。',
       ja: 'GlowUpは比較やランキングのためのツールではなく、写真で見える要素をもとにスタイルと撮影印象を整理する参考用コーチングレポートです。元の高解像度写真をレポートコピーとして保持せず、保存済みレポートとローカルプレビューは履歴から削除できます。',
     },

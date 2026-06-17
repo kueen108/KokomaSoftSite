@@ -335,27 +335,27 @@ export const appPrivacySectionOverrides: Partial<Record<string, Record<Lang, { h
     ko: [
       {
         heading: '1. 처리하는 정보',
-        content: 'GlowUp은 계정 생성 없이 사용할 수 있는 사진 기반 스타일 리포트 앱입니다. 앱은 사용자가 촬영하거나 선택한 사진, 리포트 생성에 필요한 압축 이미지 데이터, 국가/언어 설정, 스타일 목표, 생성된 Glow 리포트 결과, 로컬 미리보기 이미지, 히스토리와 앱 설정을 처리할 수 있습니다.',
+        content: 'GlowUp은 계정 생성 없이 사용할 수 있는 사진 기반 스타일 리포트 앱입니다. 앱은 사용자가 촬영하거나 선택한 사진, 리포트 생성에 필요한 압축 이미지 데이터, 국가/언어 설정, 스타일 목표, 생성된 Glow 리포트 결과, 로컬 미리보기 이미지, 히스토리와 앱 설정을 처리할 수 있습니다. 광고 제공과 동의 관리를 위해 Google AdMob과 Google User Messaging Platform이 기기 식별자, 광고 상호작용, 진단 정보, 동의 선택 정보를 처리할 수 있습니다.',
       },
       {
         heading: '2. 이용 목적',
-        content: '처리되는 정보는 사진 기반 스타일 리포트 생성, 사진 분위기·스타일 조화·그루밍·옷차림·촬영 팁 제공, 결과 화면 표시, 공유 이미지 생성, 로컬 히스토리 저장, 사용자 문의 대응을 위해 사용됩니다.',
+        content: '처리되는 정보는 사진 기반 스타일 리포트 생성, 사진 분위기·스타일 조화·그루밍·옷차림·촬영 팁 제공, 결과 화면 표시, 공유 이미지 생성, 로컬 히스토리 저장, 광고 표시와 측정, 광고 개인정보 선택 관리, 사용자 문의 대응을 위해 사용됩니다.',
       },
       {
-        heading: '3. 원격 사진 분석',
-        content: '사용자가 리포트 생성을 요청하면 앱은 네트워크 비용과 처리 비용을 줄이기 위해 사진을 적절한 크기로 압축한 뒤 Cloudflare Worker로 전송합니다. Worker는 OpenAI 또는 호환 가능한 멀티모달 모델 제공자에게 분석 요청을 전달할 수 있습니다. API 키는 앱에 포함되지 않고 서버 측 Secret으로 관리됩니다.',
+        heading: '3. 사진 분석과 원격 AI 처리',
+        content: '사용자가 리포트 생성을 요청하면 앱은 네트워크 비용과 처리 비용을 줄이기 위해 선택한 사진을 적절한 크기로 압축한 뒤 HTTPS를 통해 보안 스타일 리포트 프록시로 전송합니다. 프록시는 요청된 리포트를 생성하기 위해 외부 AI 모델 제공자에게 분석 요청을 전달할 수 있습니다. API 키는 앱에 포함되지 않고 서버 측 Secret으로 관리됩니다. 앱은 사용자가 분석 버튼을 누르기 전에는 사진을 업로드하지 않습니다.',
       },
       {
         heading: '4. 원본 사진과 로컬 저장',
-        content: 'GlowUp은 리포트용으로 원본 고해상도 사진을 그대로 보관하지 않습니다. 리포트와 로컬 미리보기 이미지는 사용자의 기기에 저장될 수 있으며, 히스토리에서 리포트를 삭제하면 해당 로컬 미리보기 이미지도 함께 삭제됩니다. Android 설정에서 앱 데이터를 삭제하거나 앱을 제거하면 로컬 데이터가 삭제됩니다.',
+        content: 'GlowUp은 리포트용으로 원본 고해상도 사진을 그대로 보관하지 않습니다. 생성된 리포트와 더 작은 로컬 미리보기 이미지는 사용자의 기기에 히스토리로 저장될 수 있습니다. 히스토리에서 리포트를 삭제하면 해당 로컬 미리보기 이미지도 함께 삭제됩니다. 앱을 삭제하거나 기기 설정에서 앱 데이터를 삭제하면 로컬 데이터가 삭제됩니다.',
       },
       {
-        heading: '5. 제3자 서비스',
-        content: '원격 분석 기능 제공을 위해 Cloudflare Worker와 외부 멀티모달 모델 제공자가 이미지 데이터와 요청 컨텍스트를 처리할 수 있습니다. GlowUp은 현재 앱 코드에 광고 SDK, 외부 Analytics SDK, 계정 인증 서비스를 포함하지 않습니다.',
+        heading: '5. 제3자 서비스, 광고 및 동의',
+        content: '원격 분석 기능 제공을 위해 Cloudflare Worker와 외부 AI 모델 제공자가 이미지 데이터와 요청 컨텍스트를 처리할 수 있습니다. 광고 표시, 측정, 보안, 동의 관리를 위해 Google AdMob과 Google User Messaging Platform이 광고 식별자, 기기 정보, 광고 표시와 상호작용 정보, 진단 정보, 동의 선택 정보를 처리할 수 있습니다. iOS에서는 사용자의 지역 및 동의 선택이 추적 권한 요청을 허용하는 경우에만 App Tracking Transparency 권한을 요청합니다. 추적 권한이 부여되지 않으면 광고 요청은 비개인화 처리로 설정됩니다.',
       },
       {
-        heading: '6. 얼굴, 생체정보 및 민감 속성',
-        content: 'GlowUp은 얼굴을 식별하거나 생체 식별 정보를 생성·저장하기 위한 서비스가 아닙니다. 리포트는 사진 인상, 스타일 조화, 조명, 배경, 포즈, 옷차림, 헤어와 그루밍에 대한 참고용 코칭으로 제공되며, 인종, 민족, 건강 상태, 정확한 나이 등 민감한 속성을 추정하도록 설계되지 않았습니다.',
+        heading: '6. 얼굴 데이터',
+        content: 'GlowUp은 사용자가 선택하거나 촬영한 사진에서 선명한 얼굴이 하나 있는지 여부, 얼굴 프레이밍, 조명, 그루밍, 헤어, 포즈 등 스타일 리포트 생성에 필요한 눈에 보이는 얼굴 관련 정보를 처리할 수 있습니다. GlowUp은 얼굴 템플릿, 얼굴 기하 정보, 얼굴인식 정보, 생체 식별자, 신원 확인 데이터를 생성, 수집 또는 저장하지 않습니다. 얼굴 관련 정보는 요청된 사진 기반 스타일 리포트와 해당 리포트의 안전성 확인을 위해서만 사용됩니다. 선택한 이미지는 이 목적을 위해 보안 스타일 리포트 프록시를 거쳐 외부 AI 모델 제공자에게 전송될 수 있습니다. 얼굴 관련 정보는 개인 식별, 인증, 사람 간 비교, 민감한 속성 추론, 자격 결정, 광고 타겟팅 또는 개인적 가치 평가에 사용되지 않습니다. iOS 앱은 리포트 생성 후 원본 고해상도 사진을 보관하지 않습니다. 생성된 리포트와 더 작은 로컬 미리보기 이미지는 사용자가 해당 리포트를 삭제하거나 앱을 삭제할 때까지 기기의 히스토리에 남을 수 있습니다. 운영 백엔드는 업로드된 이미지와 base64 이미지 페이로드가 애플리케이션 로그에 기록되지 않고 리포트를 생성하고 서비스를 보호하는 데 필요한 일시적인 시간 동안만 보관되도록 구성됩니다.',
       },
       {
         heading: '7. 보안, 아동 및 변경',
@@ -365,57 +365,57 @@ export const appPrivacySectionOverrides: Partial<Record<string, Record<Lang, { h
     en: [
       {
         heading: '1. Information Processed',
-        content: 'GlowUp is a photo-based style report app that can be used without creating an account. The app may process photos you take or select, compressed image data needed to create a report, country and language settings, style goals, generated Glow report results, local preview images, history, and app preferences.',
+        content: 'StyleCue is a photo-based style report app that can be used without creating an account. The app may process photos you take or select, compressed image data needed to create a report, country and language settings, style goals, generated style report results, local preview images, history, and app preferences. For ads and consent management, Google AdMob and Google User Messaging Platform may process device identifiers, ad interactions, diagnostic information, and consent choices.',
       },
       {
         heading: '2. How Information Is Used',
-        content: 'Information is used to create photo-based style reports, provide photo mood, styling harmony, grooming, outfit, and photo tips, display results, generate share images, save local history, and respond to user inquiries.',
+        content: 'Information is used to create photo-based style reports, provide photo mood, styling harmony, grooming, outfit, and photo tips, display results, generate share images, save local history, show and measure ads, manage ad privacy choices, and respond to user inquiries.',
       },
       {
-        heading: '3. Remote Photo Analysis',
-        content: 'When you request a report, the app compresses the photo to an appropriate size to reduce network and processing cost, then sends it to a Cloudflare Worker. The Worker may forward the analysis request to OpenAI or a compatible multimodal model provider. API keys are not included in the app and are managed as server-side secrets.',
+        heading: '3. Photo Analysis and Remote AI Processing',
+        content: 'When you request a report, the app compresses the selected photo to an appropriate size to reduce network and processing cost, then sends it over HTTPS to a secure style-report proxy. The proxy may forward the analysis request to an external AI model provider only to generate the requested report. API keys are not included in the app and are managed as server-side secrets. The app does not upload a photo until you tap the analyze action.',
       },
       {
         heading: '4. Original Photos and Local Storage',
-        content: 'GlowUp does not keep original full-resolution photos as report copies. Reports and local preview images may be stored on your device. Deleting a report from history also removes its local preview image. Local data is deleted when you clear app data in Android settings or uninstall the app.',
+        content: 'StyleCue does not keep original full-resolution photos as report copies. Generated reports and smaller local preview images may be stored on your device in History. Deleting a report from History also removes its local preview image. Local data is deleted when you delete the app or clear the app data in device settings.',
       },
       {
-        heading: '5. Third-Party Services',
-        content: 'Cloudflare Worker and an external multimodal model provider may process image data and request context to provide remote analysis. GlowUp currently does not include advertising SDKs, external analytics SDKs, or account authentication services in the app code.',
+        heading: '5. Third-Party Services, Ads, and Consent',
+        content: 'Cloudflare Worker and an external AI model provider may process image data and request context to provide remote analysis. Google AdMob and Google User Messaging Platform may process advertising identifiers, device information, ad impressions and interactions, diagnostics, and consent choices to show, measure, secure, and manage ads. On iOS, StyleCue requests App Tracking Transparency permission only when the user\'s region and consent choices support a tracking permission request. If tracking permission is not granted, ad requests are configured for non-personalized publisher privacy treatment.',
       },
       {
-        heading: '6. Face, Biometric Data, and Sensitive Attributes',
-        content: 'GlowUp is not a service for identifying faces or creating or storing biometric identifiers. Reports are reference coaching about photo impression, style harmony, lighting, background, pose, outfit, hair, and grooming, and are not designed to infer sensitive attributes such as race, ethnicity, health condition, or exact age.',
+        heading: '6. Face Data',
+        content: 'StyleCue may process visible face-related information in a photo you choose or take, such as whether one clear face is present, face framing, lighting, grooming, hair, pose, and other visible styling signals needed to create the style report. StyleCue does not create, collect, or store face templates, face geometry, faceprints, biometric identifiers, or identity verification data. StyleCue does not use face data to identify a person, authenticate a person, compare people, infer sensitive traits, make eligibility decisions, or rank personal worth. Face-related information is used only to create the requested photo-based style report and safety checks for that report. The selected image is sent through the secure style-report proxy to an external AI model provider for this purpose. It is not sold. It is not shared with data brokers. It is not used for advertising targeting. The iOS app does not keep the original full-resolution photo after creating the report. The generated report and a smaller local preview image may remain on the device in History until the user deletes that report or deletes the app. The production backend is configured so uploaded images and base64 image payloads are not written to application logs and are retained only for the transient time needed to generate and secure the report.',
       },
       {
         heading: '7. Security, Children, and Changes',
-        content: 'When remote analysis is used, network transmission uses HTTPS. GlowUp is not directed to children, and photos of minors should be used only with guardian consent and guidance. This policy will be updated if app features, data handling, or external service usage changes.',
+        content: 'When remote analysis is used, network transmission uses HTTPS. StyleCue is not directed to children, and photos of minors should be used only with guardian consent and guidance. This policy will be updated if app features, data handling, or external service usage changes.',
       },
     ],
     zh: [
       {
         heading: '1. 处理的信息',
-        content: 'GlowUp 是一款无需创建账号即可使用的照片风格报告应用。应用可能会处理你拍摄或选择的照片、生成报告所需的压缩图片数据、国家和语言设置、风格目标、生成的 Glow 报告结果、本地预览图片、历史记录和应用偏好设置。',
+        content: 'GlowUp 是一款无需创建账号即可使用的照片风格报告应用。应用可能会处理你拍摄或选择的照片、生成报告所需的压缩图片数据、国家和语言设置、风格目标、生成的 Glow 报告结果、本地预览图片、历史记录和应用偏好设置。为提供广告和同意管理，Google AdMob 和 Google User Messaging Platform 可能会处理设备标识符、广告互动、诊断信息和同意选择。',
       },
       {
         heading: '2. 使用目的',
-        content: '这些信息用于生成基于照片的风格报告，提供照片氛围、风格协调、整理、穿搭和拍摄建议，显示结果，生成分享图片，保存本地历史记录，并回应用户咨询。',
+        content: '这些信息用于生成基于照片的风格报告，提供照片氛围、风格协调、整理、穿搭和拍摄建议，显示结果，生成分享图片，保存本地历史记录，展示和衡量广告，管理广告隐私选择，并回应用户咨询。',
       },
       {
-        heading: '3. 远程照片分析',
-        content: '当你请求生成报告时，应用会将照片压缩到合适大小以降低网络和处理成本，然后发送到 Cloudflare Worker。Worker 可能会将分析请求转发给 OpenAI 或兼容的多模态模型提供方。API 密钥不会包含在应用内，而是作为服务器端 Secret 管理。',
+        heading: '3. 照片分析与远程 AI 处理',
+        content: '当你请求生成报告时，应用会将所选照片压缩到合适大小以降低网络和处理成本，然后通过 HTTPS 发送到安全的风格报告代理。该代理可能会把分析请求转发给外部 AI 模型提供方，仅用于生成你请求的报告。API 密钥不会包含在应用内，而是作为服务器端 Secret 管理。除非你点击分析操作，应用不会上传照片。',
       },
       {
         heading: '4. 原始照片与本地保存',
-        content: 'GlowUp 不会为报告保留原始完整分辨率照片副本。报告和本地预览图片可能会保存在你的设备上。从历史记录中删除报告也会删除其本地预览图片。通过 Android 设置清除应用数据或卸载应用时，本地数据会被删除。',
+        content: 'GlowUp 不会为报告保留原始完整分辨率照片副本。生成的报告和较小的本地预览图片可能会保存在你设备的历史记录中。从历史记录中删除报告也会删除其本地预览图片。删除应用或通过设备设置清除应用数据时，本地数据会被删除。',
       },
       {
-        heading: '5. 第三方服务',
-        content: '为提供远程分析功能，Cloudflare Worker 和外部多模态模型提供方可能会处理图片数据和请求上下文。GlowUp 当前的应用代码不包含广告 SDK、外部 Analytics SDK 或账号认证服务。',
+        heading: '5. 第三方服务、广告与同意',
+        content: '为提供远程分析功能，Cloudflare Worker 和外部 AI 模型提供方可能会处理图片数据和请求上下文。为展示、衡量、保护和管理广告，Google AdMob 和 Google User Messaging Platform 可能会处理广告标识符、设备信息、广告展示和互动、诊断信息以及同意选择。在 iOS 上，仅当用户所在地区和同意选择支持追踪权限请求时，GlowUp 才会请求 App Tracking Transparency 权限。如果未授予追踪权限，广告请求会配置为非个性化发布商隐私处理。',
       },
       {
-        heading: '6. 面部、生物识别信息和敏感属性',
-        content: 'GlowUp 不是用于识别人脸或创建、保存生物识别标识的服务。报告仅作为照片印象、风格协调、光线、背景、姿势、穿搭、发型和整理方面的参考建议，不用于推断种族、民族、健康状况或准确年龄等敏感属性。',
+        heading: '6. 面部数据',
+        content: 'GlowUp 可能会处理你选择或拍摄的照片中可见的面部相关信息，例如是否存在一张清晰的脸、面部取景、光线、整理、发型、姿势以及生成风格报告所需的其他可见造型信号。GlowUp 不会创建、收集或存储面部模板、面部几何信息、面纹、生物识别标识符或身份验证数据。GlowUp 不会使用面部数据来识别个人、认证个人、比较人员、推断敏感特征、作出资格决定或评价个人价值。面部相关信息仅用于创建用户请求的照片风格报告以及该报告的安全检查。所选图片会通过安全的风格报告代理发送给外部 AI 模型提供方，仅用于此目的。该信息不会出售，不会与数据经纪商共享，也不会用于广告定向。iOS 应用在创建报告后不会保留原始完整分辨率照片。生成的报告和较小的本地预览图片可能会保留在设备历史记录中，直到用户删除该报告或删除应用。生产后端配置为不将上传图片和 base64 图片载荷写入应用日志，并且仅在生成和保护报告所需的临时时间内保留。',
       },
       {
         heading: '7. 安全、儿童与变更',
@@ -425,27 +425,27 @@ export const appPrivacySectionOverrides: Partial<Record<string, Record<Lang, { h
     ja: [
       {
         heading: '1. 処理する情報',
-        content: 'GlowUp は、アカウント作成なしで利用できる写真ベースのスタイルレポートアプリです。アプリは、ユーザーが撮影または選択した写真、レポート作成に必要な圧縮画像データ、国と言語設定、スタイル目標、生成された Glow レポート結果、ローカルプレビュー画像、履歴、アプリ設定を処理する場合があります。',
+        content: 'GlowUp は、アカウント作成なしで利用できる写真ベースのスタイルレポートアプリです。アプリは、ユーザーが撮影または選択した写真、レポート作成に必要な圧縮画像データ、国と言語設定、スタイル目標、生成された Glow レポート結果、ローカルプレビュー画像、履歴、アプリ設定を処理する場合があります。広告と同意管理のため、Google AdMob と Google User Messaging Platform が端末識別子、広告インタラクション、診断情報、同意選択を処理する場合があります。',
       },
       {
         heading: '2. 利用目的',
-        content: 'これらの情報は、写真ベースのスタイルレポート作成、写真の雰囲気・スタイルの調和・グルーミング・服装・撮影ヒントの提供、結果表示、共有画像生成、ローカル履歴保存、ユーザーからのお問い合わせ対応に使用されます。',
+        content: 'これらの情報は、写真ベースのスタイルレポート作成、写真の雰囲気・スタイルの調和・グルーミング・服装・撮影ヒントの提供、結果表示、共有画像生成、ローカル履歴保存、広告の表示と測定、広告プライバシー選択の管理、ユーザーからのお問い合わせ対応に使用されます。',
       },
       {
-        heading: '3. リモート写真分析',
-        content: 'ユーザーがレポート作成を依頼すると、アプリはネットワークと処理コストを抑えるため写真を適切なサイズに圧縮し、Cloudflare Worker に送信します。Worker は OpenAI または互換性のあるマルチモーダルモデル提供者へ分析リクエストを転送する場合があります。API キーはアプリに含まれず、サーバー側 Secret として管理されます。',
+        heading: '3. 写真分析とリモート AI 処理',
+        content: 'ユーザーがレポート作成を依頼すると、アプリはネットワークと処理コストを抑えるため選択された写真を適切なサイズに圧縮し、HTTPS で安全なスタイルレポートプロキシへ送信します。プロキシは、リクエストされたレポートを生成する目的に限り、外部 AI モデル提供者へ分析リクエストを転送する場合があります。API キーはアプリに含まれず、サーバー側 Secret として管理されます。ユーザーが分析操作をタップするまで、アプリは写真をアップロードしません。',
       },
       {
         heading: '4. 元写真とローカル保存',
-        content: 'GlowUp はレポート用に元の高解像度写真をそのまま保持しません。レポートとローカルプレビュー画像はユーザーの端末に保存される場合があります。履歴からレポートを削除すると、そのローカルプレビュー画像も削除されます。Android 設定でアプリデータを削除する、またはアプリをアンインストールすると、ローカルデータは削除されます。',
+        content: 'GlowUp はレポート用に元の高解像度写真をそのまま保持しません。生成されたレポートと小さなローカルプレビュー画像は、ユーザーの端末の履歴に保存される場合があります。履歴からレポートを削除すると、そのローカルプレビュー画像も削除されます。アプリを削除する、または端末設定でアプリデータを削除すると、ローカルデータは削除されます。',
       },
       {
-        heading: '5. 第三者サービス',
-        content: 'リモート分析機能を提供するため、Cloudflare Worker と外部マルチモーダルモデル提供者が画像データとリクエストコンテキストを処理する場合があります。GlowUp の現在のアプリコードには、広告 SDK、外部 Analytics SDK、アカウント認証サービスは含まれていません。',
+        heading: '5. 第三者サービス、広告、同意',
+        content: 'リモート分析機能を提供するため、Cloudflare Worker と外部 AI モデル提供者が画像データとリクエストコンテキストを処理する場合があります。広告の表示、測定、保護、管理のため、Google AdMob と Google User Messaging Platform が広告識別子、端末情報、広告表示と操作、診断情報、同意選択を処理する場合があります。iOS では、ユーザーの地域と同意選択がトラッキング許可リクエストをサポートする場合に限り、GlowUp は App Tracking Transparency の許可をリクエストします。トラッキング許可が付与されない場合、広告リクエストは非パーソナライズされたパブリッシャープライバシー処理として設定されます。',
       },
       {
-        heading: '6. 顔、生体情報、センシティブ属性',
-        content: 'GlowUp は、顔を識別したり生体識別子を作成・保存したりするためのサービスではありません。レポートは、写真の印象、スタイルの調和、照明、背景、ポーズ、服装、ヘア、グルーミングに関する参考コーチングであり、人種、民族、健康状態、正確な年齢などのセンシティブ属性を推測するようには設計されていません。',
+        heading: '6. 顔データ',
+        content: 'GlowUp は、ユーザーが選択または撮影した写真に含まれる、1つの明瞭な顔があるかどうか、顔のフレーミング、照明、グルーミング、ヘア、ポーズ、スタイルレポート作成に必要なその他の可視的なスタイリングシグナルなど、顔に関連する可視情報を処理する場合があります。GlowUp は、顔テンプレート、顔の幾何情報、顔紋、生体識別子、本人確認データを作成、収集、保存しません。GlowUp は、顔データを個人の識別、認証、人物比較、センシティブ属性の推測、資格判断、個人的価値の評価に使用しません。顔関連情報は、リクエストされた写真ベースのスタイルレポートとその安全確認の作成にのみ使用されます。選択された画像は、この目的のために安全なスタイルレポートプロキシを通じて外部 AI モデル提供者に送信されます。販売されず、データブローカーと共有されず、広告ターゲティングにも使用されません。iOS アプリは、レポート作成後に元の高解像度写真を保持しません。生成されたレポートと小さなローカルプレビュー画像は、ユーザーがそのレポートを削除するかアプリを削除するまで端末の履歴に残る場合があります。本番バックエンドは、アップロード画像と base64 画像ペイロードをアプリケーションログに書き込まず、レポートの生成と保護に必要な一時的な時間のみ保持するよう構成されています。',
       },
       {
         heading: '7. セキュリティ、子ども、変更',
@@ -723,10 +723,10 @@ export const appPrivacyLastUpdated: Partial<Record<string, Record<Lang, string>>
     ja: '最終更新日：2026年6月9日',
   },
   glowup: {
-    ko: '최종 수정일: 2026년 6월 7일',
-    en: 'Last updated: June 7, 2026',
-    zh: '最后更新：2026年6月7日',
-    ja: '最終更新日：2026年6月7日',
+    ko: '최종 수정일: 2026년 6월 17일',
+    en: 'Last updated: June 17, 2026',
+    zh: '最后更新：2026年6月17日',
+    ja: '最終更新日：2026年6月17日',
   },
   smartbap: {
     ko: '최종 수정일: 2026년 6월 8일',
