@@ -121,9 +121,7 @@ function validateCandidatePost(candidate, content, recent) {
   if (recent.sourceUrls.has(candidate.link)) throw new Error('duplicate source URL');
   if (recent.generatedTitles.has(generatedKoreanTitle(candidate))) throw new Error('duplicate generated title');
 
-  const fingerprint = topicTokens(
-    `${generatedKoreanTitle(candidate)} ${candidate.title} ${candidate.summary} ${content.replace(/^---\n[\s\S]*?\n---\n?/, '').slice(0, 2200)}`,
-  );
+  const fingerprint = topicTokens(`${generatedKoreanTitle(candidate)} ${candidate.title} ${candidate.summary}`);
   let closest = { name: '', similarity: 0 };
   for (const post of recent.posts) {
     const similarity = jaccard(fingerprint, post.fingerprint);

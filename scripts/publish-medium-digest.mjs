@@ -86,9 +86,7 @@ function validatePost(filePath, date) {
 
 function validateNoDuplicatePost(filePath, content, data) {
   const currentName = basename(filePath);
-  const currentFingerprint = topicTokens(
-    `${data.title} ${data.description} ${data.sourceTitle} ${content.replace(/^---\n[\s\S]*?\n---\n?/, '').slice(0, 2200)}`,
-  );
+  const currentFingerprint = topicTokens(`${data.title} ${data.description} ${data.sourceTitle}`);
   for (const name of readdirSync(postDir)) {
     if (name === currentName || !/^\d{4}-\d{2}-\d{2}-.*\.md$/.test(name)) continue;
     const otherContent = readFileSync(join(postDir, name), 'utf8');
@@ -99,9 +97,7 @@ function validateNoDuplicatePost(filePath, content, data) {
     if (otherData.sourceUrl && otherData.sourceUrl === data.sourceUrl) {
       throw new Error(`${currentName} duplicates sourceUrl from ${name}`);
     }
-    const otherFingerprint = topicTokens(
-      `${otherData.title} ${otherData.description} ${otherData.sourceTitle} ${otherContent.replace(/^---\n[\s\S]*?\n---\n?/, '').slice(0, 2200)}`,
-    );
+    const otherFingerprint = topicTokens(`${otherData.title} ${otherData.description} ${otherData.sourceTitle}`);
     const similarity = jaccard(currentFingerprint, otherFingerprint);
     if (similarity >= 0.42) {
       throw new Error(`${currentName} is too similar to ${name} (topic similarity ${similarity.toFixed(2)})`);
