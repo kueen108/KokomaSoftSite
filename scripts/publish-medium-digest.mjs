@@ -115,6 +115,8 @@ function topicTokens(value) {
     'into', 'what', 'why', 'how', 'when', 'will', 'can', 'all', 'about', 'after', 'before', 'today', 'medium',
     'ai', 'artificial', 'intelligence', '글', '오늘의', '원문', '도구', '개발자', '중요한', '포인트', '요약',
     '것이다', '있다', '한다', '된다', '사용자', '업무', '실제', '도입', '결과', '검증',
+    '코딩', '에이전트', '반복', '기준', '실패', '품질', '자동화', '블로그', '발행', '작업', '팀',
+    '기능', '모델', '생성', '운영', '질문', '방식',
   ]);
   return new Set(
     value

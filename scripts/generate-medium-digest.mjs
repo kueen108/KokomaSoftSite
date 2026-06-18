@@ -129,7 +129,7 @@ function validateCandidatePost(candidate, content, recent) {
     const similarity = jaccard(fingerprint, post.fingerprint);
     if (similarity > closest.similarity) closest = { name: post.name, similarity };
   }
-  if (closest.similarity >= 0.35) {
+  if (closest.similarity >= 0.42) {
     throw new Error(`too similar to ${closest.name} (${closest.similarity.toFixed(2)})`);
   }
 }
@@ -193,6 +193,8 @@ function topicTokens(value) {
     'the', 'and', 'for', 'with', 'from', 'that', 'this', 'your', 'you', 'are', 'was', 'were', 'have', 'has',
     'into', 'what', 'why', 'how', 'when', 'will', 'can', 'all', 'about', 'after', 'before', 'today', 'medium',
     'ai', 'artificial', 'intelligence', '글', '오늘의', '원문', '도구', '개발자', '중요한', '포인트', '요약',
+    '코딩', '에이전트', '실제', '사용', '업무', '반복', '검증', '기준', '도입', '결과', '실패', '품질',
+    '자동화', '블로그', '발행', '작업', '팀', '기능', '모델', '생성', '사용자', '운영', '질문', '방식',
   ]);
   return new Set(
     stripHtml(value)
