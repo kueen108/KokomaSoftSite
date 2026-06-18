@@ -87,14 +87,18 @@ function firstExistingForDate(prefix, date) {
     .sort()[0] ?? null;
 }
 
-function selectTopic(prefix, posts) {
+function selectTopic(prefix, posts, workflowName) {
   const existingPosts = readExistingPosts(prefix);
-  const candidate = posts.find((post) => !isDuplicateTopic(post, existingPosts));
+  const candidate = [...posts, ...fallbackPostsForWorkflow(workflowName)].find((post) => !isDuplicateTopic(post, existingPosts));
   if (!candidate) {
     const used = existingPosts.map((post) => post.slug ?? post.title).filter(Boolean).join(', ');
-    throw new Error(`no unused ${prefix} topic remains. Add new curated topics before publishing. Used: ${used}`);
+    throw new Error(`no unused ${prefix} topic remains after curated and fallback pools. Used: ${used}`);
   }
   return candidate;
+}
+
+function fallbackPostsForWorkflow(workflowName) {
+  return workflowName === 'developer' ? fallbackDeveloperPosts : fallbackKnowledgePosts;
 }
 
 function readExistingPosts(prefix) {
@@ -732,6 +736,184 @@ const knowledgePosts = [
   },
 ];
 
+const fallbackDeveloperPosts = [
+  {
+    slug: 'webhooks',
+    title: '개발자가 알아야 할 지식: 웹훅, 이벤트를 밖으로 안전하게 내보내는 계약',
+    description: '웹훅을 설계할 때 필요한 서명 검증, 재시도, 멱등성, 이벤트 버전 관리를 실무 관점에서 정리합니다.',
+    sourceTitle: 'Stripe Docs: Best practices for using webhooks',
+    sourceUrl: 'https://docs.stripe.com/webhooks',
+    sourceAuthor: 'Stripe',
+    tags: ['API Design', 'Integration', 'Reliability'],
+    intro: '웹훅은 “무언가 일어났으니 너도 알아야 한다”는 메시지를 외부 시스템에 보내는 방식입니다. 결제 완료, 구독 갱신, 파일 처리 완료, 배포 상태 변경처럼 상대 시스템이 즉시 반응해야 하는 일에 자주 쓰입니다.',
+    why: [
+      '웹훅은 단순한 HTTP POST처럼 보이지만 실제로는 시스템 간 계약입니다. 보내는 쪽은 이벤트가 무엇인지, 언제 재시도하는지, 어떤 순서를 보장하는지 알려야 하고, 받는 쪽은 인증, 중복 처리, 장애 복구를 준비해야 합니다.',
+      '개발자가 웹훅을 알아야 하는 이유는 연동 장애가 조용히 쌓이기 쉽기 때문입니다. 한 번 실패한 결제 이벤트, 두 번 도착한 배송 이벤트, 순서가 뒤집힌 상태 변경 이벤트는 데이터 불일치로 이어집니다.',
+      '좋은 웹훅 설계는 외부 파트너에게 친절합니다. 문서화된 이벤트 타입, 검증 가능한 서명, 안정적인 재시도 정책, 테스트 도구가 있으면 연동 비용이 크게 줄어듭니다.',
+    ],
+    concepts: [
+      '첫 번째는 인증입니다. 웹훅 엔드포인트는 인터넷에 열려 있으므로 요청 본문과 타임스탬프를 공유 비밀키로 서명하고, 받는 쪽은 그 서명을 검증해야 합니다. 단순히 IP allowlist만 믿으면 운영 환경 변화에 약합니다.',
+      '두 번째는 멱등성입니다. 네트워크 오류 때문에 같은 이벤트가 여러 번 도착할 수 있습니다. 수신자는 이벤트 ID를 저장하고 이미 처리한 이벤트를 다시 처리하지 않아야 합니다.',
+      '세 번째는 재시도와 순서입니다. 대부분의 웹훅은 적어도 한 번 전달을 목표로 하며 정확히 한 번 전달을 보장하지 않습니다. 이벤트 순서도 항상 믿기 어렵기 때문에 현재 상태 조회 API와 함께 설계하는 편이 안전합니다.',
+    ],
+    example: '결제 서비스가 `invoice.paid` 웹훅을 보낸다고 합시다. 수신 서버가 500을 반환하면 발신자는 일정 시간 뒤 재시도합니다. 이때 수신자가 이벤트 ID를 기준으로 중복 처리를 하지 않으면 사용자의 구독 기간이 두 번 연장될 수 있습니다. 반대로 재시도 정책이 없다면 일시 장애 하나로 결제 완료 상태가 영원히 반영되지 않을 수 있습니다.',
+    checklist: [
+      '모든 웹훅 요청에 검증 가능한 서명과 타임스탬프가 포함되는가?',
+      '수신자가 이벤트 ID를 저장해 중복 처리를 막는가?',
+      '2xx와 비2xx 응답에 대한 재시도 정책이 문서화되어 있는가?',
+      '이벤트 스키마와 버전 변경 정책이 명확한가?',
+      '웹훅 실패를 운영자가 볼 수 있는 로그, 대시보드, 재전송 기능이 있는가?',
+      '웹훅만 믿지 않고 필요할 때 현재 상태를 다시 조회할 API가 있는가?',
+    ],
+    misconceptions: [
+      '“POST 한 번 보내면 끝”이라는 오해가 있습니다. 웹훅은 네트워크, 인증, 중복, 재시도, 문서화가 모두 들어간 통합 계약입니다.',
+      '“순서대로 올 것이다”라고 가정하는 것도 위험합니다. 서로 다른 큐나 재시도 경로를 거치면 생성 순서와 도착 순서가 달라질 수 있습니다.',
+      '“서명 검증은 받는 쪽 책임”이라고만 보는 것도 부족합니다. 발신자는 안전하게 검증할 수 있는 서명 방식과 예제를 제공해야 합니다.',
+      '“실패하면 파트너가 다시 보내겠지”라는 생각도 불친절합니다. 발신 쪽에는 실패 기록과 재전송 도구가 있어야 운영자가 문제를 복구할 수 있습니다.',
+    ],
+    actions: [
+      '현재 운영 중인 웹훅 하나를 골라 같은 이벤트가 두 번 들어왔을 때 결과가 달라지는지 확인해보세요.',
+      '서명 검증 실패, 오래된 타임스탬프, 알 수 없는 이벤트 타입을 각각 어떻게 처리하는지 테스트를 추가하세요.',
+      '문서에는 예시 payload만 두지 말고 재시도 간격, timeout, 응답 코드 의미, 이벤트 버전 정책을 함께 적어두세요.',
+    ],
+    links: [
+      { title: 'Stripe Docs: Webhooks', url: 'https://docs.stripe.com/webhooks' },
+      { title: 'GitHub Docs: Webhook events and payloads', url: 'https://docs.github.com/en/webhooks/webhook-events-and-payloads' },
+      { title: 'Svix: Webhook best practices', url: 'https://www.svix.com/resources/webhook-best-practices/' },
+    ],
+    takeaway: '웹훅은 HTTP 요청 하나가 아니라, 실패와 중복을 전제로 만든 시스템 간 약속입니다.',
+  },
+  {
+    slug: 'optimistic-locking',
+    title: '개발자가 알아야 할 지식: 낙관적 잠금, 충돌은 드물지만 확인은 꼭 해야 한다',
+    description: '동시 수정 문제를 버전 필드와 조건부 업데이트로 다루는 낙관적 잠금의 원리와 한계를 정리합니다.',
+    sourceTitle: 'Martin Fowler: Optimistic Offline Lock',
+    sourceUrl: 'https://martinfowler.com/eaaCatalog/optimisticOfflineLock.html',
+    sourceAuthor: 'Martin Fowler',
+    tags: ['Databases', 'Concurrency', 'Architecture'],
+    intro: '여러 사용자가 같은 데이터를 수정할 때 문제는 “누가 먼저 저장했는가”보다 “내가 본 값이 아직도 최신인가”입니다.',
+    why: [
+      '웹 애플리케이션에서는 같은 문서, 주문, 설정, 재고를 여러 요청이 동시에 건드릴 수 있습니다. 마지막 저장이 무조건 이기면 앞선 사용자의 변경이 조용히 사라집니다.',
+      '낙관적 잠금은 충돌이 자주 일어나지 않는다고 보고, 미리 잠그기보다 저장 순간에 버전이 바뀌었는지 확인합니다. 충돌이 있으면 저장을 거부하고 사용자나 호출자에게 다시 판단하게 합니다.',
+      '이 방식은 긴 편집 세션, 분산 시스템, REST API에서 특히 유용합니다. 데이터베이스 락을 오래 잡지 않으면서도 잃어버린 업데이트를 막을 수 있기 때문입니다.',
+    ],
+    concepts: [
+      '보통 레코드에 `version`, `updated_at`, `etag` 같은 값을 둡니다. 클라이언트는 읽은 버전을 함께 보내고, 서버는 현재 버전이 같을 때만 업데이트합니다.',
+      'SQL에서는 `UPDATE documents SET body = ?, version = version + 1 WHERE id = ? AND version = ?` 같은 조건부 업데이트가 핵심입니다. 영향받은 row가 0이면 누군가 먼저 수정한 것입니다.',
+      'HTTP에서는 `ETag`와 `If-Match` 헤더를 활용할 수 있습니다. 클라이언트가 알고 있는 ETag와 서버의 현재 ETag가 다르면 `412 Precondition Failed`로 충돌을 알려줄 수 있습니다.',
+    ],
+    example: '관리자 A와 B가 같은 상품 설명을 열었습니다. A가 먼저 저장하면서 version이 7에서 8이 됩니다. B가 여전히 version 7 기준으로 저장하려 하면 서버는 업데이트를 거부합니다. B는 최신 내용을 다시 보고 병합하거나 자신의 변경을 포기할 수 있습니다.',
+    checklist: [
+      '동시 수정될 수 있는 주요 엔티티에 버전 필드가 있는가?',
+      '업데이트 쿼리가 ID만이 아니라 이전 버전까지 조건으로 확인하는가?',
+      '충돌 시 클라이언트가 명확한 오류와 복구 경로를 받는가?',
+      '자동 재시도가 사용자의 변경을 무조건 덮어쓰지 않는가?',
+      '배치 작업과 관리자 도구도 같은 충돌 규칙을 따르는가?',
+    ],
+    misconceptions: [
+      '“트랜잭션을 쓰면 필요 없다”는 오해가 있습니다. 짧은 트랜잭션은 DB 내부 일관성을 지키지만, 사용자가 화면을 열어두는 긴 시간의 충돌까지 자동으로 해결하지는 않습니다.',
+      '“updated_at만 보면 충분하다”도 조심해야 합니다. 시간 정밀도, 시계 동기화, DB 갱신 방식에 따라 버전 숫자가 더 명확할 수 있습니다.',
+      '“충돌은 드물다”는 말은 무시해도 된다는 뜻이 아닙니다. 드문 충돌일수록 조용히 데이터가 사라지면 찾기 어렵습니다.',
+    ],
+    actions: [
+      '중요한 수정 화면 하나를 골라 두 브라우저 탭에서 동시에 저장해보세요. 앞선 변경이 사라지면 낙관적 잠금 후보입니다.',
+      'API 문서에 업데이트 요청이 어떤 버전 조건을 요구하는지 명시하세요.',
+      '충돌 메시지는 기술 오류가 아니라 사용자가 다음 선택을 할 수 있는 안내로 작성하세요.',
+    ],
+    links: [
+      { title: 'Martin Fowler: Optimistic Offline Lock', url: 'https://martinfowler.com/eaaCatalog/optimisticOfflineLock.html' },
+      { title: 'MDN: ETag', url: 'https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/ETag' },
+      { title: 'MDN: If-Match', url: 'https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/If-Match' },
+    ],
+    takeaway: '낙관적 잠금은 충돌이 없다고 믿는 기술이 아니라, 충돌이 있을 때 조용히 덮어쓰지 않게 만드는 안전장치입니다.',
+  },
+];
+
+const fallbackKnowledgePosts = [
+  {
+    slug: 'dunning-kruger-effect',
+    title: '오늘의 지식: 더닝-크루거 효과, 모를수록 확신하기 쉬운 이유',
+    description: '자기 평가의 오류로 알려진 더닝-크루거 효과를 학습, 조직 의사결정, 전문가 신뢰의 관점에서 설명합니다.',
+    sourceTitle: 'Encyclopaedia Britannica: Dunning-Kruger effect',
+    sourceUrl: 'https://www.britannica.com/science/Dunning-Kruger-effect',
+    sourceAuthor: 'Encyclopaedia Britannica',
+    tags: ['Psychology', 'Thinking', 'Decision Making'],
+    intro: '사람은 자신이 모르는 것을 정확히 모릅니다. 이 단순한 사실 때문에 어떤 사람은 실력이 부족할수록 오히려 더 강하게 확신하고, 실력이 늘수록 자신의 한계를 더 잘 보게 됩니다.',
+    explain: [
+      '더닝-크루거 효과는 특정 영역에서 능력이 낮은 사람이 자신의 능력을 과대평가하기 쉬운 현상을 말합니다. 문제를 풀 능력이 부족하면 동시에 자신의 풀이가 왜 틀렸는지 알아차리는 능력도 부족해지기 때문입니다.',
+      '이 효과는 “무능한 사람은 모두 자신감이 넘친다”는 조롱이 아닙니다. 인간의 자기 평가가 얼마나 어려운지 보여주는 심리학적 경고입니다. 초보자는 무엇을 모르는지 모르고, 숙련자는 변수가 얼마나 많은지 알기 때문에 더 조심스러워질 수 있습니다.',
+      '핵심은 지식과 메타인지가 함께 자란다는 점입니다. 어느 분야를 조금 배울 때는 세상이 단순해 보이지만, 더 깊이 들어가면 예외, 맥락, 조건, 한계가 보이기 시작합니다.',
+    ],
+    why: [
+      '현대 사회는 빠른 의견을 보상합니다. 회의, 소셜 미디어, 투자 판단, 기술 선택에서 확신 있는 말은 종종 전문성처럼 보입니다. 하지만 확신의 크기와 판단의 품질은 같은 것이 아닙니다.',
+      '조직에서는 이 효과가 의사결정의 위험이 됩니다. 문제를 잘 모르는 사람이 단순한 해결책을 강하게 밀고, 실제로 복잡성을 아는 사람은 조심스럽게 말하다가 덜 설득력 있어 보일 수 있습니다.',
+      '개인 학습에서도 중요합니다. 무언가를 처음 익힌 뒤 “이제 알겠다”는 느낌이 들 때가 오히려 가장 조심해야 할 때일 수 있습니다. 그 순간 필요한 것은 더 큰 확신이 아니라 피드백과 검증입니다.',
+    ],
+    examples: [
+      '프로그래밍을 막 배운 사람이 작은 앱 하나를 만들고 “대부분의 서비스는 간단하다”고 생각할 수 있습니다. 하지만 운영, 보안, 장애 대응, 데이터 마이그레이션, 사용자 지원을 겪으면 같은 문제를 훨씬 조심스럽게 보게 됩니다.',
+      '투자에서도 짧은 상승장을 경험한 초보자는 자신의 판단력을 과대평가하기 쉽습니다. 반대로 여러 사이클을 겪은 사람은 운, 유동성, 리스크 관리의 역할을 더 크게 봅니다.',
+      '토론에서 목소리가 큰 사람이 항상 더 많이 아는 것은 아닙니다. 때로는 복잡성을 모르는 사람이 더 짧고 단정적인 문장을 만들기 쉽습니다.',
+    ],
+    misconceptions: [
+      '더닝-크루거 효과는 특정 집단을 비웃는 말이 아닙니다. 누구나 낯선 영역에서는 이 함정에 빠질 수 있습니다.',
+      '자신감이 나쁘다는 뜻도 아닙니다. 문제는 자신감이 검증과 피드백 없이 전문성처럼 취급될 때입니다.',
+      '전문가는 항상 자신감이 낮다는 뜻도 아닙니다. 좋은 전문가는 확신할 수 있는 부분과 불확실한 부분을 구분해서 말합니다.',
+    ],
+    actions: [
+      '새로 배운 주제에 대해 “내가 아직 구분하지 못하는 예외는 무엇인가”를 적어보세요.',
+      '중요한 결정을 내릴 때 확신의 정도와 근거의 질을 분리해서 평가하세요.',
+      '회의에서는 가장 단정적인 의견뿐 아니라 “어떤 조건에서는 틀릴 수 있는가”를 말하는 사람의 신호도 들어보세요.',
+    ],
+    links: [
+      { title: 'Britannica: Dunning-Kruger effect', url: 'https://www.britannica.com/science/Dunning-Kruger-effect' },
+      { title: 'APA Dictionary: Dunning-Kruger effect', url: 'https://dictionary.apa.org/dunning-kruger-effect' },
+      { title: 'Cornell Chronicle: Unskilled and unaware of it', url: 'https://news.cornell.edu/stories/1999/12/study-shows-incompetent-people-too-ignorant-know-it' },
+    ],
+    takeaway: '진짜 배움은 확신이 커지는 과정만이 아니라, 내가 무엇을 모르는지 더 정확히 보게 되는 과정입니다.',
+  },
+  {
+    slug: 'cobra-effect',
+    title: '오늘의 지식: 코브라 효과, 보상이 문제를 더 키울 때',
+    description: '잘못 설계된 인센티브가 예상과 반대로 행동을 바꾸는 코브라 효과를 정책, 조직, 제품 지표에 연결합니다.',
+    sourceTitle: 'Encyclopaedia Britannica: perverse incentive',
+    sourceUrl: 'https://www.britannica.com/topic/perverse-incentive',
+    sourceAuthor: 'Encyclopaedia Britannica',
+    tags: ['Economics', 'Behavior', 'Decision Making'],
+    intro: '문제를 줄이려고 보상을 만들었는데, 사람들이 그 보상을 얻기 위해 문제를 더 많이 만들기 시작한다면 어떻게 될까요. 코브라 효과는 선의의 인센티브가 반대로 작동하는 순간을 설명합니다.',
+    explain: [
+      '코브라 효과는 어떤 문제를 해결하려고 만든 보상이나 규칙이 오히려 그 문제를 늘리는 현상을 말합니다. 흔히 식민지 인도에서 코브라를 줄이려고 죽은 코브라에 현상금을 걸었더니 사람들이 코브라를 사육했다는 이야기에서 이름이 왔습니다.',
+      '이 일화의 역사적 정확성은 논쟁이 있지만, 개념 자체는 매우 유용합니다. 사람은 제도가 측정하고 보상하는 행동에 반응합니다. 그래서 목표와 지표가 어긋나면 문제 해결이 아니라 지표 최적화가 일어납니다.',
+      '핵심은 “사람들이 나쁘다”가 아니라 “시스템이 어떤 행동을 유도하는가”입니다. 좋은 의도만으로는 충분하지 않고, 보상을 받은 사람이 어떻게 우회할지까지 상상해야 합니다.',
+    ],
+    why: [
+      '회사와 서비스는 인센티브로 움직입니다. 영업 보상, 고객지원 처리 건수, 앱의 체류 시간, 크리에이터 수익 배분, 교육 평가가 모두 사람의 행동을 바꿉니다.',
+      '단일 지표가 강하게 보상되면 사람은 그 지표를 올리는 가장 쉬운 길을 찾습니다. 처리 건수만 보상하면 어려운 상담을 피하고, 클릭만 보상하면 자극적인 제목이 늘고, 배포 횟수만 보상하면 품질보다 빈도가 앞설 수 있습니다.',
+      '코브라 효과를 이해하면 정책과 제품 실험을 더 신중하게 설계할 수 있습니다. 보상은 목표를 향한 지름길이 아니라, 예상치 못한 우회로까지 함께 만드는 힘입니다.',
+    ],
+    examples: [
+      '버그를 많이 찾은 사람에게만 보상하면 사소한 버그를 쪼개서 보고하거나, 품질을 처음부터 높이는 활동은 덜 인정받을 수 있습니다.',
+      '콘텐츠 플랫폼이 조회 수만 보상하면 짧은 호기심을 자극하는 제목과 반복 업로드가 늘 수 있습니다. 장기 만족도나 신고율을 함께 보지 않으면 생태계 품질이 내려갑니다.',
+      '조직에서 야근 시간을 성실함으로 보상하면 실제 생산성보다 오래 앉아 있는 행동이 강화될 수 있습니다.',
+    ],
+    misconceptions: [
+      '코브라 효과는 인센티브를 쓰지 말자는 뜻이 아닙니다. 인센티브는 강력하기 때문에 더 정교하게 설계해야 한다는 뜻입니다.',
+      '사람들이 일부러 제도를 악용한다는 이야기만도 아닙니다. 선량한 사람도 평가 기준이 바뀌면 자연스럽게 행동을 조정합니다.',
+      '보조 지표를 많이 붙이면 자동으로 해결되는 것도 아닙니다. 지표가 많아질수록 무엇이 정말 중요한지 흐려질 수 있습니다.',
+    ],
+    actions: [
+      '지금 쓰는 핵심 지표 하나에 대해 “이 숫자만 올리려면 어떤 나쁜 행동이 가능할까”를 적어보세요.',
+      '보상 지표와 방어 지표를 함께 두세요. 속도를 보상한다면 품질과 재작업률도 같이 봐야 합니다.',
+      '새 정책을 작게 시작하고, 사람들이 실제로 어떻게 반응하는지 관찰한 뒤 확대하세요.',
+    ],
+    links: [
+      { title: 'Britannica: Perverse incentive', url: 'https://www.britannica.com/topic/perverse-incentive' },
+      { title: 'Wikipedia: Cobra effect', url: 'https://en.wikipedia.org/wiki/Perverse_incentive#The_original_cobra_effect' },
+      { title: 'OECD: Behavioural insights', url: 'https://www.oecd.org/gov/regulatory-policy/behavioural-insights.htm' },
+    ],
+    takeaway: '사람은 목표가 아니라 보상받는 행동을 반복합니다. 좋은 제도는 그 차이를 끝까지 의심합니다.',
+  },
+];
+
 const workflows = {
   developer: {
     prefix: 'developer-knowledge',
@@ -765,7 +947,7 @@ if (!hasFlag('--skip-pull')) {
 let filename = firstExistingForDate(workflow.prefix, date);
 let created = false;
 if (!filename) {
-  const post = selectTopic(workflow.prefix, workflow.posts);
+  const post = selectTopic(workflow.prefix, workflow.posts, workflowName);
   filename = `${workflow.prefix}-${date}-${post.slug}.md`;
   const content = `${frontmatter(post, date, workflowName)}${workflow.article(post)}`;
   writeFileSync(join(postDir, filename), content);
