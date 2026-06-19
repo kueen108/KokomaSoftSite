@@ -89,16 +89,26 @@ function firstExistingForDate(prefix, date) {
 
 function selectTopic(prefix, posts, workflowName) {
   const existingPosts = readExistingPosts(prefix);
-  const candidate = [...posts, ...fallbackPostsForWorkflow(workflowName)].find((post) => !isDuplicateTopic(post, existingPosts));
+  const candidate = [
+    ...posts,
+    ...fallbackPostsForWorkflow(workflowName),
+    ...generatedPostsForWorkflow(workflowName),
+  ].find((post) => !isDuplicateTopic(post, existingPosts));
   if (!candidate) {
     const used = existingPosts.map((post) => post.slug ?? post.title).filter(Boolean).join(', ');
-    throw new Error(`no unused ${prefix} topic remains after curated and fallback pools. Used: ${used}`);
+    throw new Error(`no unused ${prefix} topic remains after curated, fallback, and generated topic pools. Used: ${used}`);
   }
   return candidate;
 }
 
 function fallbackPostsForWorkflow(workflowName) {
   return workflowName === 'developer' ? fallbackDeveloperPosts : fallbackKnowledgePosts;
+}
+
+function generatedPostsForWorkflow(workflowName) {
+  return workflowName === 'developer'
+    ? generatedDeveloperTopicBank.map(developerPostFromTopic)
+    : generatedKnowledgeTopicBank.map(knowledgePostFromTopic);
 }
 
 function readExistingPosts(prefix) {
@@ -911,6 +921,853 @@ const fallbackKnowledgePosts = [
       { title: 'OECD: Behavioural insights', url: 'https://www.oecd.org/gov/regulatory-policy/behavioural-insights.htm' },
     ],
     takeaway: '사람은 목표가 아니라 보상받는 행동을 반복합니다. 좋은 제도는 그 차이를 끝까지 의심합니다.',
+  },
+];
+
+function developerPostFromTopic(topic) {
+  const problem = topic.problem ?? `${topic.subject}는 작은 코드 조각보다 시스템의 약속에 더 가깝습니다.`;
+  const risk = topic.risk ?? '이 기준이 없으면 구현은 동작해도 운영 순간에 비용, 장애, 데이터 불일치가 드러납니다.';
+  const payoff = topic.payoff ?? '개발자가 이 개념을 알면 설계 결정의 이유를 더 분명히 설명하고, 장애가 나기 전에 위험을 줄일 수 있습니다.';
+  return {
+    slug: topic.slug,
+    title: `개발자가 알아야 할 지식: ${topic.subject}, ${topic.angle}`,
+    description: topic.description,
+    sourceTitle: topic.sourceTitle,
+    sourceUrl: topic.sourceUrl,
+    sourceAuthor: topic.sourceAuthor,
+    tags: topic.tags,
+    intro: topic.intro ?? `${topic.subject}는 코드가 커지고 사용자가 늘어날수록 조용히 중요해지는 실무 개념입니다. 처음에는 세부 구현처럼 보이지만, 실제로는 시스템이 실패를 어떻게 다룰지 정하는 기준이 됩니다.`,
+    why: [
+      problem,
+      risk,
+      payoff,
+    ],
+    concepts: [
+      topic.principles?.[0] ?? `첫 번째 핵심은 경계입니다. ${topic.subject}가 적용되는 범위와 적용되지 않는 범위를 구분해야 합니다. 경계가 흐리면 예외 처리가 곳곳에 흩어지고, 나중에는 같은 문제가 서로 다른 방식으로 해결됩니다.`,
+      topic.principles?.[1] ?? `두 번째 핵심은 계약입니다. 서버, 클라이언트, 데이터베이스, 운영 도구가 어떤 값을 믿고 어떤 실패를 허용하는지 문서와 코드에 함께 드러나야 합니다.`,
+      topic.principles?.[2] ?? `세 번째 핵심은 관측 가능성입니다. 제대로 설계했는지 알려면 성공 경로뿐 아니라 거절, 충돌, 지연, 재시도 같은 사건도 로그와 지표로 확인할 수 있어야 합니다.`,
+    ],
+    example: topic.example,
+    checklist: topic.checklist,
+    misconceptions: topic.misconceptions,
+    actions: topic.actions,
+    links: [
+      { title: topic.sourceTitle, url: topic.sourceUrl },
+      ...(topic.links ?? []),
+    ],
+    takeaway: topic.takeaway,
+  };
+}
+
+function knowledgePostFromTopic(topic) {
+  return {
+    slug: topic.slug,
+    title: `오늘의 지식: ${topic.subject}, ${topic.angle}`,
+    description: topic.description,
+    sourceTitle: topic.sourceTitle,
+    sourceUrl: topic.sourceUrl,
+    sourceAuthor: topic.sourceAuthor,
+    tags: topic.tags,
+    intro: topic.intro ?? `${topic.subject}는 익숙한 현상을 조금 다르게 보게 해주는 개념입니다. 이름은 짧지만, 그 안에는 우리가 판단하고 행동하는 방식에 대한 중요한 힌트가 들어 있습니다.`,
+    explain: topic.explain,
+    why: topic.why,
+    examples: topic.examples,
+    misconceptions: topic.misconceptions,
+    actions: topic.actions,
+    links: [
+      { title: topic.sourceTitle, url: topic.sourceUrl },
+      ...(topic.links ?? []),
+    ],
+    takeaway: topic.takeaway,
+  };
+}
+
+const generatedDeveloperTopicBank = [
+  {
+    slug: 'schema-migration',
+    subject: '스키마 마이그레이션',
+    angle: '데이터 변경은 배포보다 오래 남는다',
+    description: 'DB 스키마 변경을 안전하게 배포하기 위한 expand-contract, 롤백, 호환성 원칙을 정리합니다.',
+    sourceTitle: 'Prisma Docs: Data migrations',
+    sourceUrl: 'https://www.prisma.io/docs/orm/prisma-migrate/workflows/data-migration',
+    sourceAuthor: 'Prisma',
+    tags: ['Databases', 'Deployment', 'Reliability'],
+    problem: '코드는 되돌리기 쉽지만 데이터 구조는 한 번 바뀌면 오래 남습니다. 컬럼 삭제, 타입 변경, 인덱스 추가, 백필 작업은 배포 버튼보다 느리게 진행되고 장애 범위도 넓습니다.',
+    risk: '마이그레이션을 앱 배포와 한 덩어리로만 보면 새 코드와 옛 코드가 동시에 떠 있는 순간을 놓칩니다. 롤링 배포 중 일부 인스턴스가 새 컬럼을 쓰고 일부는 옛 컬럼만 읽으면 예측하기 어려운 오류가 생깁니다.',
+    payoff: '개발자가 마이그레이션 흐름을 알면 변경을 확장, 전환, 정리 단계로 나누고 데이터 손실 없이 배포할 수 있습니다.',
+    principles: [
+      '첫 번째는 호환성입니다. 새 스키마는 잠시 동안 옛 코드와 새 코드를 모두 받아들여야 합니다. 컬럼을 바로 지우기보다 먼저 추가하고, 양쪽 쓰기나 백필을 거친 뒤 읽기 경로를 옮기는 편이 안전합니다.',
+      '두 번째는 작업 크기입니다. 큰 테이블에 인덱스를 만들거나 값을 채우는 작업은 온라인 여부, 잠금, 배치 크기, 재시도 가능성을 확인해야 합니다.',
+      '세 번째는 검증입니다. 마이그레이션이 끝났다는 것은 명령이 성공했다는 뜻만이 아니라 데이터 개수, null 비율, 읽기 경로, 오류율이 기대와 맞는다는 뜻이어야 합니다.',
+    ],
+    example: '사용자 이름 컬럼을 `name`에서 `display_name`으로 바꾼다고 합시다. 안전한 흐름은 새 컬럼 추가, 기존 값 백필, 새 코드에서 양쪽 쓰기, 읽기 경로 전환, 충분한 관측 후 옛 컬럼 제거입니다. 한 번에 rename하면 롤링 배포 중 일부 서버가 컬럼을 찾지 못할 수 있습니다.',
+    checklist: [
+      '새 스키마가 옛 코드와 새 코드 모두에서 안전하게 동작하는가?',
+      '대용량 테이블 변경이 긴 잠금이나 복제를 밀리게 만들지 않는가?',
+      '백필은 중단 후 다시 실행해도 같은 결과를 내는가?',
+      '롤백할 때 코드뿐 아니라 데이터 상태도 고려했는가?',
+      '마이그레이션 완료를 검증할 쿼리와 지표가 준비되어 있는가?',
+    ],
+    misconceptions: [
+      '“마이그레이션 파일이 있으니 안전하다”는 오해가 있습니다. 파일은 절차일 뿐이고 운영 데이터의 크기와 배포 방식이 실제 위험을 정합니다.',
+      '“트래픽 적은 시간에 하면 된다”도 절반만 맞습니다. 잠금과 복제 지연은 적은 트래픽에서도 치명적일 수 있습니다.',
+      '“실패하면 롤백하면 된다”는 말도 데이터 변경에서는 조심해야 합니다. 삭제되거나 합쳐진 데이터는 코드처럼 간단히 되돌릴 수 없습니다.',
+    ],
+    actions: [
+      '다음 스키마 변경을 expand, migrate, contract 세 단계로 나눠 적어보세요.',
+      '백필 스크립트는 작은 배치와 재시작 가능성을 기준으로 점검하세요.',
+      '마이그레이션 PR에는 롤백 계획과 완료 검증 쿼리를 함께 남기세요.',
+    ],
+    links: [
+      { title: 'PlanetScale: Online schema changes', url: 'https://planetscale.com/docs/concepts/online-schema-change' },
+      { title: 'GitLab Docs: Database migrations style guide', url: 'https://docs.gitlab.com/development/database/migrations_for_multiple_databases/' },
+    ],
+    takeaway: '좋은 스키마 변경은 한 번에 바꾸는 기술이 아니라, 옛 세계와 새 세계가 잠시 공존하게 만드는 설계입니다.',
+  },
+  {
+    slug: 'queue-visibility-timeout',
+    subject: '큐 visibility timeout',
+    angle: '작업이 사라진 것이 아니라 잠시 안 보이는 것이다',
+    description: '메시지 큐에서 visibility timeout이 중복 처리, 재시도, 작업 시간 설계에 주는 영향을 설명합니다.',
+    sourceTitle: 'AWS SQS Developer Guide: Visibility timeout',
+    sourceUrl: 'https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-visibility-timeout.html',
+    sourceAuthor: 'Amazon Web Services',
+    tags: ['Queues', 'Reliability', 'Distributed Systems'],
+    problem: '큐에서 메시지를 가져오는 순간 메시지가 삭제된다고 생각하면 재시도와 중복 처리의 핵심을 놓칩니다. 많은 큐는 소비자가 처리하는 동안 메시지를 잠시 숨길 뿐, 성공 삭제가 오기 전까지는 다시 나타날 수 있습니다.',
+    risk: '작업 시간이 visibility timeout보다 길면 같은 메시지가 다른 워커에게 다시 전달됩니다. 반대로 timeout을 너무 길게 잡으면 실패한 작업이 오래 묶여 복구가 늦어집니다.',
+    payoff: '이 개념을 알면 작업 처리 시간을 현실적으로 측정하고, 중복 실행을 전제로 안전한 워커를 만들 수 있습니다.',
+    principles: [
+      '첫 번째는 처리 시간과 timeout의 관계입니다. 평균이 아니라 느린 경우까지 보고 timeout을 정해야 합니다.',
+      '두 번째는 멱등성입니다. 메시지는 한 번만 처리된다고 가정하면 안 됩니다. 작업 ID, 이벤트 ID, 상태 전이를 기준으로 중복 실행을 막아야 합니다.',
+      '세 번째는 연장과 실패 처리입니다. 긴 작업은 heartbeat나 timeout 연장을 쓰고, 반복 실패 메시지는 dead letter queue로 보내 원인을 따로 봐야 합니다.',
+    ],
+    example: '이미지 변환 작업이 보통 20초지만 가끔 3분 걸린다고 합시다. visibility timeout이 60초라면 느린 작업은 아직 처리 중인데 큐에 다시 보입니다. 두 워커가 같은 이미지를 변환하고, 결과 파일을 서로 덮어쓸 수 있습니다.',
+    checklist: [
+      '작업 시간의 p95, p99가 visibility timeout보다 충분히 짧은가?',
+      '작업이 중복 실행되어도 최종 상태가 망가지지 않는가?',
+      '긴 작업은 timeout을 연장하거나 작은 작업으로 나뉘어 있는가?',
+      '반복 실패 메시지는 DLQ로 이동하고 알림이 가는가?',
+      '메시지 삭제는 실제 처리 성공 뒤에만 수행되는가?',
+    ],
+    misconceptions: [
+      '“큐에서 받았으니 내 것이다”라는 오해가 있습니다. 처리 성공을 확정하기 전까지 메시지는 다시 나타날 수 있습니다.',
+      '“timeout을 아주 길게 잡으면 안전하다”도 위험합니다. 워커가 죽었을 때 복구가 늦어지고 큐 지연이 커집니다.',
+      '“중복은 큐가 막아준다”는 생각도 부족합니다. 대부분의 분산 큐는 적어도 한 번 전달을 기준으로 설계됩니다.',
+    ],
+    actions: [
+      '가장 오래 걸리는 큐 작업의 처리 시간 분포를 확인하세요.',
+      '작업 결과 저장 경로에 idempotency key나 상태 전이 조건을 넣으세요.',
+      'DLQ 메시지를 운영자가 쉽게 볼 수 있는 대시보드에 올리세요.',
+    ],
+    links: [
+      { title: 'Google Cloud Pub/Sub: Exactly-once delivery', url: 'https://cloud.google.com/pubsub/docs/exactly-once-delivery' },
+      { title: 'RabbitMQ: Consumer acknowledgements', url: 'https://www.rabbitmq.com/docs/confirms' },
+    ],
+    takeaway: '큐 작업은 한 번 가져오면 끝이 아닙니다. 성공을 확인할 때까지 메시지는 다시 돌아올 수 있습니다.',
+  },
+  {
+    slug: 'database-indexes',
+    subject: '데이터베이스 인덱스',
+    angle: '빠른 조회는 공짜가 아니다',
+    description: '인덱스가 읽기 성능을 높이는 방식과 쓰기 비용, 선택도, 실행 계획을 함께 보는 법을 정리합니다.',
+    sourceTitle: 'PostgreSQL Docs: Indexes',
+    sourceUrl: 'https://www.postgresql.org/docs/current/indexes.html',
+    sourceAuthor: 'PostgreSQL Global Development Group',
+    tags: ['Databases', 'Performance', 'SQL'],
+    example: '주문 테이블에서 `WHERE user_id = ? ORDER BY created_at DESC LIMIT 20` 쿼리가 자주 쓰인다면 `user_id`만 있는 인덱스보다 `(user_id, created_at)` 복합 인덱스가 더 적합할 수 있습니다. 하지만 모든 필드에 인덱스를 붙이면 주문 생성과 업데이트가 느려집니다.',
+    checklist: [
+      '느린 쿼리의 WHERE, JOIN, ORDER BY가 어떤 인덱스를 실제로 쓰는가?',
+      '인덱스 컬럼의 선택도가 충분한가?',
+      '복합 인덱스의 컬럼 순서가 실제 쿼리 패턴과 맞는가?',
+      '쓰기 빈도가 높은 테이블에 불필요한 인덱스가 쌓여 있지 않은가?',
+      'EXPLAIN 결과를 보고 추측과 실제 실행 계획을 비교했는가?',
+    ],
+    misconceptions: [
+      '“인덱스는 많을수록 빠르다”는 오해가 있습니다. 인덱스는 읽기를 돕지만 쓰기와 저장 공간 비용을 늘립니다.',
+      '“컬럼 하나씩 인덱스를 만들면 된다”도 부족합니다. 실제 쿼리는 여러 조건과 정렬을 함께 사용합니다.',
+      '“개발 DB에서 빠르면 운영도 빠르다”는 판단은 위험합니다. 데이터 크기와 분포가 바뀌면 실행 계획도 바뀝니다.',
+    ],
+    actions: [
+      '가장 느린 쿼리 하나를 골라 EXPLAIN을 읽어보세요.',
+      '사용되지 않는 인덱스를 찾아 제거 후보로 분류하세요.',
+      '새 인덱스는 어떤 쿼리를 빠르게 만들고 어떤 쓰기를 느리게 할지 PR에 적으세요.',
+    ],
+    takeaway: '인덱스는 검색을 빠르게 하는 마법이 아니라, 읽기와 쓰기 사이의 명시적인 거래입니다.',
+  },
+  {
+    slug: 'cache-invalidation',
+    subject: '캐시 무효화',
+    angle: '빠른 데이터보다 맞는 데이터가 먼저다',
+    description: '캐시 TTL, 삭제, 갱신 전략을 데이터 신선도와 장애 대응 관점에서 설명합니다.',
+    sourceTitle: 'AWS Whitepaper: Caching challenges and strategies',
+    sourceUrl: 'https://docs.aws.amazon.com/whitepapers/latest/database-caching-strategies-using-redis/caching-challenges-and-strategies.html',
+    sourceAuthor: 'Amazon Web Services',
+    tags: ['Caching', 'Performance', 'Reliability'],
+    example: '상품 가격을 10분 캐시한다고 합시다. 조회는 빨라지지만 가격 변경 직후 사용자는 오래된 가격을 볼 수 있습니다. 결제처럼 정확성이 중요한 경로에서는 캐시 값을 그대로 믿지 않고 원본 저장소에서 다시 확인해야 합니다.',
+    checklist: [
+      '캐시된 값이 틀렸을 때 사용자나 비즈니스 피해가 얼마나 큰가?',
+      'TTL은 데이터 변경 빈도와 허용 가능한 오래됨을 기준으로 정했는가?',
+      '쓰기 후 캐시 삭제나 갱신이 실패하면 어떻게 복구되는가?',
+      '캐시 stampede를 막는 보호 장치가 있는가?',
+      '캐시 hit rate뿐 아니라 stale 데이터 문제도 추적하는가?',
+    ],
+    misconceptions: [
+      '“TTL만 있으면 언젠가 맞아진다”는 말은 운영 피해를 과소평가합니다. 언젠가 맞는 것과 지금 안전한 것은 다릅니다.',
+      '“캐시는 읽기 성능 문제다”도 부족합니다. 캐시는 데이터 일관성과 장애 전파 방식까지 바꿉니다.',
+      '“삭제하면 끝”이라는 생각도 위험합니다. 삭제 요청 자체가 실패하거나 순서가 뒤집힐 수 있습니다.',
+    ],
+    actions: [
+      '캐시된 데이터 하나를 골라 허용 가능한 stale 시간을 명확히 적으세요.',
+      '쓰기 경로에서 캐시 삭제 실패를 로그와 지표로 남기세요.',
+      '핵심 경로는 캐시 값을 다시 검증해야 하는지 확인하세요.',
+    ],
+    links: [
+      { title: 'Cloudflare: Cache concepts', url: 'https://developers.cloudflare.com/cache/concepts/' },
+      { title: 'Redis Docs: Caching', url: 'https://redis.io/solutions/caching/' },
+    ],
+    takeaway: '캐시의 목표는 빠른 오답이 아니라, 충분히 빠른 정답을 안정적으로 주는 것입니다.',
+  },
+  {
+    slug: 'secret-rotation',
+    subject: '시크릿 로테이션',
+    angle: '비밀은 한 번 만들고 잊는 값이 아니다',
+    description: 'API 키와 토큰을 안전하게 교체하기 위한 이중 키, 배포 순서, 만료 정책을 정리합니다.',
+    sourceTitle: 'AWS Secrets Manager: Rotate secrets',
+    sourceUrl: 'https://docs.aws.amazon.com/secretsmanager/latest/userguide/rotating-secrets.html',
+    sourceAuthor: 'Amazon Web Services',
+    tags: ['Security', 'Operations', 'Configuration'],
+    example: '결제 API 키를 바꿔야 하는데 서버 20대가 환경 변수를 읽고 있다고 합시다. 새 키를 발급하고, 앱이 새 키와 옛 키를 모두 허용하는 기간을 둔 뒤, 모든 인스턴스 배포가 끝난 것을 확인하고 옛 키를 폐기해야 끊김이 없습니다.',
+    checklist: [
+      '시크릿이 코드, 로그, 빌드 산출물에 남지 않는가?',
+      '새 키와 옛 키가 공존할 수 있는 전환 기간이 있는가?',
+      '키 교체 후 실제로 새 키가 사용되는지 확인할 지표가 있는가?',
+      '폐기한 키로 요청이 들어오면 알림을 받을 수 있는가?',
+      '정기 로테이션과 긴급 유출 대응 절차가 구분되어 있는가?',
+    ],
+    misconceptions: [
+      '“환경 변수에 넣었으니 안전하다”는 오해가 있습니다. 환경 변수도 프로세스, 로그, 디버깅 도구를 통해 노출될 수 있습니다.',
+      '“키를 바꾸면 끝”도 부족합니다. 모든 클라이언트가 새 키를 쓰는지, 옛 키가 정말 막혔는지 확인해야 합니다.',
+      '“유출 사고 때만 교체하면 된다”는 접근은 늦습니다. 평소에 교체 가능한 구조여야 긴급 상황에서도 움직입니다.',
+    ],
+    actions: [
+      '가장 오래된 API 키 하나를 찾아 소유자와 사용처를 확인하세요.',
+      '시크릿 교체 절차를 실제로 한 번 리허설해보세요.',
+      '로그에서 토큰 형태의 문자열이 마스킹되는지 테스트하세요.',
+    ],
+    links: [
+      { title: 'OWASP Secrets Management Cheat Sheet', url: 'https://cheatsheetseries.owasp.org/cheatsheets/Secrets_Management_Cheat_Sheet.html' },
+      { title: 'Google Cloud Secret Manager rotation', url: 'https://cloud.google.com/secret-manager/docs/rotation-recommendations' },
+    ],
+    takeaway: '시크릿 관리는 숨기는 일이 아니라, 안전하게 바꾸고 폐기할 수 있게 만드는 일입니다.',
+  },
+  {
+    slug: 'pagination-cursors',
+    subject: '커서 페이지네이션',
+    angle: '다음 페이지는 숫자가 아니라 위치다',
+    description: 'offset pagination의 한계와 cursor 기반 페이지네이션이 무한 스크롤과 변경 많은 데이터에 유리한 이유를 설명합니다.',
+    sourceTitle: 'GraphQL Docs: Pagination',
+    sourceUrl: 'https://graphql.org/learn/pagination/',
+    sourceAuthor: 'GraphQL Foundation',
+    tags: ['API Design', 'Databases', 'Performance'],
+    example: '피드에서 `OFFSET 1000 LIMIT 20`을 쓰면 앞쪽 데이터가 추가되거나 삭제될 때 같은 항목이 다시 보이거나 건너뛸 수 있습니다. `created_at`과 `id`를 묶은 커서를 쓰면 마지막으로 본 위치 이후의 데이터를 안정적으로 가져올 수 있습니다.',
+    checklist: [
+      '정렬 기준이 항상 결정적이고 고유한가?',
+      '커서가 사용자가 임의로 조작해도 안전한 형태인가?',
+      '새 데이터가 끼어드는 상황에서 중복과 누락이 허용 범위 안인가?',
+      '역방향 페이지 이동이 필요한지 제품 요구사항을 확인했는가?',
+      '커서에 담긴 필드 변경이 API 호환성을 깨지 않는가?',
+    ],
+    misconceptions: [
+      '“페이지 번호가 사용자에게 더 쉽다”는 말은 일부 화면에서만 맞습니다. 끝없는 피드나 로그에서는 위치 기반이 더 자연스럽습니다.',
+      '“커서는 그냥 마지막 ID다”도 부족합니다. 정렬 기준이 시간이라면 동률을 깨는 ID까지 함께 필요할 수 있습니다.',
+      '“offset도 인덱스 있으면 괜찮다”는 생각은 큰 offset에서 비용과 일관성 문제를 놓칩니다.',
+    ],
+    actions: [
+      '무한 스크롤 API 하나를 골라 중복과 누락 가능성을 테스트하세요.',
+      '정렬 기준에 동률이 생길 때 결과 순서가 흔들리지 않는지 확인하세요.',
+      '커서 포맷을 외부 계약으로 보고 버전 변경 가능성을 고려하세요.',
+    ],
+    links: [
+      { title: 'Stripe API pagination', url: 'https://docs.stripe.com/api/pagination' },
+      { title: 'PostgreSQL: LIMIT and OFFSET', url: 'https://www.postgresql.org/docs/current/queries-limit.html' },
+    ],
+    takeaway: '커서 페이지네이션은 몇 번째 묶음인지보다, 마지막으로 어디까지 봤는지를 더 정확히 기억합니다.',
+  },
+  {
+    slug: 'rate-limit-budget',
+    subject: '사용량 예산',
+    angle: '한도는 차단선이 아니라 운영 계약이다',
+    description: 'API 사용량, 비용, 공정성을 다루기 위한 quota와 budget 설계 원칙을 설명합니다.',
+    sourceTitle: 'Google Cloud: Quotas and limits',
+    sourceUrl: 'https://cloud.google.com/docs/quotas',
+    sourceAuthor: 'Google Cloud',
+    tags: ['API Design', 'Cost', 'Operations'],
+    example: 'AI 요약 API를 조직별 월간 예산과 사용자별 분당 한도로 나누면 비용 폭주와 단일 사용자의 남용을 따로 제어할 수 있습니다. 둘 중 하나만 있으면 공정성이나 비용 중 한쪽이 비게 됩니다.',
+    checklist: [
+      '제한 기준이 사용자, 조직, API 키, 기능 비용 중 무엇인지 명확한가?',
+      '한도 초과 응답이 다음 행동을 안내하는가?',
+      '운영자가 임시 증액과 차단을 감사 로그와 함께 수행할 수 있는가?',
+      '사용자가 자신의 남은 예산을 볼 수 있는가?',
+      '무료, 유료, 내부 트래픽 정책이 서로 섞이지 않았는가?',
+    ],
+    misconceptions: [
+      '“한도는 고객을 막는 장치”라는 오해가 있습니다. 좋은 한도는 서비스를 계속 쓰게 만드는 공정성의 장치입니다.',
+      '“비용 큰 기능만 보면 된다”도 부족합니다. 낮은 비용 요청도 반복되면 장애를 만들 수 있습니다.',
+      '“운영자가 수동으로 풀어주면 된다”는 방식은 감사와 일관성을 잃기 쉽습니다.',
+    ],
+    actions: [
+      '가장 비용 큰 API의 호출자를 상위 순으로 확인하세요.',
+      '한도 초과 메시지가 사용자에게 남은 시간이나 대안을 알려주는지 보세요.',
+      '예외 증액 절차를 문서화하고 만료 시간을 두세요.',
+    ],
+    links: [
+      { title: 'GitHub REST API rate limits', url: 'https://docs.github.com/en/rest/using-the-rest-api/rate-limits-for-the-rest-api' },
+      { title: 'OpenAI API rate limits guide', url: 'https://platform.openai.com/docs/guides/rate-limits' },
+    ],
+    takeaway: '사용량 예산은 사용자를 밀어내는 선이 아니라, 모두가 예측 가능하게 쓰기 위한 약속입니다.',
+  },
+  {
+    slug: 'outbox-pattern',
+    subject: '아웃박스 패턴',
+    angle: 'DB 저장과 이벤트 발행 사이의 틈을 줄이는 법',
+    description: '트랜잭션 아웃박스가 데이터 변경과 메시지 발행의 일관성을 다루는 방식을 정리합니다.',
+    sourceTitle: 'microservices.io: Transactional outbox',
+    sourceUrl: 'https://microservices.io/patterns/data/transactional-outbox.html',
+    sourceAuthor: 'Chris Richardson',
+    tags: ['Architecture', 'Messaging', 'Databases'],
+    example: '주문 상태를 DB에 결제 완료로 바꾼 뒤 Kafka 이벤트를 발행해야 한다고 합시다. DB 저장은 성공했는데 이벤트 발행 전에 서버가 죽으면 다른 서비스는 결제 완료를 모릅니다. 아웃박스는 같은 DB 트랜잭션 안에 발행할 이벤트를 기록하고, 별도 프로세스가 안정적으로 내보내게 합니다.',
+    checklist: [
+      '상태 변경과 이벤트 기록이 같은 트랜잭션 안에서 일어나는가?',
+      '이벤트 발행기는 중복 발행을 전제로 설계되었는가?',
+      '아웃박스 테이블 적체와 실패율을 모니터링하는가?',
+      '이벤트 순서가 중요한 aggregate 기준으로 보장되는가?',
+      '소비자는 이벤트 ID로 중복 처리를 막는가?',
+    ],
+    misconceptions: [
+      '“DB 저장 후 바로 publish하면 충분하다”는 오해가 있습니다. 두 작업 사이의 아주 짧은 틈이 운영에서는 데이터 불일치가 됩니다.',
+      '“아웃박스를 쓰면 exactly once가 된다”도 틀립니다. 보통은 중복 가능성을 소비자와 함께 다룹니다.',
+      '“이벤트 브로커 트랜잭션만 쓰면 된다”는 생각도 시스템 경계와 저장소 종류에 따라 맞지 않을 수 있습니다.',
+    ],
+    actions: [
+      '중요한 이벤트 발행 경로 하나에서 DB 성공 후 publish 실패 시나리오를 그려보세요.',
+      '소비자 중복 처리 키가 실제로 저장되는지 확인하세요.',
+      '아웃박스 적체가 사용자 영향으로 이어지기 전에 알림을 걸어두세요.',
+    ],
+    links: [
+      { title: 'Debezium: Outbox event router', url: 'https://debezium.io/documentation/reference/stable/transformations/outbox-event-router.html' },
+      { title: 'AWS Prescriptive Guidance: Transactional outbox', url: 'https://docs.aws.amazon.com/prescriptive-guidance/latest/cloud-design-patterns/transactional-outbox.html' },
+    ],
+    takeaway: '아웃박스 패턴은 저장과 발행을 완벽히 하나로 만들기보다, 실패해도 따라잡을 수 있는 기록을 남깁니다.',
+  },
+  {
+    slug: 'slo-error-budget',
+    subject: 'SLO와 에러 버짓',
+    angle: '완벽한 안정성 대신 합의된 위험을 관리한다',
+    description: '서비스 수준 목표와 에러 버짓이 기능 출시와 안정성 투자를 조율하는 방법을 설명합니다.',
+    sourceTitle: 'Google SRE Workbook: Implementing SLOs',
+    sourceUrl: 'https://sre.google/workbook/implementing-slos/',
+    sourceAuthor: 'Google SRE',
+    tags: ['SRE', 'Reliability', 'Operations'],
+    example: '월간 가용성 목표가 99.9%라면 약 43분의 실패 여유가 있습니다. 이 여유를 빠르게 소진한다면 새 기능 출시보다 안정성 개선을 우선해야 한다는 신호가 됩니다.',
+    checklist: [
+      'SLO가 내부 시스템 지표가 아니라 사용자 경험에 가까운가?',
+      '측정 기간과 제외 조건이 명확한가?',
+      '에러 버짓 소진 속도를 보고 출시 정책이 바뀌는가?',
+      '알림이 SLO 위반 위험과 연결되어 있는가?',
+      '제품팀과 엔지니어링팀이 같은 목표를 보고 있는가?',
+    ],
+    misconceptions: [
+      '“100% 안정성이 목표”라는 말은 현실적인 의사결정을 흐립니다. 비용과 속도까지 고려하면 목표 수준을 합의하는 편이 낫습니다.',
+      '“SLO는 운영팀 문서”도 아닙니다. 사용자의 기대와 제품 약속을 기술 지표로 바꾸는 작업입니다.',
+      '“한 번 정하면 끝”도 아닙니다. 사용자 규모와 제품 성격이 바뀌면 SLO도 다시 봐야 합니다.',
+    ],
+    actions: [
+      '핵심 사용자 여정 하나를 골라 성공률 SLO 초안을 만들어보세요.',
+      '최근 한 달 장애가 에러 버짓을 얼마나 썼는지 계산하세요.',
+      'SLO 위반 위험이 커질 때 출시를 늦출 기준을 정하세요.',
+    ],
+    links: [
+      { title: 'Google SRE Book: Service Level Objectives', url: 'https://sre.google/sre-book/service-level-objectives/' },
+      { title: 'Atlassian: SLOs, SLIs and SLAs', url: 'https://www.atlassian.com/incident-management/kpis/sla-vs-slo-vs-sli' },
+    ],
+    takeaway: '에러 버짓은 장애를 허락하는 면죄부가 아니라, 속도와 안정성의 대화를 숫자로 만드는 도구입니다.',
+  },
+  {
+    slug: 'connection-pooling',
+    subject: '커넥션 풀',
+    angle: '연결을 아끼지 않으면 빠른 서비스도 멈춘다',
+    description: 'DB와 외부 서비스 커넥션 풀의 크기, 대기열, 타임아웃을 설계하는 법을 정리합니다.',
+    sourceTitle: 'HikariCP Wiki: About pool sizing',
+    sourceUrl: 'https://github.com/brettwooldridge/HikariCP/wiki/About-Pool-Sizing',
+    sourceAuthor: 'HikariCP',
+    tags: ['Databases', 'Performance', 'Reliability'],
+    example: '웹 서버 인스턴스 20대가 각각 DB 커넥션 풀 50개를 열면 최대 1000개 연결이 됩니다. DB가 감당할 수 있는 연결 수보다 크면 요청이 늘어난 순간 처리량이 늘기보다 context switching과 대기만 늘어납니다.',
+    checklist: [
+      '전체 인스턴스 수를 곱한 최대 커넥션 수가 DB 한도 안에 있는가?',
+      '풀 대기 시간과 획득 실패를 지표로 보고 있는가?',
+      '느린 쿼리가 커넥션을 오래 붙잡고 있지 않은가?',
+      '외부 API 클라이언트도 연결과 동시성 한도를 갖고 있는가?',
+      '풀 크기 조정이 부하 테스트로 검증되었는가?',
+    ],
+    misconceptions: [
+      '“풀을 크게 하면 더 빠르다”는 오해가 있습니다. 병렬성이 늘어도 DB가 처리할 수 있는 일의 양은 제한되어 있습니다.',
+      '“커넥션 에러는 DB 문제”라고만 보면 애플리케이션의 대기열과 timeout 설정을 놓칩니다.',
+      '“기본값이면 충분하다”는 생각도 위험합니다. 인스턴스 수와 트래픽 패턴에 따라 기본값은 과하거나 부족할 수 있습니다.',
+    ],
+    actions: [
+      '서비스 전체 최대 DB 커넥션 수를 계산하세요.',
+      '커넥션 획득 대기 시간을 대시보드에 추가하세요.',
+      '느린 쿼리와 풀 고갈이 같은 시간에 발생하는지 비교하세요.',
+    ],
+    links: [
+      { title: 'PostgreSQL Docs: Managing kernel resources', url: 'https://www.postgresql.org/docs/current/kernel-resources.html' },
+      { title: 'Microsoft Learn: Connection pooling', url: 'https://learn.microsoft.com/en-us/dotnet/framework/data/adonet/sql-server-connection-pooling' },
+    ],
+    takeaway: '커넥션 풀은 많이 열수록 좋은 수도꼭지가 아니라, 병목을 통제하기 위한 제한 장치입니다.',
+  },
+];
+
+const generatedKnowledgeTopicBank = [
+  {
+    slug: 'anchoring-bias',
+    subject: '앵커링 효과',
+    angle: '처음 본 숫자가 판단을 붙잡는다',
+    description: '협상, 가격, 의사결정에서 첫 정보가 이후 판단에 강한 기준점이 되는 현상을 설명합니다.',
+    sourceTitle: 'The Decision Lab: Anchoring Bias',
+    sourceUrl: 'https://thedecisionlab.com/biases/anchoring-bias',
+    sourceAuthor: 'The Decision Lab',
+    tags: ['Psychology', 'Decision Making', 'Behavior'],
+    intro: '사람은 새 정보를 볼 때 완전히 빈 상태에서 판단하지 않습니다. 처음 본 숫자, 처음 들은 설명, 먼저 제시된 선택지가 마음속 기준점이 됩니다.',
+    explain: [
+      '앵커링 효과는 처음 접한 정보가 이후 판단에 과도한 영향을 주는 인지 편향입니다. 가격표, 예상 일정, 연봉 제안, 뉴스의 첫 문장이 모두 앵커가 될 수 있습니다.',
+      '흥미로운 점은 앵커가 반드시 합리적이거나 관련성이 높을 필요가 없다는 것입니다. 무작위 숫자조차 사람의 추정값을 끌어당길 수 있다는 연구들이 이 효과를 보여줍니다.',
+      '핵심은 기준점의 힘입니다. 우리는 기준점에서 조금씩 조정한다고 느끼지만, 실제로는 충분히 멀리 조정하지 못하는 경우가 많습니다.',
+    ],
+    why: [
+      '가격 협상에서는 먼저 제시된 금액이 대화의 범위를 좁힙니다. 제품 할인 전 가격, 부동산 호가, 프로젝트 일정 추정치가 모두 이후 판단의 출발점이 됩니다.',
+      '조직 의사결정에서도 첫 의견이 강한 앵커가 됩니다. 회의 초반에 나온 숫자가 검증되지 않았더라도 뒤의 논의는 그 주변에서 맴돌기 쉽습니다.',
+      '앵커링을 알면 처음 제시된 정보와 근거의 품질을 분리해서 볼 수 있습니다. 빠른 기준점은 편리하지만, 중요한 판단에서는 일부러 다른 기준점을 찾아야 합니다.',
+    ],
+    examples: [
+      '정가 10만 원에 50% 할인이라고 적힌 상품은 처음부터 5만 원으로 제시된 상품보다 싸게 느껴질 수 있습니다.',
+      '개발 일정 회의에서 누군가 “2주면 되지 않을까”라고 말하면, 충분한 분석 전에도 논의가 2주 주변에서 시작될 수 있습니다.',
+      '중고 거래에서 판매자가 높은 가격을 먼저 부르면 구매자는 그 가격을 기준으로 깎는 폭을 생각하게 됩니다.',
+    ],
+    misconceptions: [
+      '앵커링 효과는 어리석은 사람만 겪는 현상이 아닙니다. 전문가도 시간 압박과 정보 부족 상황에서는 기준점의 영향을 받습니다.',
+      '첫 정보가 항상 틀렸다는 뜻도 아닙니다. 문제는 그 정보가 근거보다 더 큰 힘을 가질 때입니다.',
+      '앵커를 무시하겠다고 마음먹는 것만으로 충분하지 않습니다. 대안 기준과 독립적인 추정 절차가 필요합니다.',
+    ],
+    actions: [
+      '중요한 숫자를 결정할 때 첫 제안과 독립적으로 계산한 값을 따로 적어보세요.',
+      '회의에서는 첫 추정치를 말하기 전에 각자 조용히 추정한 값을 먼저 모아보세요.',
+      '가격을 볼 때 할인율보다 최종 지불 가치와 대체재 가격을 함께 비교하세요.',
+    ],
+    links: [
+      { title: 'Wikipedia: Anchoring effect', url: 'https://en.wikipedia.org/wiki/Anchoring_effect' },
+      { title: 'Nielsen Norman Group: Anchoring Bias', url: 'https://www.nngroup.com/articles/anchoring-bias/' },
+    ],
+    takeaway: '처음 본 숫자는 출발점처럼 보이지만, 종종 생각의 울타리가 됩니다.',
+  },
+  {
+    slug: 'confirmation-bias',
+    subject: '확증 편향',
+    angle: '믿고 싶은 증거가 더 잘 보인다',
+    description: '사람이 기존 믿음을 지지하는 정보는 쉽게 받아들이고 반대 정보는 덜 보는 경향을 설명합니다.',
+    sourceTitle: 'Britannica: Confirmation bias',
+    sourceUrl: 'https://www.britannica.com/science/confirmation-bias',
+    sourceAuthor: 'Encyclopaedia Britannica',
+    tags: ['Psychology', 'Thinking', 'Decision Making'],
+    explain: [
+      '확증 편향은 기존 믿음이나 가설을 지지하는 정보를 더 찾고, 더 기억하고, 더 설득력 있게 느끼는 경향입니다.',
+      '이 편향은 정보를 일부러 왜곡하는 행동만을 뜻하지 않습니다. 검색어 선택, 읽는 기사, 기억에 남는 사례, 반박을 대하는 태도에서 조용히 작동합니다.',
+      '핵심은 생각의 편안함입니다. 사람은 자신의 세계관을 흔드는 정보보다 이미 가진 생각을 정리해주는 정보를 더 빨리 이해합니다.',
+    ],
+    why: [
+      '소셜 미디어와 추천 알고리즘은 확증 편향을 키우기 쉽습니다. 내가 반응한 정보와 비슷한 정보가 더 많이 오면 세상이 내 생각과 비슷하게만 보입니다.',
+      '투자, 채용, 제품 기획에서도 위험합니다. 마음에 든 후보나 아이디어가 생기면 좋은 신호만 모으고 경고 신호를 설명해버릴 수 있습니다.',
+      '확증 편향을 줄이는 목적은 의견을 없애는 것이 아닙니다. 의견을 갖되, 그 의견이 틀렸을 가능성을 확인할 절차를 두는 것입니다.',
+    ],
+    examples: [
+      '새 제품 아이디어가 마음에 들면 긍정적인 사용자 반응 몇 개는 크게 보이고, 무관심한 다수의 신호는 “아직 몰라서 그렇다”고 넘길 수 있습니다.',
+      '건강 정보를 찾을 때 이미 믿는 치료법 이름과 “효과”를 함께 검색하면 반대 근거보다 지지 사례를 더 많이 보게 됩니다.',
+      '팀원이 마음에 들지 않으면 같은 실수도 성격 문제로 해석하고, 마음에 드는 사람의 실수는 상황 탓으로 돌릴 수 있습니다.',
+    ],
+    misconceptions: [
+      '확증 편향은 고집 센 사람만의 문제가 아닙니다. 누구나 빠르게 판단해야 할 때 자기 믿음에 기대기 쉽습니다.',
+      '반대 의견을 한 번 읽는 것만으로 해결되지 않습니다. 어떤 반대 증거가 실제로 내 결론을 바꿀지 미리 정해야 합니다.',
+      '모든 의견을 같은 무게로 보라는 뜻도 아닙니다. 근거의 품질을 따지되, 불편한 근거를 자동으로 낮게 평가하지 말자는 뜻입니다.',
+    ],
+    actions: [
+      '중요한 결론을 내리기 전에 “이 생각이 틀렸다면 어떤 증거가 보여야 할까”를 적어보세요.',
+      '검색할 때 내 주장과 반대되는 문장으로도 한 번 찾아보세요.',
+      '회의에서 한 사람에게 의도적으로 반대 근거 수집 역할을 맡겨보세요.',
+    ],
+    links: [
+      { title: 'Wikipedia: Confirmation bias', url: 'https://en.wikipedia.org/wiki/Confirmation_bias' },
+      { title: 'APA Dictionary: confirmation bias', url: 'https://dictionary.apa.org/confirmation-bias' },
+    ],
+    takeaway: '좋은 판단은 증거를 많이 모으는 것보다, 내 생각을 흔드는 증거도 들어오게 만드는 데서 시작합니다.',
+  },
+  {
+    slug: 'planning-fallacy',
+    subject: '계획 오류',
+    angle: '우리는 미래의 방해를 너무 작게 본다',
+    description: '일정과 비용을 예측할 때 낙관적으로 과소평가하는 계획 오류를 프로젝트와 일상에 연결합니다.',
+    sourceTitle: 'APA Dictionary: planning fallacy',
+    sourceUrl: 'https://dictionary.apa.org/planning-fallacy',
+    sourceAuthor: 'American Psychological Association',
+    tags: ['Psychology', 'Productivity', 'Decision Making'],
+    explain: [
+      '계획 오류는 사람들이 작업을 끝내는 데 필요한 시간, 비용, 노력을 반복적으로 과소평가하는 경향입니다.',
+      '문제는 경험이 없어서만 생기지 않습니다. 과거에도 늦었는데 이번에는 다를 것이라고 생각하는 순간에도 계획 오류가 작동합니다.',
+      '핵심은 내부 관점의 함정입니다. 우리는 이번 작업의 의도와 순서를 자세히 보지만, 과거 비슷한 작업들이 실제로 얼마나 지연되었는지는 덜 봅니다.',
+    ],
+    why: [
+      '프로젝트 일정은 기술 문제가 아니라 신뢰 문제입니다. 반복적으로 낙관적인 일정은 팀의 집중력과 이해관계자의 신뢰를 동시에 깎습니다.',
+      '개인 일정에서도 마찬가지입니다. 이동 시간, 준비 시간, 컨텍스트 전환, 예상 못 한 질문을 빼고 계획하면 하루가 늘 밀립니다.',
+      '계획 오류를 이해하면 의지가 아니라 기준을 바꾸게 됩니다. “열심히 하면 된다”보다 과거 데이터와 버퍼를 쓰는 편이 더 정직합니다.',
+    ],
+    examples: [
+      '간단한 기능이라고 생각했는데 권한, 빈 상태, 에러 처리, QA, 배포 승인까지 붙으면서 일정이 두 배가 될 수 있습니다.',
+      '이사 준비를 하루면 된다고 생각하지만 포장재 구매, 주소 변경, 청소, 예상 못 한 수리까지 시간이 늘어납니다.',
+      '글 하나를 쓰는 시간도 초안 작성만 계산하면 짧아 보이지만 자료 확인, 편집, 이미지, 발행 확인까지 포함하면 달라집니다.',
+    ],
+    misconceptions: [
+      '계획 오류는 게으름의 문제가 아닙니다. 성실한 사람도 불확실성을 낮게 잡으면 같은 오류를 냅니다.',
+      '버퍼를 넣는 것은 비효율이 아닙니다. 변동성이 있는 일을 현실적으로 다루는 방법입니다.',
+      '과거 평균만 보면 충분하다는 뜻도 아닙니다. 이번 작업이 과거와 어떤 점에서 다른지 함께 봐야 합니다.',
+    ],
+    actions: [
+      '새 일정 추정 전에 비슷한 과거 작업 세 개의 실제 소요 시간을 확인하세요.',
+      '작업을 “개발 완료”가 아니라 검증과 배포까지 포함한 완료 기준으로 나누세요.',
+      '일정에는 집중 시간뿐 아니라 리뷰 대기와 컨텍스트 전환 비용도 넣어보세요.',
+    ],
+    links: [
+      { title: 'Wikipedia: Planning fallacy', url: 'https://en.wikipedia.org/wiki/Planning_fallacy' },
+      { title: 'LessWrong: Planning fallacy', url: 'https://www.lesswrong.com/tag/planning-fallacy' },
+    ],
+    takeaway: '계획은 의지의 선언이 아니라, 과거의 방해까지 포함한 예측이어야 합니다.',
+  },
+  {
+    slug: 'loss-aversion',
+    subject: '손실 회피',
+    angle: '잃는 고통은 얻는 기쁨보다 크게 느껴진다',
+    description: '같은 크기의 이익과 손실을 다르게 느끼는 손실 회피가 선택과 협상에 미치는 영향을 설명합니다.',
+    sourceTitle: 'The Decision Lab: Loss Aversion',
+    sourceUrl: 'https://thedecisionlab.com/biases/loss-aversion',
+    sourceAuthor: 'The Decision Lab',
+    tags: ['Behavioral Economics', 'Psychology', 'Decision Making'],
+    explain: [
+      '손실 회피는 같은 크기의 이익보다 손실을 더 강하게 느끼는 경향입니다. 10만 원을 얻는 기쁨보다 10만 원을 잃는 고통이 더 크게 다가올 수 있습니다.',
+      '이 현상은 행동경제학에서 중요한 개념으로, 사람들이 위험을 피하거나 이미 가진 것을 과하게 지키려는 행동을 설명합니다.',
+      '핵심은 기준점입니다. 무엇을 이미 내 것이라고 느끼는지에 따라 같은 변화도 이익이나 손실로 다르게 해석됩니다.',
+    ],
+    why: [
+      '제품과 가격 정책에서는 무료 체험 종료, 기능 제거, 요금제 변경이 강한 반발을 부를 수 있습니다. 사용자는 새 혜택보다 잃는 기능을 더 크게 봅니다.',
+      '투자에서는 손실을 확정하기 싫어 손해 난 자산을 오래 붙잡는 행동으로 이어질 수 있습니다.',
+      '손실 회피를 이해하면 변화 관리가 달라집니다. 사람들에게 무엇을 얻게 되는지만 말하지 말고, 무엇을 잃는다고 느끼는지도 다뤄야 합니다.',
+    ],
+    examples: [
+      '앱에서 자주 쓰던 버튼 위치가 바뀌면 새 디자인이 더 좋아도 사용자는 익숙함을 잃었다고 느낄 수 있습니다.',
+      '협상에서 같은 금액이라도 “할인 제공”보다 “할인 종료”가 더 강한 행동을 유도할 수 있습니다.',
+      '정리해야 할 물건을 버리지 못하는 이유도 이미 가진 것의 손실을 크게 느끼기 때문일 수 있습니다.',
+    ],
+    misconceptions: [
+      '손실 회피는 비합리적이라는 비난으로 끝낼 개념이 아닙니다. 손실에 민감한 태도는 생존과 안전에 도움이 되었던 면도 있습니다.',
+      '모든 사람이 항상 손실을 피한다는 뜻도 아닙니다. 상황과 성향, 손실의 의미에 따라 위험을 감수하기도 합니다.',
+      '손실을 강조하면 언제나 설득이 잘 된다는 뜻도 아닙니다. 과도한 위협은 불신과 피로를 만듭니다.',
+    ],
+    actions: [
+      '변경을 안내할 때 사용자가 잃는다고 느낄 요소를 먼저 목록으로 적어보세요.',
+      '투자나 구매 결정에서는 “손실을 확정하기 싫어서 미루는가”를 따로 물어보세요.',
+      '무언가를 정리할 때 이미 가진 비용보다 앞으로의 사용 가치로 다시 판단해보세요.',
+    ],
+    links: [
+      { title: 'Wikipedia: Loss aversion', url: 'https://en.wikipedia.org/wiki/Loss_aversion' },
+      { title: 'Nobel Prize: Daniel Kahneman facts', url: 'https://www.nobelprize.org/prizes/economic-sciences/2002/kahneman/facts/' },
+    ],
+    takeaway: '사람은 변화의 총합보다 잃는 부분을 먼저 봅니다. 좋은 설득은 그 감각을 무시하지 않습니다.',
+  },
+  {
+    slug: 'network-effect',
+    subject: '네트워크 효과',
+    angle: '사람이 늘수록 가치도 달라진다',
+    description: '사용자 수가 제품 가치에 영향을 주는 네트워크 효과의 힘과 한계를 설명합니다.',
+    sourceTitle: 'Harvard Business Review: Managing Network Effects',
+    sourceUrl: 'https://hbr.org/2019/01/managing-network-effects',
+    sourceAuthor: 'Harvard Business Review',
+    tags: ['Economics', 'Technology', 'Product'],
+    explain: [
+      '네트워크 효과는 사용자가 늘수록 제품이나 서비스의 가치가 함께 커지는 현상입니다. 전화, 메신저, 결제망, 마켓플레이스, 소셜 플랫폼이 대표적입니다.',
+      '중요한 점은 규모 자체가 아니라 연결의 가치입니다. 사람이 많아도 서로 찾기 어렵거나 품질이 낮으면 네트워크 효과는 약해질 수 있습니다.',
+      '네트워크 효과는 직접 효과와 간접 효과로 나뉩니다. 메신저는 친구가 많을수록 직접 가치가 커지고, 앱스토어는 사용자와 개발자가 서로를 끌어당기는 간접 효과를 가집니다.',
+    ],
+    why: [
+      '네트워크 효과가 강한 시장에서는 초반 성장이 이후 경쟁력을 크게 좌우합니다. 사용자는 사람이 있는 곳으로 가고, 공급자는 수요가 있는 곳으로 갑니다.',
+      '하지만 네트워크 효과는 품질 문제도 증폭합니다. 스팸, 허위 정보, 낮은 품질 공급자가 늘면 사람이 많다는 장점이 오히려 피로가 됩니다.',
+      '이 개념을 알면 플랫폼의 성장을 단순 사용자 수가 아니라 연결 품질과 유동성으로 보게 됩니다.',
+    ],
+    examples: [
+      '메신저 앱은 기능이 조금 부족해도 주변 사람이 모두 쓰면 가치가 커집니다.',
+      '중고거래 플랫폼은 구매자와 판매자가 충분히 있어야 검색과 판매가 빨라집니다.',
+      '개발자 생태계에서는 사용자가 많아야 라이브러리와 문서가 늘고, 자료가 많아질수록 다시 사용자가 늘어납니다.',
+    ],
+    misconceptions: [
+      '네트워크 효과는 자동으로 생기지 않습니다. 같은 공간에 사용자를 모아도 서로에게 가치 있는 연결이 일어나야 합니다.',
+      '크면 항상 강하다는 뜻도 아닙니다. 품질 관리가 실패하면 큰 네트워크는 큰 혼잡이 됩니다.',
+      '초기 사용자가 적으면 불가능하다는 뜻도 아닙니다. 좁은 집단에서 강한 밀도를 먼저 만들 수 있습니다.',
+    ],
+    actions: [
+      '플랫폼을 볼 때 전체 가입자보다 실제로 가치 있는 연결 수를 확인하세요.',
+      '초기 서비스라면 넓은 시장보다 좁은 커뮤니티에서 밀도를 먼저 만드는 전략을 생각해보세요.',
+      '사용자 증가가 품질 저하를 부르는 지점을 미리 정하고 관리 지표를 두세요.',
+    ],
+    links: [
+      { title: 'Wikipedia: Network effect', url: 'https://en.wikipedia.org/wiki/Network_effect' },
+      { title: 'a16z: Network effects', url: 'https://a16z.com/network-effects/' },
+    ],
+    takeaway: '네트워크 효과의 핵심은 숫자가 아니라, 그 숫자들이 서로에게 만들어주는 가치입니다.',
+  },
+  {
+    slug: 'tragedy-of-commons',
+    subject: '공유지의 비극',
+    angle: '모두에게 열린 자원은 모두가 망칠 수도 있다',
+    description: '공유 자원을 개인의 합리적 선택이 고갈시키는 문제와 제도 설계의 필요성을 설명합니다.',
+    sourceTitle: 'Britannica: Tragedy of the commons',
+    sourceUrl: 'https://www.britannica.com/science/tragedy-of-the-commons',
+    sourceAuthor: 'Encyclopaedia Britannica',
+    tags: ['Economics', 'Society', 'Environment'],
+    explain: [
+      '공유지의 비극은 누구나 쓸 수 있는 공동 자원이 개인의 합리적 사용 때문에 과도하게 소비되어 망가지는 현상을 말합니다.',
+      '목초지, 어장, 대기, 도로, 공용 주방, 온라인 커뮤니티의 주의력까지 모두 공유 자원의 성격을 가질 수 있습니다.',
+      '핵심은 개인의 이익과 전체의 지속 가능성이 어긋나는 구조입니다. 한 사람의 추가 사용은 작아 보여도 모두가 같은 선택을 하면 자원이 무너집니다.',
+    ],
+    why: [
+      '환경 문제에서 이 개념은 매우 중요합니다. 오염과 탄소 배출은 개인이나 기업이 비용을 외부로 넘길 때 전체 사회의 부담으로 돌아옵니다.',
+      '디지털 공간에서도 보입니다. 누구나 글을 올릴 수 있는 커뮤니티는 관리 규칙이 없으면 스팸과 저품질 콘텐츠로 가치가 떨어집니다.',
+      '공유지의 비극을 이해하면 도덕적 비난보다 제도 설계가 중요하다는 점을 보게 됩니다. 좋은 규칙은 개인 선택과 공동 이익을 다시 맞춥니다.',
+    ],
+    examples: [
+      '어장에서 각 어부가 조금 더 잡는 것은 개인에게 이익이지만, 모두가 그렇게 하면 물고기 수가 회복되지 못합니다.',
+      '회사 공용 회의실을 아무 규칙 없이 예약하면 일부 사람이 과하게 선점하고 전체 생산성이 떨어질 수 있습니다.',
+      '무료 API가 제한 없이 열려 있으면 일부 사용자의 과도한 호출이 전체 서비스 품질을 낮출 수 있습니다.',
+    ],
+    misconceptions: [
+      '공유지는 반드시 실패한다는 뜻이 아닙니다. 엘리너 오스트롬의 연구처럼 공동체 규칙과 감시, 제재가 있으면 잘 관리될 수 있습니다.',
+      '해결책이 항상 사유화나 강한 규제 하나뿐인 것도 아닙니다. 자원의 성격과 공동체에 따라 다양한 제도가 가능합니다.',
+      '개인의 선의만으로 충분하다는 뜻도 아닙니다. 선의가 있어도 구조가 나쁘면 나쁜 결과가 반복됩니다.',
+    ],
+    actions: [
+      '공유 자원을 볼 때 누가 비용을 내고 누가 이익을 얻는지 나눠보세요.',
+      '공용 도구나 커뮤니티에는 사용 규칙, 제한, 복구 절차를 명확히 두세요.',
+      '문제가 반복되면 개인 탓만 하기보다 인센티브와 감시 구조를 점검하세요.',
+    ],
+    links: [
+      { title: 'Nobel Prize: Elinor Ostrom facts', url: 'https://www.nobelprize.org/prizes/economic-sciences/2009/ostrom/facts/' },
+      { title: 'Wikipedia: Tragedy of the commons', url: 'https://en.wikipedia.org/wiki/Tragedy_of_the_commons' },
+    ],
+    takeaway: '공유 자원은 모두의 것이기 때문에 더 많은 설계와 책임이 필요합니다.',
+  },
+  {
+    slug: 'streisand-effect',
+    subject: '스트라이샌드 효과',
+    angle: '숨기려 할수록 더 널리 퍼진다',
+    description: '정보를 억누르려는 시도가 오히려 관심을 키우는 역설적 현상을 설명합니다.',
+    sourceTitle: 'Wikipedia: Streisand effect',
+    sourceUrl: 'https://en.wikipedia.org/wiki/Streisand_effect',
+    sourceAuthor: 'Wikipedia contributors',
+    tags: ['Media', 'Society', 'Internet'],
+    explain: [
+      '스트라이샌드 효과는 어떤 정보를 숨기거나 삭제하려는 시도가 오히려 그 정보에 대한 관심과 확산을 키우는 현상입니다.',
+      '이름은 바브라 스트라이샌드가 자신의 집 사진 삭제를 요구하면서 오히려 더 큰 관심을 불러온 사건에서 유래했습니다.',
+      '핵심은 금지와 호기심의 결합입니다. 사람들은 왜 숨기려 하는지 궁금해하고, 복제 가능한 인터넷 환경에서는 억제가 확산의 신호가 되기 쉽습니다.',
+    ],
+    why: [
+      '오늘날 정보는 캡처, 복사, 재업로드가 쉽습니다. 단순 삭제 요청은 문제 해결보다 더 많은 사람에게 존재를 알리는 신호가 될 수 있습니다.',
+      '기업과 공인의 위기 대응에서도 중요합니다. 작은 비판을 과도하게 법적 대응하면 비판 내용보다 대응 방식이 더 큰 뉴스가 됩니다.',
+      '이 개념은 침묵하라는 뜻이 아닙니다. 대응의 강도와 방식이 정보의 확산을 어떻게 바꿀지 계산해야 한다는 뜻입니다.',
+    ],
+    examples: [
+      '작은 게시글 하나를 강하게 삭제 요청했더니 사람들이 원문을 보존하고 공유하면서 더 널리 알려질 수 있습니다.',
+      '제품 결함을 설명 없이 숨기면 사용자 커뮤니티는 스스로 증거를 모으고 의혹은 커집니다.',
+      '학교나 조직이 가벼운 풍자를 금지하면 풍자 자체보다 금지 조치가 더 큰 관심을 받기도 합니다.',
+    ],
+    misconceptions: [
+      '스트라이샌드 효과는 모든 삭제 요청이 틀렸다는 뜻이 아닙니다. 개인정보, 불법 콘텐츠, 명백한 허위 정보는 대응이 필요합니다.',
+      '아무 대응도 하지 말라는 뜻도 아닙니다. 때로는 투명한 설명과 빠른 수정이 확산을 줄입니다.',
+      '관심을 끌기 위해 일부러 논란을 만들면 된다는 뜻도 아닙니다. 신뢰 손상은 단기 주목보다 오래 갑니다.',
+    ],
+    actions: [
+      '민감한 게시물에 대응하기 전 삭제, 설명, 수정, 무대응의 확산 가능성을 각각 비교하세요.',
+      '실수가 사실이라면 숨기기보다 무엇을 고쳤는지 빠르게 설명하세요.',
+      '법적 대응은 내용보다 대응 자체가 뉴스가 될 가능성을 검토한 뒤 결정하세요.',
+    ],
+    links: [
+      { title: 'EFF: The Streisand Effect', url: 'https://www.eff.org/deeplinks/2013/01/streisand-effect' },
+      { title: 'Wikipedia: Barbra Streisand', url: 'https://en.wikipedia.org/wiki/Barbra_Streisand' },
+    ],
+    takeaway: '인터넷에서 억제는 때로 가장 큰 홍보가 됩니다. 대응은 내용만큼 신호를 관리하는 일입니다.',
+  },
+  {
+    slug: 'moral-hazard',
+    subject: '도덕적 해이',
+    angle: '위험을 남이 부담하면 행동도 달라진다',
+    description: '보험, 금융, 조직에서 위험 부담이 분리될 때 생기는 행동 변화와 제도 설계를 설명합니다.',
+    sourceTitle: 'Britannica: Moral hazard',
+    sourceUrl: 'https://www.britannica.com/money/moral-hazard',
+    sourceAuthor: 'Encyclopaedia Britannica',
+    tags: ['Economics', 'Risk', 'Society'],
+    explain: [
+      '도덕적 해이는 어떤 행동의 위험이나 비용을 본인이 온전히 부담하지 않을 때 더 위험하게 행동할 수 있는 현상입니다.',
+      '보험이 대표적인 예입니다. 보호 장치가 생기면 사람은 안심하지만, 일부는 사고 예방 노력을 줄일 수 있습니다.',
+      '핵심은 나쁜 사람의 문제가 아니라 위험 분담 구조입니다. 누가 이익을 얻고 누가 손실을 부담하는지가 행동을 바꿉니다.',
+    ],
+    why: [
+      '금융 위기나 기업 구제 논의에서 도덕적 해이는 중요한 쟁점입니다. 손실은 사회가 부담하고 이익은 개인이나 기업이 가져가면 위험한 선택이 반복될 수 있습니다.',
+      '조직에서도 보입니다. 실험 실패 비용을 다른 팀이 떠안고 성과만 특정 팀이 가져가면 무리한 출시가 늘 수 있습니다.',
+      '도덕적 해이를 이해하면 보호와 책임의 균형을 보게 됩니다. 안전망은 필요하지만, 행동을 왜곡하지 않도록 설계해야 합니다.',
+    ],
+    examples: [
+      '렌터카 보험이 모든 손상을 보장한다고 느끼면 운전자가 자기 차보다 덜 조심할 수 있습니다.',
+      '회사가 장애 비용을 운영팀에만 떠넘기고 기능 출시 성과는 개발팀만 받으면 안정성 투자가 줄 수 있습니다.',
+      '은행이 실패해도 구제받는다고 믿으면 위험한 투자에 더 쉽게 뛰어들 수 있습니다.',
+    ],
+    misconceptions: [
+      '도덕적 해이는 보험이나 안전망이 나쁘다는 뜻이 아닙니다. 문제는 보호가 책임과 완전히 분리될 때입니다.',
+      '모든 사람이 보호를 받으면 무책임해진다는 뜻도 아닙니다. 제도 설계와 감시, 자기부담 구조가 행동을 조정합니다.',
+      '도덕성만 강조하면 구조를 놓칩니다. 개인의 마음보다 비용 배분 방식이 더 강한 신호일 때가 많습니다.',
+    ],
+    actions: [
+      '어떤 정책을 볼 때 이익과 손실을 누가 각각 가져가는지 그려보세요.',
+      '팀 목표를 만들 때 성과 지표와 실패 비용이 같은 곳에 보이도록 설계하세요.',
+      '안전망에는 남용을 줄이는 자기부담, 조건, 모니터링을 함께 생각하세요.',
+    ],
+    links: [
+      { title: 'Investopedia: Moral Hazard', url: 'https://www.investopedia.com/terms/m/moralhazard.asp' },
+      { title: 'Wikipedia: Moral hazard', url: 'https://en.wikipedia.org/wiki/Moral_hazard' },
+    ],
+    takeaway: '위험을 누가 부담하는지 바뀌면, 사람의 선택도 조용히 바뀝니다.',
+  },
+  {
+    slug: 'sunk-cost-fallacy',
+    subject: '매몰비용 오류',
+    angle: '이미 쓴 비용은 결정을 대신할 수 없다',
+    description: '이미 투입한 시간과 돈 때문에 좋지 않은 선택을 계속하는 매몰비용 오류를 설명합니다.',
+    sourceTitle: 'The Decision Lab: Sunk Cost Fallacy',
+    sourceUrl: 'https://thedecisionlab.com/biases/the-sunk-cost-fallacy',
+    sourceAuthor: 'The Decision Lab',
+    tags: ['Psychology', 'Economics', 'Decision Making'],
+    explain: [
+      '매몰비용 오류는 이미 쓴 돈, 시간, 노력이 아까워서 앞으로의 가치가 낮은 선택을 계속하는 경향입니다.',
+      '합리적으로는 되돌릴 수 없는 비용보다 앞으로 얻을 이익과 추가 비용을 봐야 합니다. 하지만 사람은 포기를 실패로 느끼기 쉽습니다.',
+      '핵심은 과거와 미래를 분리하는 일입니다. 이미 쓴 비용은 배움의 자료가 될 수 있지만, 다음 결정을 자동으로 정당화하지는 못합니다.',
+    ],
+    why: [
+      '프로젝트가 커질수록 매몰비용 오류는 강해집니다. 이미 개발한 기능, 이미 쓴 예산, 이미 발표한 계획이 방향 전환을 어렵게 만듭니다.',
+      '개인 생활에서도 영화가 재미없어도 끝까지 보거나, 맞지 않는 공부법을 오래 붙잡는 식으로 나타납니다.',
+      '이 오류를 이해하면 중단을 패배가 아니라 자원 재배치로 볼 수 있습니다. 중요한 것은 과거 비용의 체면보다 미래 선택의 품질입니다.',
+    ],
+    examples: [
+      '사용자가 거의 없는 기능에 이미 3개월을 썼다는 이유로 계속 개발하면 더 큰 비용이 들어갈 수 있습니다.',
+      '비싼 공연 티켓을 샀지만 몸이 아픈데도 억지로 가면 이미 쓴 돈에 건강까지 더 잃을 수 있습니다.',
+      '오래 쓴 도구가 팀에 맞지 않는데 이전 설정 비용이 아까워 전환을 미루는 경우도 있습니다.',
+    ],
+    misconceptions: [
+      '매몰비용을 무시하라는 말은 과거를 배우지 말라는 뜻이 아닙니다. 과거 비용은 회고의 대상이지 미래 투자의 이유가 아닙니다.',
+      '중단이 항상 정답이라는 뜻도 아닙니다. 앞으로의 기대 가치가 충분하면 계속하는 것이 맞습니다.',
+      '감정을 배제하라는 뜻도 아닙니다. 아쉬움을 인정하되 결정 기준을 미래로 옮기자는 뜻입니다.',
+    ],
+    actions: [
+      '계속할지 고민되는 일을 “오늘 처음 시작한다면 다시 선택할까”로 물어보세요.',
+      '프로젝트에는 사전에 중단 기준을 정해두세요.',
+      '이미 쓴 비용과 앞으로 필요한 비용을 문서에서 분리해 적으세요.',
+    ],
+    links: [
+      { title: 'Wikipedia: Sunk cost', url: 'https://en.wikipedia.org/wiki/Sunk_cost' },
+      { title: 'BehavioralEconomics.com: Sunk Cost Fallacy', url: 'https://www.behavioraleconomics.com/resources/mini-encyclopedia-of-be/sunk-cost-fallacy/' },
+    ],
+    takeaway: '과거의 비용은 되돌릴 수 없습니다. 그래서 다음 선택은 미래의 가치로 해야 합니다.',
+  },
+  {
+    slug: 'bike-shedding',
+    subject: '파킨슨의 사소함 법칙',
+    angle: '쉬운 문제일수록 말이 길어진다',
+    description: '사람들이 복잡한 핵심보다 이해하기 쉬운 사소한 문제에 과도하게 시간을 쓰는 현상을 설명합니다.',
+    sourceTitle: 'Wikipedia: Law of triviality',
+    sourceUrl: 'https://en.wikipedia.org/wiki/Law_of_triviality',
+    sourceAuthor: 'Wikipedia contributors',
+    tags: ['Organizations', 'Decision Making', 'Productivity'],
+    explain: [
+      '파킨슨의 사소함 법칙은 사람들이 복잡하고 중요한 문제보다 이해하기 쉬운 사소한 문제에 더 많은 논의를 쏟는 경향을 말합니다.',
+      '자주 쓰이는 비유는 원자력 발전소 예산보다 자전거 보관소 색상에 회의 시간이 더 길어진다는 이야기입니다.',
+      '핵심은 참여 장벽입니다. 복잡한 문제는 전문가가 아니면 말하기 어렵지만, 사소한 문제는 누구나 의견을 낼 수 있어 논의가 쉽게 커집니다.',
+    ],
+    why: [
+      '조직 회의에서 이 현상은 의사결정 비용을 크게 만듭니다. 중요한 구조적 선택은 조용히 지나가고, 버튼 색상이나 문구처럼 쉬운 주제에 에너지가 몰립니다.',
+      '제품 개발에서도 위험합니다. 사용자 가치와 아키텍처 결정보다 취향 논쟁이 앞서면 일정은 늦고 품질은 좋아지지 않습니다.',
+      '이 법칙을 알면 회의 안건의 무게와 토론 시간을 의식적으로 맞추게 됩니다.',
+    ],
+    examples: [
+      '신규 결제 구조의 위험은 5분 만에 넘어가고, 영수증 이메일 제목은 30분 토론하는 회의가 생길 수 있습니다.',
+      '문서의 핵심 정책보다 폰트와 표지 디자인에 피드백이 몰리는 것도 비슷한 현상입니다.',
+      '코드 리뷰에서 데이터 손실 가능성보다 변수명 취향 논쟁이 길어지는 경우도 있습니다.',
+    ],
+    misconceptions: [
+      '사소한 문제는 모두 무시하라는 뜻이 아닙니다. 작은 디테일도 사용자 경험에 중요할 수 있습니다.',
+      '전문가만 말해야 한다는 뜻도 아닙니다. 다만 논의 시간은 결정의 영향도에 맞아야 합니다.',
+      '취향 논쟁을 막는다고 창의성이 줄어드는 것은 아닙니다. 오히려 중요한 선택에 에너지를 남깁니다.',
+    ],
+    actions: [
+      '회의 안건마다 예상 영향도와 최대 토론 시간을 정하세요.',
+      '취향성 피드백은 담당자에게 위임하고 원칙 수준에서만 합의하세요.',
+      '긴 논의가 시작되면 “이 결정의 되돌리기 비용은 얼마인가”를 물어보세요.',
+    ],
+    links: [
+      { title: 'Wikipedia: C. Northcote Parkinson', url: 'https://en.wikipedia.org/wiki/C._Northcote_Parkinson' },
+      { title: 'Parkinson’s Law of Triviality', url: 'https://en.wikipedia.org/wiki/Law_of_triviality' },
+    ],
+    takeaway: '모두가 말하기 쉬운 문제가 반드시 가장 중요한 문제는 아닙니다.',
+  },
+  {
+    slug: 'compound-interest',
+    subject: '복리',
+    angle: '작은 차이가 시간이 지나며 구조가 된다',
+    description: '복리가 돈뿐 아니라 지식, 습관, 신뢰에도 적용되는 누적 효과를 설명합니다.',
+    sourceTitle: 'Investor.gov: Compound Interest Calculator',
+    sourceUrl: 'https://www.investor.gov/financial-tools-calculators/calculators/compound-interest-calculator',
+    sourceAuthor: 'U.S. Securities and Exchange Commission',
+    tags: ['Economics', 'Learning', 'Productivity'],
+    explain: [
+      '복리는 이자가 원금에 더해지고, 다음에는 그 합계에 다시 이자가 붙는 구조입니다. 시간이 길어질수록 선형 증가가 아니라 곡선형 증가가 됩니다.',
+      '돈의 세계에서 출발한 개념이지만, 학습과 습관에도 비슷한 패턴이 있습니다. 매일의 작은 개선은 즉시 크게 보이지 않지만, 쌓이면 선택지를 바꿉니다.',
+      '핵심은 시간과 재투자입니다. 결과를 다시 다음 결과의 기반으로 넣을 때 복리 효과가 생깁니다.',
+    ],
+    why: [
+      '현대 사회는 즉시 보이는 성과를 좋아하지만, 많은 중요한 것은 늦게 드러납니다. 신뢰, 실력, 건강, 브랜드는 하루 단위보다 누적 단위로 움직입니다.',
+      '복리를 이해하면 작은 반복을 가볍게 보지 않게 됩니다. 반대로 작은 부채, 작은 나쁜 습관, 작은 품질 저하도 누적되면 큰 문제가 됩니다.',
+      '이 개념은 조급함을 줄이고 방향의 중요성을 키웁니다. 매일 조금씩이라도 같은 방향으로 쌓이는 것이 강력합니다.',
+    ],
+    examples: [
+      '매일 30분씩 읽은 기술 문서는 한 달 뒤에는 작아 보여도 몇 년 뒤 문제를 이해하는 속도를 바꿉니다.',
+      '운동을 하루 쉬는 것은 작지만, 쉬는 습관이 쌓이면 체력의 기준선이 내려갑니다.',
+      '팀에서 작은 약속을 계속 지키면 신뢰가 쌓이고, 작은 약속을 계속 어기면 협업 비용이 커집니다.',
+    ],
+    misconceptions: [
+      '복리는 무조건 긍정적인 힘이 아닙니다. 좋은 것도 나쁜 것도 누적됩니다.',
+      '작게 시작하면 항상 성공한다는 뜻도 아닙니다. 방향이 틀리면 누적은 잘못된 곳으로 데려갑니다.',
+      '초반 성과가 작다고 실패라는 뜻도 아닙니다. 복리는 초반보다 후반에 더 눈에 띕니다.',
+    ],
+    actions: [
+      '반복할 작은 행동 하나를 정하고 결과를 다음 행동의 기반으로 남기세요.',
+      '나쁜 복리가 생기는 영역, 예를 들어 기술 부채나 수면 부족을 찾아보세요.',
+      '성과를 하루 단위가 아니라 누적 그래프로 기록해보세요.',
+    ],
+    links: [
+      { title: 'Wikipedia: Compound interest', url: 'https://en.wikipedia.org/wiki/Compound_interest' },
+      { title: 'Khan Academy: Compound interest', url: 'https://www.khanacademy.org/economics-finance-domain/core-finance/interest-tutorial' },
+    ],
+    takeaway: '복리는 속도가 아니라 방향과 시간이 만드는 힘입니다.',
   },
 ];
 
