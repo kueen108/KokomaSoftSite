@@ -105,7 +105,7 @@ function checkMeLocalizedScreenshots(locale: 'ko' | 'en' | 'ja'): AppScreenshot[
 const glowUpScreenshots = [
   {
     file: '01-home.png',
-    caption: { ko: 'Glow 리포트 시작하기', en: 'Start your Glow report', zh: '开始创建 Glow 报告', ja: 'Glowレポートを始める' },
+    caption: { ko: 'StyleCue 리포트 시작하기', en: 'Start your StyleCue report', zh: '开始创建 StyleCue 报告', ja: 'StyleCueレポートを始める' },
   },
   {
     file: '02-photo-ready.png',
@@ -117,7 +117,7 @@ const glowUpScreenshots = [
   },
   {
     file: '04-result-snapshot.png',
-    caption: { ko: 'Glow 스냅샷 확인', en: 'See your Glow snapshot', zh: '查看 Glow 快照', ja: 'Glowスナップショットを見る' },
+    caption: { ko: '스타일 스냅샷 확인', en: 'See your style snapshot', zh: '查看风格快照', ja: 'スタイルスナップショットを見る' },
   },
   {
     file: '05-photo-details.png',
@@ -129,7 +129,7 @@ const glowUpScreenshots = [
   },
   {
     file: '07-share-card.png',
-    caption: { ko: 'Glow 카드로 공유', en: 'Share a polished Glow card', zh: '分享精美 Glow 卡片', ja: 'Glowカードを共有' },
+    caption: { ko: 'StyleCue 카드로 공유', en: 'Share a polished StyleCue card', zh: '分享精美 StyleCue 卡片', ja: 'StyleCueカードを共有' },
   },
   {
     file: '08-settings.png',
@@ -768,40 +768,40 @@ export const apps: AppInfo[] = [
     id: 'glowup',
     iconUrl: '/app-icons/glowup.png',
     name: {
-      ko: 'GlowUp',
+      ko: 'StyleCue',
       en: 'StyleCue',
-      zh: 'GlowUp',
-      ja: 'GlowUp',
+      zh: 'StyleCue',
+      ja: 'StyleCue',
     },
     tagline: {
-      ko: '사진 기반 Glow 리포트로 코디, 헤어, 촬영 팁을 확인하세요.',
+      ko: '사진 기반 StyleCue 리포트로 코디, 헤어, 촬영 팁을 확인하세요.',
       en: 'Photo-based style reports for outfit, grooming, and photo tips.',
-      zh: '用基于照片的 Glow 报告查看穿搭、发型和拍摄建议。',
-      ja: '写真ベースのGlowレポートで、コーデ、ヘア、撮影のヒントを確認できます。',
+      zh: '用基于照片的 StyleCue 报告查看穿搭、发型和拍摄建议。',
+      ja: '写真ベースのStyleCueレポートで、コーデ、ヘア、撮影のヒントを確認できます。',
     },
     description: {
-      ko: 'GlowUp은 한 장의 사진으로 사진 분위기, 옷차림 밸런스, 그루밍, 헤어 방향, 조명, 구도, 배경을 살펴보고 바로 시도할 수 있는 실용적인 팁으로 정리하는 스타일 리포트 앱입니다.',
+      ko: 'StyleCue은 한 장의 사진으로 사진 분위기, 옷차림 밸런스, 그루밍, 헤어 방향, 조명, 구도, 배경을 살펴보고 바로 시도할 수 있는 실용적인 팁으로 정리하는 스타일 리포트 앱입니다.',
       en: 'StyleCue creates a supportive photo-based style report from one clear picture, helping you understand photo mood, outfit balance, grooming details, hair direction, lighting, framing, and practical next steps.',
-      zh: 'GlowUp 可用一张清晰照片生成支持性的照片风格报告，帮助你了解照片氛围、穿搭平衡、整理细节、发型方向、光线、构图和可立即尝试的下一步建议。',
-      ja: 'GlowUpは、1枚のクリアな写真から写真の雰囲気、服装バランス、グルーミング、ヘアの方向、照明、構図、背景を確認し、すぐ試せる実用的なヒントにまとめるスタイルレポートアプリです。',
+      zh: 'StyleCue 可用一张清晰照片生成支持性的照片风格报告，帮助你了解照片氛围、穿搭平衡、整理细节、发型方向、光线、构图和可立即尝试的下一步建议。',
+      ja: 'StyleCueは、1枚のクリアな写真から写真の雰囲気、服装バランス、グルーミング、ヘアの方向、照明、構図、背景を確認し、すぐ試せる実用的なヒントにまとめるスタイルレポートアプリです。',
     },
     features: {
-      ko: ['카메라 또는 갤러리 사진으로 Glow 리포트 생성', '스타일 키워드, Glow 점수, 트렌드 매칭 추정치와 잘 어울리는 점 확인', '조명, 구도, 포즈, 옷차림 밸런스, 헤어, 배경에 대한 실용적인 팁', '이전 리포트를 기기에 저장하고 히스토리에서 다시 열기', '사진, 키워드, 점수, 빠른 팁이 담긴 공유용 Glow 카드 생성', '영어, 한국어, 일본어, 프랑스어, 이탈리아어, 스페인어, 힌디어, 중국어 간체 지원'],
-      en: ['Create a photo-based Glow report from camera or gallery', 'Review style keywords, a Glow score, trend-match estimate, and what works in the photo', 'Get practical tips for lighting, framing, pose, outfit balance, hair, and background', 'Save previous reports on your device and reopen them from history', 'Create shareable Glow cards with your photo, keywords, score, and quick tip', 'Supports English, Korean, Japanese, French, Italian, Spanish, Hindi, and Simplified Chinese'],
-      zh: ['通过相机或相册照片生成 Glow 报告', '查看风格关键词、Glow 分数、趋势匹配估算和照片中的亮点', '获取关于光线、构图、姿势、穿搭平衡、发型和背景的实用建议', '将之前的报告保存在设备上，并可从历史记录重新打开', '生成包含照片、关键词、分数和快速建议的可分享 Glow 卡片', '支持英语、韩语、日语、法语、意大利语、西班牙语、印地语和简体中文'],
-      ja: ['カメラまたはギャラリーの写真からGlowレポートを作成', 'スタイルキーワード、Glowスコア、トレンド一致の目安、写真で良い点を確認', '照明、構図、ポーズ、服装バランス、ヘア、背景について実用的なヒントを表示', '以前のレポートを端末に保存し、履歴から再表示', '写真、キーワード、スコア、クイックヒント入りの共有用Glowカードを作成', '英語、韓国語、日本語、フランス語、イタリア語、スペイン語、ヒンディー語、簡体字中国語に対応'],
+      ko: ['카메라 또는 갤러리 사진으로 StyleCue 리포트 생성', '스타일 키워드, StyleCue 점수, 트렌드 매칭 추정치와 잘 어울리는 점 확인', '조명, 구도, 포즈, 옷차림 밸런스, 헤어, 배경에 대한 실용적인 팁', '이전 리포트를 기기에 저장하고 히스토리에서 다시 열기', '사진, 키워드, 점수, 빠른 팁이 담긴 공유용 StyleCue 카드 생성', '영어, 한국어, 일본어, 프랑스어, 이탈리아어, 스페인어, 힌디어, 중국어 간체 지원'],
+      en: ['Create a photo-based StyleCue report from camera or gallery', 'Review style keywords, a StyleCue score, trend-match estimate, and what works in the photo', 'Get practical tips for lighting, framing, pose, outfit balance, hair, and background', 'Save previous reports on your device and reopen them from history', 'Create shareable StyleCue cards with your photo, keywords, score, and quick tip', 'Supports English, Korean, Japanese, French, Italian, Spanish, Hindi, and Simplified Chinese'],
+      zh: ['通过相机或相册照片生成 StyleCue 报告', '查看风格关键词、StyleCue 分数、趋势匹配估算和照片中的亮点', '获取关于光线、构图、姿势、穿搭平衡、发型和背景的实用建议', '将之前的报告保存在设备上，并可从历史记录重新打开', '生成包含照片、关键词、分数和快速建议的可分享 StyleCue 卡片', '支持英语、韩语、日语、法语、意大利语、西班牙语、印地语和简体中文'],
+      ja: ['カメラまたはギャラリーの写真からStyleCueレポートを作成', 'スタイルキーワード、StyleCueスコア、トレンド一致の目安、写真で良い点を確認', '照明、構図、ポーズ、服装バランス、ヘア、背景について実用的なヒントを表示', '以前のレポートを端末に保存し、履歴から再表示', '写真、キーワード、スコア、クイックヒント入りの共有用StyleCueカードを作成', '英語、韓国語、日本語、フランス語、イタリア語、スペイン語、ヒンディー語、簡体字中国語に対応'],
     },
     recommendedFor: {
       ko: ['프로필 사진이나 SNS 사진의 인상을 가볍게 점검하고 싶은 사용자', '옷차림, 헤어, 그루밍, 촬영 구도 팁을 한 번에 보고 싶은 사용자', '외모 비교나 랭킹보다 사진 속 개선 포인트를 참고하고 싶은 사용자', '리포트를 기기에 저장하고 공유 카드로 남기고 싶은 사용자'],
-      en: ['People who want a light review of a profile or social photo', 'Users who want outfit, hair, grooming, lighting, and framing tips in one place', 'Anyone who prefers practical photo coaching over comparison or ranking', 'People who want to save reports locally or share a polished Glow card'],
-      zh: ['想轻松检查头像或社交照片印象的用户', '想一次查看穿搭、发型、整理、光线和构图建议的用户', '比起外貌比较或排名，更想参考照片改进点的用户', '想在设备上保存报告或分享精美 Glow 卡片的用户'],
-      ja: ['プロフィール写真やSNS写真の印象を気軽に確認したい方', '服装、ヘア、グルーミング、照明、構図のヒントをまとめて見たい方', '外見の比較やランキングより、写真の改善ポイントを参考にしたい方', 'レポートを端末に保存したり、整ったGlowカードとして共有したい方'],
+      en: ['People who want a light review of a profile or social photo', 'Users who want outfit, hair, grooming, lighting, and framing tips in one place', 'Anyone who prefers practical photo coaching over comparison or ranking', 'People who want to save reports locally or share a polished StyleCue card'],
+      zh: ['想轻松检查头像或社交照片印象的用户', '想一次查看穿搭、发型、整理、光线和构图建议的用户', '比起外貌比较或排名，更想参考照片改进点的用户', '想在设备上保存报告或分享精美 StyleCue 卡片的用户'],
+      ja: ['プロフィール写真やSNS写真の印象を気軽に確認したい方', '服装、ヘア、グルーミング、照明、構図のヒントをまとめて見たい方', '外見の比較やランキングより、写真の改善ポイントを参考にしたい方', 'レポートを端末に保存したり、整ったStyleCueカードとして共有したい方'],
     },
     supportNote: {
-      ko: 'GlowUp은 외모 비교나 랭킹이 아니라 사진에서 보이는 요소를 바탕으로 스타일과 촬영 인상을 정리하는 참고용 코칭 리포트를 제공합니다. 원본 고해상도 사진은 리포트 사본으로 보관하지 않으며, 저장된 리포트와 로컬 미리보기는 히스토리에서 삭제할 수 있습니다.',
-      en: 'StyleCue is a style coach experience, not a comparison or ranking tool. Reports focus on visible photo details and turn them into practical coaching. Original full-resolution photos are not kept as report copies, and saved reports plus local previews can be deleted from history.',
-      zh: 'GlowUp 是一种风格教练体验，而不是比较或排名工具。报告聚焦照片中可见的细节，并将其转化为实用建议。原始完整分辨率照片不会作为报告副本保留，已保存报告和本地预览可从历史记录中删除。',
-      ja: 'GlowUpは比較やランキングのためのツールではなく、写真で見える要素をもとにスタイルと撮影印象を整理する参考用コーチングレポートです。元の高解像度写真をレポートコピーとして保持せず、保存済みレポートとローカルプレビューは履歴から削除できます。',
+      ko: 'StyleCue은 외모 비교나 랭킹이 아니라 사진에서 보이는 요소를 바탕으로 스타일과 촬영 인상을 정리하는 참고용 코칭 리포트를 제공합니다. 본인 사진 또는 사진 속 모든 사람이 명시적으로 동의한 사진만 사용해야 하며, 확인하지 않으면 업로드되지 않습니다. 원본 고해상도 사진은 리포트 사본으로 보관하지 않으며, 저장된 리포트와 로컬 미리보기는 히스토리에서 삭제할 수 있습니다.',
+      en: 'StyleCue is a style coach experience, not a comparison or ranking tool. Reports focus on visible photo details and turn them into practical coaching. Use only your own photo or a photo where every visible person explicitly consented; photos are not uploaded without confirmation. Original full-resolution photos are not kept as report copies, and saved reports plus local previews can be deleted from history.',
+      zh: 'StyleCue 是一种风格教练体验，而不是比较或排名工具。报告聚焦照片中可见的细节，并将其转化为实用建议。请仅使用你自己的照片，或照片中所有可见人员已明确同意上传和生成报告的照片；未确认时不会上传照片。原始完整分辨率照片不会作为报告副本保留，已保存报告和本地预览可从历史记录中删除。',
+      ja: 'StyleCueは比較やランキングのためのツールではなく、写真で見える要素をもとにスタイルと撮影印象を整理する参考用コーチングレポートです。ご自身の写真、または写っている全員がアップロードとレポート作成に明確に同意した写真だけを使用してください。確認しない場合、写真はアップロードされません。元の高解像度写真をレポートコピーとして保持せず、保存済みレポートとローカルプレビューは履歴から削除できます。',
     },
     screenshots: {
       ko: glowUpLocalizedScreenshots('ko'),
