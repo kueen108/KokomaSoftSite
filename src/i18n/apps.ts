@@ -798,10 +798,10 @@ export const apps: AppInfo[] = [
       ja: ['プロフィール写真やSNS写真の印象を気軽に確認したい方', '服装、ヘア、グルーミング、照明、構図のヒントをまとめて見たい方', '外見の比較やランキングより、写真の改善ポイントを参考にしたい方', 'レポートを端末に保存したり、整ったStyleCueカードとして共有したい方'],
     },
     supportNote: {
-      ko: 'StyleCue은 외모 비교나 랭킹이 아니라 사진에서 보이는 요소를 바탕으로 스타일과 촬영 인상을 정리하는 참고용 코칭 리포트를 제공합니다. 본인 사진 또는 사진 속 모든 사람이 명시적으로 동의한 사진만 사용해야 하며, 확인하지 않으면 업로드되지 않습니다. 원본 고해상도 사진은 리포트 사본으로 보관하지 않으며, 저장된 리포트와 로컬 미리보기는 히스토리에서 삭제할 수 있습니다.',
-      en: 'StyleCue is a style coach experience, not a comparison or ranking tool. Reports focus on visible photo details and turn them into practical coaching. Use only your own photo or a photo where every visible person explicitly consented; photos are not uploaded without confirmation. Original full-resolution photos are not kept as report copies, and saved reports plus local previews can be deleted from history.',
-      zh: 'StyleCue 是一种风格教练体验，而不是比较或排名工具。报告聚焦照片中可见的细节，并将其转化为实用建议。请仅使用你自己的照片，或照片中所有可见人员已明确同意上传和生成报告的照片；未确认时不会上传照片。原始完整分辨率照片不会作为报告副本保留，已保存报告和本地预览可从历史记录中删除。',
-      ja: 'StyleCueは比較やランキングのためのツールではなく、写真で見える要素をもとにスタイルと撮影印象を整理する参考用コーチングレポートです。ご自身の写真、または写っている全員がアップロードとレポート作成に明確に同意した写真だけを使用してください。確認しない場合、写真はアップロードされません。元の高解像度写真をレポートコピーとして保持せず、保存済みレポートとローカルプレビューは履歴から削除できます。',
+      ko: 'StyleCue은 외모 비교나 랭킹이 아니라 사진에서 보이는 요소를 바탕으로 스타일과 촬영 인상을 정리하는 참고용 코칭 리포트를 제공합니다. 본인 사진 또는 사진 속 모든 사람이 명시적으로 동의한 사진만 사용해야 하며, 업로드 전 KokomaSoft StyleCue analysis server와 OpenAI 사용 가능성을 안내하고 확인하지 않으면 업로드되지 않습니다. 원본 고해상도 사진은 리포트 사본으로 보관하지 않으며, 저장된 리포트와 로컬 미리보기는 히스토리에서 삭제할 수 있습니다.',
+      en: 'StyleCue is a style coach experience, not a comparison or ranking tool. Reports focus on visible photo details and turn them into practical coaching. Use only your own photo or a photo where every visible person explicitly consented; before upload the app identifies KokomaSoft StyleCue analysis server and possible OpenAI processing, and photos are not uploaded without confirmation. Original full-resolution photos are not kept as report copies, and saved reports plus local previews can be deleted from history.',
+      zh: 'StyleCue 是一种风格教练体验，而不是比较或排名工具。报告聚焦照片中可见的细节，并将其转化为实用建议。请仅使用你自己的照片，或照片中所有可见人员已明确同意上传和生成报告的照片；上传前应用会说明 KokomaSoft StyleCue analysis server 和可能的 OpenAI 处理，未确认时不会上传照片。原始完整分辨率照片不会作为报告副本保留，已保存报告和本地预览可从历史记录中删除。',
+      ja: 'StyleCueは比較やランキングのためのツールではなく、写真で見える要素をもとにスタイルと撮影印象を整理する参考用コーチングレポートです。ご自身の写真、または写っている全員がアップロードとレポート作成に明確に同意した写真だけを使用してください。アップロード前にKokomaSoft StyleCue analysis serverとOpenAI処理の可能性を案内し、確認しない場合、写真はアップロードされません。元の高解像度写真をレポートコピーとして保持せず、保存済みレポートとローカルプレビューは履歴から削除できます。',
     },
     screenshots: {
       ko: glowUpLocalizedScreenshots('ko'),
