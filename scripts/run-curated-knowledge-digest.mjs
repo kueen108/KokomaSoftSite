@@ -1971,6 +1971,7 @@ if (status) {
 }
 
 run('git', ['push', 'origin', 'HEAD']);
+run('npx', ['wrangler', 'deploy']);
 
 const fileContent = readFileSync(join(postDir, filename), 'utf8');
 const title = fileContent.match(/^title:\s+"(.+)"$/m)?.[1]?.replaceAll('\\"', '"') ?? filename;
@@ -1995,6 +1996,6 @@ console.log([
   `URL: ${publicUrl}`,
   `주요 참고: ${sourceUrl}`,
   `빌드: 통과`,
-  `커밋/푸시: ${commit}, origin HEAD push 완료`,
+  `커밋/푸시/배포: ${commit}, origin HEAD push 완료, wrangler deploy 완료`,
   `공개 URL HTTP 상태: ${publicStatus}`,
 ].join('\n'));

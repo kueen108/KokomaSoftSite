@@ -170,6 +170,7 @@ if (staged) {
 
 const branch = gitOutput(['branch', '--show-current']) || 'HEAD';
 run('git', ['push', 'origin', branch]);
+run('npx', ['wrangler', 'deploy']);
 
 let httpStatus = 'not checked';
 try {
@@ -184,5 +185,5 @@ console.log(`제목: ${meta.title}`);
 console.log(`URL: ${url}`);
 console.log(`원문: ${meta.sourceUrl}`);
 console.log(`빌드: npm run build 통과`);
-console.log(`커밋/푸시: ${commit}, origin ${branch} push 완료`);
+console.log(`커밋/푸시/배포: ${commit}, origin ${branch} push 완료, wrangler deploy 완료`);
 console.log(`공개 URL HTTP 상태: ${httpStatus}`);
