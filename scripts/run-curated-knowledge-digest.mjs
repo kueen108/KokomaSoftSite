@@ -87,16 +87,17 @@ function firstExistingForDate(prefix, date) {
     .sort()[0] ?? null;
 }
 
-function selectTopic(prefix, posts, workflowName) {
+function selectTopic(prefix, posts, workflowName, date) {
   const existingPosts = readExistingPosts(prefix);
   const candidate = [
     ...posts,
     ...fallbackPostsForWorkflow(workflowName),
     ...generatedPostsForWorkflow(workflowName),
+    ...proceduralPostsForWorkflow(workflowName, date),
   ].find((post) => !isDuplicateTopic(post, existingPosts));
   if (!candidate) {
     const used = existingPosts.map((post) => post.slug ?? post.title).filter(Boolean).join(', ');
-    throw new Error(`no unused ${prefix} topic remains after curated, fallback, and generated topic pools. Used: ${used}`);
+    throw new Error(`no unused ${prefix} topic remains after curated, fallback, generated, and procedural topic pools. Used: ${used}`);
   }
   return candidate;
 }
@@ -109,6 +110,26 @@ function generatedPostsForWorkflow(workflowName) {
   return workflowName === 'developer'
     ? generatedDeveloperTopicBank.map(developerPostFromTopic)
     : generatedKnowledgeTopicBank.map(knowledgePostFromTopic);
+}
+
+function proceduralPostsForWorkflow(workflowName, date) {
+  const topics = workflowName === 'developer' ? proceduralDeveloperTopics : proceduralKnowledgeTopics;
+  const angles = workflowName === 'developer' ? proceduralDeveloperAngles : proceduralKnowledgeAngles;
+  const pairs = [];
+  for (const topic of topics) {
+    for (const angle of angles) {
+      const suffix = safeSlug(angle.slug);
+      pairs.push({
+        ...topic,
+        slug: `${topic.slug}-${suffix}`,
+        angle: angle.textFor(topic),
+        description: angle.descriptionFor(topic),
+      });
+    }
+  }
+  const offset = Math.abs(hashString(`${workflowName}:${date}`)) % Math.max(1, pairs.length);
+  return [...pairs.slice(offset), ...pairs.slice(0, offset)]
+    .map((topic) => (workflowName === 'developer' ? developerPostFromTopic(topic) : knowledgePostFromTopic(topic)));
 }
 
 function readExistingPosts(prefix) {
@@ -947,19 +968,48 @@ function developerPostFromTopic(topic) {
       topic.principles?.[1] ?? `두 번째 핵심은 계약입니다. 서버, 클라이언트, 데이터베이스, 운영 도구가 어떤 값을 믿고 어떤 실패를 허용하는지 문서와 코드에 함께 드러나야 합니다.`,
       topic.principles?.[2] ?? `세 번째 핵심은 관측 가능성입니다. 제대로 설계했는지 알려면 성공 경로뿐 아니라 거절, 충돌, 지연, 재시도 같은 사건도 로그와 지표로 확인할 수 있어야 합니다.`,
     ],
-    example: topic.example,
-    checklist: topic.checklist,
-    misconceptions: topic.misconceptions,
-    actions: topic.actions,
+    example: topic.example ?? `${topic.subject}를 새 기능에 적용한다고 해봅시다. 처음에는 정상 경로만 보이지만 실제 운영에서는 지연, 중복 요청, 권한 차이, 배포 순서처럼 작은 예외가 함께 움직입니다. 이때 ${topic.subject}의 기준을 미리 정해두면 문제를 코드 곳곳의 임시 처리로 흩뜨리지 않고 한 곳에서 설명할 수 있습니다.`,
+    checklist: topic.checklist ?? [
+      `${topic.subject}가 적용되는 경계와 예외가 문서와 코드에 드러나는가?`,
+      '실패하거나 지연될 때 호출자가 어떤 응답을 받는지 정해져 있는가?',
+      '중복 실행, 재시도, 롤백 상황에서도 데이터가 일관되게 남는가?',
+      '운영자가 성공뿐 아니라 거절, 충돌, 지연을 지표로 확인할 수 있는가?',
+      '새 팀원이 이 설계를 왜 쓰는지 한 문단으로 이해할 수 있는가?',
+    ],
+    misconceptions: topic.misconceptions ?? [
+      `“${topic.subject}는 나중에 트래픽이 커지면 보면 된다”는 오해가 있습니다. 많은 운영 문제는 작은 규모에서 만든 계약이 그대로 커지면서 생깁니다.`,
+      '“라이브러리가 알아서 해준다”는 생각도 부족합니다. 도구는 메커니즘을 제공하지만 어떤 실패를 허용할지는 서비스가 정해야 합니다.',
+      '“문제가 생기면 로그를 보면 된다”도 늦습니다. 필요한 필드를 남기지 않은 로그는 장애 순간에 방향을 주지 못합니다.',
+    ],
+    actions: topic.actions ?? [
+      `현재 서비스에서 ${topic.subject}와 연결된 코드 경로 하나를 골라 정상 경로와 실패 경로를 함께 그려보세요.`,
+      '코드 리뷰 체크리스트에 경계, 재시도, 관측 가능성 중 빠진 항목이 있는지 확인하세요.',
+      '운영 대시보드에 이 개념이 제대로 동작하는지 보여주는 최소 지표 하나를 추가하세요.',
+    ],
     links: [
       { title: topic.sourceTitle, url: topic.sourceUrl },
       ...(topic.links ?? []),
     ],
-    takeaway: topic.takeaway,
+    takeaway: topic.takeaway ?? `${topic.subject}는 구현 디테일처럼 보이지만, 시간이 지나면 서비스가 실패를 다루는 방식 그 자체가 됩니다.`,
   };
 }
 
 function knowledgePostFromTopic(topic) {
+  const explain = topic.explain ?? [
+    `${topic.subject}는 우리가 상황을 해석할 때 자주 놓치는 구조를 이름 붙인 개념입니다.`,
+    `핵심은 ${topic.angle}는 점입니다. 같은 사건도 어떤 기준으로 보느냐에 따라 전혀 다른 결론으로 이어질 수 있습니다.`,
+    '이런 개념의 쓸모는 어려운 말을 아는 데 있지 않습니다. 복잡한 상황에서 무엇을 먼저 의심하고 확인해야 하는지 알려주는 데 있습니다.',
+  ];
+  const why = topic.why ?? [
+    '현대의 일상은 정보와 선택지가 많아서 빠른 판단을 자주 요구합니다. 이때 우리는 사실보다 익숙한 설명이나 눈에 잘 띄는 신호에 기대기 쉽습니다.',
+    `${topic.subject}를 알면 문제를 개인의 의지나 성격으로만 보지 않고, 판단을 만든 환경과 구조까지 함께 볼 수 있습니다.`,
+    '좋은 개념은 답을 대신 주지 않습니다. 대신 질문의 방향을 바꿔서 같은 실수를 덜 반복하게 만듭니다.',
+  ];
+  const examples = topic.examples ?? [
+    `회의에서 ${topic.subject}의 관점으로 보면, 겉으로 드러난 의견보다 어떤 기준이 사람들의 선택을 이끄는지 더 잘 보입니다.`,
+    '제품이나 서비스에서도 비슷합니다. 사용자의 말 하나보다 행동이 만들어진 맥락을 같이 보면 더 나은 결정을 할 수 있습니다.',
+    '개인 생활에서는 반복되는 판단 실수를 발견하는 데 도움이 됩니다. 왜 같은 선택을 다시 하는지 이름을 붙이면 바꾸기도 쉬워집니다.',
+  ];
   return {
     slug: topic.slug,
     title: `오늘의 지식: ${topic.subject}, ${topic.angle}`,
@@ -969,16 +1019,24 @@ function knowledgePostFromTopic(topic) {
     sourceAuthor: topic.sourceAuthor,
     tags: topic.tags,
     intro: topic.intro ?? `${topic.subject}는 익숙한 현상을 조금 다르게 보게 해주는 개념입니다. 이름은 짧지만, 그 안에는 우리가 판단하고 행동하는 방식에 대한 중요한 힌트가 들어 있습니다.`,
-    explain: topic.explain,
-    why: topic.why,
-    examples: topic.examples,
-    misconceptions: topic.misconceptions,
-    actions: topic.actions,
+    explain,
+    why,
+    examples,
+    misconceptions: topic.misconceptions ?? [
+      `${topic.subject}는 모든 상황을 하나로 설명하는 만능 열쇠가 아닙니다.`,
+      '개념을 안다고 해서 편향이나 실수가 자동으로 사라지는 것도 아닙니다. 실제로는 판단 절차와 환경을 함께 바꿔야 합니다.',
+      '반대로 너무 복잡하게 생각하라는 뜻도 아닙니다. 중요한 결정일수록 한 번 더 확인할 기준을 갖자는 뜻입니다.',
+    ],
+    actions: topic.actions ?? [
+      `오늘 내린 결정 하나를 ${topic.subject} 관점에서 다시 읽어보세요.`,
+      '그 판단에서 빠진 정보, 너무 크게 본 정보, 처음부터 당연하게 둔 가정을 각각 적어보세요.',
+      '다음 비슷한 상황에서 확인할 질문 하나를 미리 정해두세요.',
+    ],
     links: [
       { title: topic.sourceTitle, url: topic.sourceUrl },
       ...(topic.links ?? []),
     ],
-    takeaway: topic.takeaway,
+    takeaway: topic.takeaway ?? `좋은 판단은 정답을 빨리 고르는 일보다, 내가 무엇에 끌려가고 있는지 알아차리는 데서 시작합니다.`,
   };
 }
 
@@ -1771,6 +1829,90 @@ const generatedKnowledgeTopicBank = [
   },
 ];
 
+const proceduralDeveloperTopics = [
+  { slug: 'timeout-budget', subject: '타임아웃 예산', sourceTitle: 'Google SRE Book: Handling Overload', sourceUrl: 'https://sre.google/sre-book/handling-overload/', sourceAuthor: 'Google SRE', tags: ['Reliability', 'Backend', 'Operations'] },
+  { slug: 'idempotent-consumers', subject: '멱등 소비자', sourceTitle: 'microservices.io: Idempotent Consumer', sourceUrl: 'https://microservices.io/patterns/communication-style/idempotent-consumer.html', sourceAuthor: 'Chris Richardson', tags: ['Messaging', 'Reliability', 'Distributed Systems'] },
+  { slug: 'dead-letter-queues', subject: '데드레터 큐', sourceTitle: 'AWS SQS: Dead-letter queues', sourceUrl: 'https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-dead-letter-queues.html', sourceAuthor: 'Amazon Web Services', tags: ['Queues', 'Operations', 'Reliability'] },
+  { slug: 'backfill-jobs', subject: '백필 작업', sourceTitle: 'GitLab Docs: Batched background migrations', sourceUrl: 'https://docs.gitlab.com/development/database/batched_background_migrations/', sourceAuthor: 'GitLab', tags: ['Databases', 'Migration', 'Operations'] },
+  { slug: 'health-checks', subject: '헬스 체크', sourceTitle: 'Kubernetes Docs: Probes', sourceUrl: 'https://kubernetes.io/docs/concepts/configuration/liveness-readiness-startup-probes/', sourceAuthor: 'Kubernetes', tags: ['Deployment', 'Reliability', 'Operations'] },
+  { slug: 'readiness-probes', subject: '준비성 프로브', sourceTitle: 'Kubernetes Docs: Configure Liveness, Readiness and Startup Probes', sourceUrl: 'https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/', sourceAuthor: 'Kubernetes', tags: ['Deployment', 'Reliability', 'Kubernetes'] },
+  { slug: 'audit-logs', subject: '감사 로그', sourceTitle: 'OWASP Logging Cheat Sheet', sourceUrl: 'https://cheatsheetseries.owasp.org/cheatsheets/Logging_Cheat_Sheet.html', sourceAuthor: 'OWASP', tags: ['Security', 'Compliance', 'Operations'] },
+  { slug: 'event-versioning', subject: '이벤트 버전 관리', sourceTitle: 'Microsoft Learn: Event-driven architecture style', sourceUrl: 'https://learn.microsoft.com/en-us/azure/architecture/guide/architecture-styles/event-driven', sourceAuthor: 'Microsoft Learn', tags: ['Architecture', 'Messaging', 'API Design'] },
+  { slug: 'api-versioning', subject: 'API 버전 관리', sourceTitle: 'Microsoft REST API Guidelines: Versioning', sourceUrl: 'https://github.com/microsoft/api-guidelines/blob/vNext/azure/Guidelines.md#api-versioning', sourceAuthor: 'Microsoft', tags: ['API Design', 'Compatibility', 'Web'] },
+  { slug: 'retry-storms', subject: '재시도 폭풍', sourceTitle: 'Google SRE Book: Addressing Cascading Failures', sourceUrl: 'https://sre.google/sre-book/addressing-cascading-failures/', sourceAuthor: 'Google SRE', tags: ['Reliability', 'Incident', 'Backend'] },
+  { slug: 'bulkheads', subject: '벌크헤드 패턴', sourceTitle: 'Microsoft Learn: Bulkhead pattern', sourceUrl: 'https://learn.microsoft.com/en-us/azure/architecture/patterns/bulkhead', sourceAuthor: 'Microsoft Learn', tags: ['Architecture', 'Reliability', 'Resilience'] },
+  { slug: 'leader-election', subject: '리더 선출', sourceTitle: 'Kubernetes Docs: Lease API', sourceUrl: 'https://kubernetes.io/docs/concepts/architecture/leases/', sourceAuthor: 'Kubernetes', tags: ['Distributed Systems', 'Coordination', 'Reliability'] },
+  { slug: 'clock-skew', subject: '시계 오차', sourceTitle: 'Google SRE Book: Time, Clocks, and Ordering of Events', sourceUrl: 'https://sre.google/sre-book/time-clocks-and-ordering/', sourceAuthor: 'Google SRE', tags: ['Distributed Systems', 'Time', 'Reliability'] },
+  { slug: 'rate-limit-headers', subject: '레이트 리밋 헤더', sourceTitle: 'RFC 9333: RateLimit Fields for HTTP', sourceUrl: 'https://www.rfc-editor.org/rfc/rfc9333.html', sourceAuthor: 'IETF', tags: ['HTTP', 'API Design', 'Operations'] },
+  { slug: 'content-security-policy', subject: '콘텐츠 보안 정책', sourceTitle: 'MDN: Content-Security-Policy', sourceUrl: 'https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP', sourceAuthor: 'MDN', tags: ['Security', 'Web', 'Frontend'] },
+  { slug: 'dependency-pinning', subject: '의존성 고정', sourceTitle: 'OWASP Dependency-Check', sourceUrl: 'https://owasp.org/www-project-dependency-check/', sourceAuthor: 'OWASP', tags: ['Security', 'Supply Chain', 'Build'] },
+  { slug: 'semantic-versioning', subject: '시맨틱 버저닝', sourceTitle: 'Semantic Versioning 2.0.0', sourceUrl: 'https://semver.org/', sourceAuthor: 'SemVer', tags: ['Release', 'Compatibility', 'API Design'] },
+  { slug: 'snapshot-testing', subject: '스냅샷 테스트', sourceTitle: 'Jest Docs: Snapshot Testing', sourceUrl: 'https://jestjs.io/docs/snapshot-testing', sourceAuthor: 'Jest', tags: ['Testing', 'Frontend', 'Quality'] },
+  { slug: 'contract-testing', subject: '컨트랙트 테스트', sourceTitle: 'Pact Docs: Contract Testing', sourceUrl: 'https://docs.pact.io/', sourceAuthor: 'Pact', tags: ['Testing', 'API Design', 'Microservices'] },
+  { slug: 'accessibility-regression', subject: '접근성 회귀', sourceTitle: 'WCAG 2 Overview', sourceUrl: 'https://www.w3.org/WAI/standards-guidelines/wcag/', sourceAuthor: 'W3C WAI', tags: ['Accessibility', 'Frontend', 'Quality'] },
+];
+
+const proceduralDeveloperAngles = [
+  { slug: 'failure-contract', textFor: (topic) => '실패 방식까지 계약해야 실무 설계가 된다', descriptionFor: (topic) => `${topic.subject}를 정상 경로뿐 아니라 실패 계약, 재시도, 관측 가능성까지 포함해 설계하는 법을 정리합니다.` },
+  { slug: 'operational-boundary', textFor: (topic) => '운영 경계가 흐리면 코드도 흔들린다', descriptionFor: (topic) => `${topic.subject}가 배포, 장애 대응, 팀 책임 경계에 어떤 영향을 주는지 설명합니다.` },
+  { slug: 'small-defaults', textFor: (topic) => '작은 기본값이 큰 장애를 만든다', descriptionFor: (topic) => `${topic.subject}의 기본값과 예외 처리가 규모가 커질 때 어떤 위험으로 바뀌는지 살펴봅니다.` },
+  { slug: 'observable-design', textFor: (topic) => '보이지 않는 설계는 고칠 수도 없다', descriptionFor: (topic) => `${topic.subject}를 로그, 지표, 알림과 연결해 운영 가능한 설계로 만드는 방법을 정리합니다.` },
+  { slug: 'compatibility-first', textFor: (topic) => '호환성을 먼저 생각해야 배포가 조용해진다', descriptionFor: (topic) => `${topic.subject}를 이전 버전, 롤링 배포, 외부 클라이언트와 함께 안전하게 운영하는 법을 설명합니다.` },
+  { slug: 'cost-of-assumptions', textFor: (topic) => '당연한 가정 하나가 운영 비용이 된다', descriptionFor: (topic) => `${topic.subject}에서 자주 놓치는 가정과 그 가정이 비용, 장애, 데이터 문제로 이어지는 과정을 다룹니다.` },
+  { slug: 'review-checklist', textFor: (topic) => '코드 리뷰에서 먼저 물어야 할 질문들', descriptionFor: (topic) => `${topic.subject}를 구현할 때 리뷰어가 확인해야 할 경계, 테스트, 운영 질문을 체크리스트로 정리합니다.` },
+  { slug: 'team-memory', textFor: (topic) => '팀의 기억으로 남겨야 반복 실수를 줄인다', descriptionFor: (topic) => `${topic.subject}를 개인 노하우가 아니라 문서, 테스트, 지표로 남기는 방법을 설명합니다.` },
+];
+
+const proceduralKnowledgeTopics = [
+  { slug: 'normalcy-bias', subject: '정상성 편향', sourceTitle: 'Encyclopaedia Britannica: cognitive bias', sourceUrl: 'https://www.britannica.com/science/cognitive-bias', sourceAuthor: 'Encyclopaedia Britannica', tags: ['Psychology', 'Risk', 'Decision Making'] },
+  { slug: 'status-quo-bias', subject: '현상 유지 편향', sourceTitle: 'The Decision Lab: Status Quo Bias', sourceUrl: 'https://thedecisionlab.com/biases/status-quo-bias', sourceAuthor: 'The Decision Lab', tags: ['Psychology', 'Decision Making', 'Behavior'] },
+  { slug: 'framing-effect', subject: '프레이밍 효과', sourceTitle: 'The Decision Lab: Framing Effect', sourceUrl: 'https://thedecisionlab.com/biases/framing-effect', sourceAuthor: 'The Decision Lab', tags: ['Psychology', 'Communication', 'Decision Making'] },
+  { slug: 'hindsight-bias', subject: '사후 확신 편향', sourceTitle: 'APA Dictionary: hindsight bias', sourceUrl: 'https://dictionary.apa.org/hindsight-bias', sourceAuthor: 'American Psychological Association', tags: ['Psychology', 'Thinking', 'Decision Making'] },
+  { slug: 'recency-bias', subject: '최근성 편향', sourceTitle: 'The Decision Lab: Recency Bias', sourceUrl: 'https://thedecisionlab.com/biases/recency-bias', sourceAuthor: 'The Decision Lab', tags: ['Psychology', 'Memory', 'Decision Making'] },
+  { slug: 'selection-bias', subject: '선택 편향', sourceTitle: 'Encyclopaedia Britannica: selection bias', sourceUrl: 'https://www.britannica.com/science/selection-bias', sourceAuthor: 'Encyclopaedia Britannica', tags: ['Statistics', 'Research', 'Thinking'] },
+  { slug: 'base-rate-neglect', subject: '기저율 무시', sourceTitle: 'The Decision Lab: Base Rate Fallacy', sourceUrl: 'https://thedecisionlab.com/biases/base-rate-fallacy', sourceAuthor: 'The Decision Lab', tags: ['Statistics', 'Psychology', 'Decision Making'] },
+  { slug: 'false-consensus-effect', subject: '허위 합의 효과', sourceTitle: 'APA Dictionary: false-consensus effect', sourceUrl: 'https://dictionary.apa.org/false-consensus-effect', sourceAuthor: 'American Psychological Association', tags: ['Psychology', 'Society', 'Communication'] },
+  { slug: 'halo-effect', subject: '후광 효과', sourceTitle: 'APA Dictionary: halo effect', sourceUrl: 'https://dictionary.apa.org/halo-effect', sourceAuthor: 'American Psychological Association', tags: ['Psychology', 'Judgment', 'Behavior'] },
+  { slug: 'fundamental-attribution-error', subject: '기본적 귀인 오류', sourceTitle: 'Britannica: attribution theory', sourceUrl: 'https://www.britannica.com/science/attribution-theory', sourceAuthor: 'Encyclopaedia Britannica', tags: ['Psychology', 'Society', 'Thinking'] },
+  { slug: 'social-proof', subject: '사회적 증거', sourceTitle: 'Nielsen Norman Group: Social Proof', sourceUrl: 'https://www.nngroup.com/articles/social-proof/', sourceAuthor: 'Nielsen Norman Group', tags: ['Behavior', 'Design', 'Decision Making'] },
+  { slug: 'choice-overload', subject: '선택 과부하', sourceTitle: 'The Decision Lab: Choice Overload', sourceUrl: 'https://thedecisionlab.com/biases/choice-overload-bias', sourceAuthor: 'The Decision Lab', tags: ['Psychology', 'Productivity', 'Decision Making'] },
+  { slug: 'peak-end-rule', subject: '피크엔드 법칙', sourceTitle: 'The Decision Lab: Peak-End Rule', sourceUrl: 'https://thedecisionlab.com/biases/peak-end-rule', sourceAuthor: 'The Decision Lab', tags: ['Psychology', 'Experience', 'Memory'] },
+  { slug: 'availability-cascade', subject: '가용성 폭포', sourceTitle: 'Wikipedia: Availability cascade', sourceUrl: 'https://en.wikipedia.org/wiki/Availability_cascade', sourceAuthor: 'Wikipedia contributors', tags: ['Media', 'Society', 'Risk'] },
+  { slug: 'second-order-effects', subject: '2차 효과', sourceTitle: 'Farnam Street: Second-Order Thinking', sourceUrl: 'https://fs.blog/second-order-thinking/', sourceAuthor: 'Farnam Street', tags: ['Thinking', 'Strategy', 'Decision Making'] },
+  { slug: 'unknown-unknowns', subject: '알려지지 않은 미지', sourceTitle: 'Wikipedia: There are unknown unknowns', sourceUrl: 'https://en.wikipedia.org/wiki/There_are_unknown_unknowns', sourceAuthor: 'Wikipedia contributors', tags: ['Risk', 'Thinking', 'Uncertainty'] },
+  { slug: 'signal-to-noise', subject: '신호와 잡음', sourceTitle: 'Encyclopaedia Britannica: signal-to-noise ratio', sourceUrl: 'https://www.britannica.com/science/signal-to-noise-ratio', sourceAuthor: 'Encyclopaedia Britannica', tags: ['Statistics', 'Thinking', 'Data'] },
+  { slug: 'feedback-loops', subject: '피드백 루프', sourceTitle: 'Encyclopaedia Britannica: feedback control system', sourceUrl: 'https://www.britannica.com/technology/feedback-control-system', sourceAuthor: 'Encyclopaedia Britannica', tags: ['Systems', 'Thinking', 'Behavior'] },
+  { slug: 'path-dependence', subject: '경로 의존성', sourceTitle: 'Britannica: path dependence', sourceUrl: 'https://www.britannica.com/topic/path-dependence', sourceAuthor: 'Encyclopaedia Britannica', tags: ['Economics', 'History', 'Decision Making'] },
+  { slug: 'negative-space', subject: '여백의 가치', sourceTitle: 'Britannica: design', sourceUrl: 'https://www.britannica.com/art/design', sourceAuthor: 'Encyclopaedia Britannica', tags: ['Design', 'Thinking', 'Culture'] },
+];
+
+const proceduralKnowledgeAngles = [
+  { slug: 'hidden-standard', textFor: (topic) => '보이지 않는 기준이 판단을 움직인다', descriptionFor: (topic) => `${topic.subject}를 통해 우리가 어떤 숨은 기준에 따라 선택하고 해석하는지 살펴봅니다.` },
+  { slug: 'daily-decisions', textFor: (topic) => '일상의 작은 선택에도 구조가 있다', descriptionFor: (topic) => `${topic.subject}를 일상 판단, 회의, 제품 선택과 연결해 쉽게 설명합니다.` },
+  { slug: 'misread-signals', textFor: (topic) => '우리는 자주 신호와 잡음을 헷갈린다', descriptionFor: (topic) => `${topic.subject}가 정보 과잉 속에서 중요한 신호를 가려내는 데 주는 힌트를 정리합니다.` },
+  { slug: 'better-questions', textFor: (topic) => '정답보다 먼저 질문을 바꿔야 한다', descriptionFor: (topic) => `${topic.subject}를 이용해 같은 문제를 더 나은 질문으로 바꾸는 법을 설명합니다.` },
+  { slug: 'decision-hygiene', textFor: (topic) => '판단에도 위생이 필요하다', descriptionFor: (topic) => `${topic.subject}가 성급한 결론을 줄이고 판단 과정을 점검하게 해주는 방식을 다룹니다.` },
+  { slug: 'modern-reading', textFor: (topic) => '현대 사회를 읽는 작은 렌즈', descriptionFor: (topic) => `${topic.subject}를 뉴스, 조직, 플랫폼, 개인 습관을 이해하는 렌즈로 소개합니다.` },
+  { slug: 'quiet-trap', textFor: (topic) => '조용한 함정은 대개 익숙한 얼굴을 하고 있다', descriptionFor: (topic) => `${topic.subject}가 왜 익숙한 상황에서 더 잘 숨어드는지 사례와 함께 설명합니다.` },
+  { slug: 'practical-skepticism', textFor: (topic) => '의심은 부정이 아니라 확인의 기술이다', descriptionFor: (topic) => `${topic.subject}를 통해 더 차분하게 의심하고 더 정확하게 확인하는 태도를 정리합니다.` },
+];
+
+function safeSlug(value) {
+  return String(value)
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 48);
+}
+
+function hashString(value) {
+  let hash = 0;
+  for (const char of String(value)) {
+    hash = ((hash << 5) - hash + char.charCodeAt(0)) | 0;
+  }
+  return hash;
+}
+
 const workflows = {
   developer: {
     prefix: 'developer-knowledge',
@@ -1804,7 +1946,7 @@ if (!hasFlag('--skip-pull')) {
 let filename = firstExistingForDate(workflow.prefix, date);
 let created = false;
 if (!filename) {
-  const post = selectTopic(workflow.prefix, workflow.posts, workflowName);
+  const post = selectTopic(workflow.prefix, workflow.posts, workflowName, date);
   filename = `${workflow.prefix}-${date}-${post.slug}.md`;
   const content = `${frontmatter(post, date, workflowName)}${workflow.article(post)}`;
   writeFileSync(join(postDir, filename), content);

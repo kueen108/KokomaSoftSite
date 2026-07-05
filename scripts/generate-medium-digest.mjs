@@ -325,15 +325,28 @@ function digestTheme(candidate) {
       finalLine: 'AI 워크플로의 실력은 한 번의 멋진 답변보다, 같은 일을 다음에도 안정적으로 끝내는 구조에서 나온다.',
     };
   }
+  const fallbackTitle = compactSourceTitle(candidate.title);
   return {
-    title: '오늘의 AI 글: AI 도구의 가치는 데모가 아니라 실제 사용에서 드러난다',
+    title: `오늘의 AI 글: ${fallbackTitle}`,
     descriptionFocus: 'AI 도구와 코딩 에이전트를 기능 시연이 아니라 실제 업무 채택, 반복 사용, 검증 가능한 운영 기준으로 판단해야 하는 이유를 정리한다.',
     openingFrame: 'AI 제품과 코딩 에이전트를 둘러싼 대화는 여전히 데모 중심으로 흐르기 쉽다. 하지만 실제 업무에 들어오면 더 중요한 질문은 반복 사용과 검증 가능성이다.',
-    sourcePhrase: 'AI 도구를 데모나 유행어가 아니라 실제 사용 맥락에서 보자는 문제의식을 던진다.',
+    sourcePhrase: `${fallbackTitle}라는 주제를 통해 AI 도구를 데모나 유행어가 아니라 실제 사용 맥락에서 보자는 문제의식을 던진다.`,
     summaryBridge: '이 요지는 코딩 에이전트에도 그대로 적용된다.',
     stepHeadings: ['흥분과 채택의 분리', '사용자군 다시 보기', '온보딩과 운영', '자동화의 완료 조건'],
     finalLine: 'AI 도구의 가치는 처음 보여준 마술이 아니라, 다음 주에도 조용히 켜지는 습관에서 결정된다.',
   };
+}
+
+function compactSourceTitle(title) {
+  const cleaned = stripHtml(title)
+    .replace(/\s*\|\s*.+$/g, '')
+    .replace(/\s*[-–—]\s*Medium.*$/gi, '')
+    .replace(/\bpart\s+\d+\b/gi, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+  const words = cleaned.split(/\s+/).filter(Boolean);
+  const compact = words.slice(0, 9).join(' ');
+  return compact || 'AI 도구의 실제 사용성';
 }
 
 function generatedKoreanTitle(candidate) {
