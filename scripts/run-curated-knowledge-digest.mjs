@@ -94,12 +94,16 @@ function selectTopic(prefix, posts, workflowName, date) {
     ...fallbackPostsForWorkflow(workflowName),
     ...generatedPostsForWorkflow(workflowName),
     ...proceduralPostsForWorkflow(workflowName, date),
-  ].find((post) => !isDuplicateTopic(post, existingPosts));
+  ].find((post) => !isDuplicateTopic({ ...post, body: articleBodyForWorkflow(workflowName, post) }, existingPosts));
   if (!candidate) {
     const used = existingPosts.map((post) => post.slug ?? post.title).filter(Boolean).join(', ');
     throw new Error(`no unused ${prefix} topic remains after curated, fallback, generated, and procedural topic pools. Used: ${used}`);
   }
   return candidate;
+}
+
+function articleBodyForWorkflow(workflowName, post) {
+  return workflowName === 'developer' ? developerArticle(post) : knowledgeArticle(post);
 }
 
 function fallbackPostsForWorkflow(workflowName) {
@@ -157,13 +161,13 @@ function slugFromFilename(name, prefix) {
 }
 
 function isDuplicateTopic(post, existingPosts, currentFile = null) {
-  const candidateTokens = topicTokens(`${post.title} ${post.description} ${post.sourceTitle}`);
+  const candidateTokens = topicTokens(`${post.title} ${post.description} ${post.sourceTitle} ${post.body ?? ''}`);
   return existingPosts.some((existing) => {
     if (existing.file === currentFile) return false;
     if (existing.slug && existing.slug === post.slug) return true;
     if (existing.title && existing.title === post.title) return true;
     if (existing.sourceUrl && existing.sourceUrl === post.sourceUrl) return true;
-    return jaccard(candidateTokens, existing.tokens) >= 0.42;
+    return jaccard(candidateTokens, existing.tokens) >= 0.58;
   });
 }
 
@@ -183,7 +187,7 @@ function validateNoDuplicateCuratedPost(filePath, prefix) {
     if (existing.title && existing.title === post.title) return true;
     if (existing.sourceUrl && existing.sourceUrl === post.sourceUrl) return true;
     const currentTokens = topicTokens(`${data.title} ${data.description} ${data.sourceTitle} ${stripFrontmatter(content).slice(0, 2200)}`);
-    return jaccard(currentTokens, existing.tokens) >= 0.42;
+    return jaccard(currentTokens, existing.tokens) >= 0.58;
   });
   if (duplicate) {
     throw new Error(`${currentName} duplicates or is too similar to ${duplicate.file}`);
