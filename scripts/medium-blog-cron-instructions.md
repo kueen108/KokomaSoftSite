@@ -69,7 +69,7 @@ A short but opinionated reading recommendation, plus when to read the original.
 5. Report only the script's concise result.
 
 ## Cron wrapper
-For the actual OpenClaw cron job, prefer the single command below. It performs bounded Medium feed selection, creates the post when needed, then calls the publish script above. The runtime must have Cloudflare auth available, preferably `CLOUDFLARE_API_TOKEN`, because the publish step deploys with `npx wrangler deploy`.
+For the actual OpenClaw cron job, prefer the single command below. It performs bounded Medium feed selection, creates the post when needed, then calls the publish script above. If `CLOUDFLARE_API_TOKEN` is available, the publish step also runs `npx wrangler deploy`; otherwise it relies on the connected Cloudflare deployment after push.
 
 ```sh
 node scripts/run-medium-digest-codex.mjs --date YYYY-MM-DD

@@ -41,6 +41,14 @@ function run(command, args, options = {}) {
   return output;
 }
 
+function deployIfConfigured() {
+  if (!process.env.CLOUDFLARE_API_TOKEN) {
+    return 'wrangler deploy skipped: CLOUDFLARE_API_TOKEN is not set; relying on the connected Cloudflare deployment after git push.';
+  }
+  run('npx', ['wrangler', 'deploy']);
+  return 'wrangler deploy complete';
+}
+
 function parseFrontmatter(content) {
   const match = content.match(/^---\n([\s\S]*?)\n---/);
   if (!match) throw new Error('frontmatter block is missing');
@@ -170,7 +178,7 @@ if (staged) {
 
 const branch = gitOutput(['branch', '--show-current']) || 'HEAD';
 run('git', ['push', 'origin', branch]);
-run('npx', ['wrangler', 'deploy']);
+const deployStatus = deployIfConfigured();
 
 let httpStatus = 'not checked';
 try {
@@ -185,5 +193,5 @@ console.log(`제목: ${meta.title}`);
 console.log(`URL: ${url}`);
 console.log(`원문: ${meta.sourceUrl}`);
 console.log(`빌드: npm run build 통과`);
-console.log(`커밋/푸시/배포: ${commit}, origin ${branch} push 완료, wrangler deploy 완료`);
+console.log(`커밋/푸시/배포: ${commit}, origin ${branch} push 완료, ${deployStatus}`);
 console.log(`공개 URL HTTP 상태: ${httpStatus}`);

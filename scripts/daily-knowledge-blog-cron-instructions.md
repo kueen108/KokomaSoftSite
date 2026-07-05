@@ -75,14 +75,14 @@ One memorable takeaway sentence.
 4. Create/update the markdown post.
 5. Run `npm run build`.
 6. Commit with `blog: publish daily knowledge digest YYYY-MM-DD`.
-7. Push to origin, then run `npx wrangler deploy` so Cloudflare serves the new post.
+7. Push to origin. If `CLOUDFLARE_API_TOKEN` is available, also run `npx wrangler deploy`; otherwise rely on the connected Cloudflare deployment.
 
 ## Final Telegram response
 Keep the final response short:
 - 발행 성공 여부
 - 블로그 글 제목
 - URL: `https://blog.kokomasoft.com/<slug>/`
-- Cron/runtime must have Cloudflare auth available, preferably `CLOUDFLARE_API_TOKEN`, because this repo does not have a GitHub Actions deploy workflow.
+- Cron/runtime may set `CLOUDFLARE_API_TOKEN` for immediate Wrangler deploy. Without it, allow a short delay for the connected Cloudflare deployment before checking public URLs.
 - 주요 참고 링크
 - 빌드/푸시 결과 한 줄
 
