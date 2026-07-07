@@ -99,15 +99,17 @@ function firstExistingForDate(prefix, date) {
 
 function selectTopic(prefix, posts, workflowName, date) {
   const existingPosts = readExistingPosts(prefix);
-  const candidate = [
+  const candidates = [
     ...posts,
     ...fallbackPostsForWorkflow(workflowName),
     ...generatedPostsForWorkflow(workflowName),
     ...proceduralPostsForWorkflow(workflowName, date),
-  ].find((post) => !isDuplicateTopic({ ...post, body: articleBodyForWorkflow(workflowName, post) }, existingPosts));
+    ...emergencyProceduralPostsForWorkflow(workflowName, date),
+  ];
+  const candidate = candidates.find((post) => !isDuplicateTopic({ ...post, body: articleBodyForWorkflow(workflowName, post) }, existingPosts));
   if (!candidate) {
     const used = existingPosts.map((post) => post.slug ?? post.title).filter(Boolean).join(', ');
-    throw new Error(`no unused ${prefix} topic remains after curated, fallback, generated, and procedural topic pools. Used: ${used}`);
+    throw new Error(`no usable ${prefix} topic could be generated. Used: ${used}`);
   }
   return candidate;
 }
@@ -138,12 +140,62 @@ function proceduralPostsForWorkflow(workflowName, date) {
         slug: `${topic.slug}-${suffix}`,
         angle: angle.textFor(topic),
         description: angle.descriptionFor(topic),
+        duplicateSimilarityThreshold: 0.82,
       });
     }
   }
   const offset = Math.abs(hashString(`${workflowName}:${date}`)) % Math.max(1, pairs.length);
   return [...pairs.slice(offset), ...pairs.slice(0, offset)]
     .map((topic) => (workflowName === 'developer' ? developerPostFromTopic(topic) : knowledgePostFromTopic(topic)));
+}
+
+function emergencyProceduralPostsForWorkflow(workflowName, date) {
+  const topics = workflowName === 'developer' ? proceduralDeveloperTopics : proceduralKnowledgeTopics;
+  const angles = workflowName === 'developer' ? proceduralDeveloperAngles : proceduralKnowledgeAngles;
+  const focuses = workflowName === 'developer' ? proceduralDeveloperFocuses : proceduralKnowledgeFocuses;
+  const pairs = [];
+  for (const topic of topics) {
+    for (const angle of angles) {
+      for (const focus of focuses) {
+        pairs.push(expandProceduralTopic(topic, angle, focus, workflowName, date));
+      }
+    }
+  }
+  const offset = Math.abs(hashString(`${workflowName}:emergency:${date}`)) % Math.max(1, pairs.length);
+  return [...pairs.slice(offset), ...pairs.slice(0, offset)]
+    .map((topic) => (workflowName === 'developer' ? developerPostFromTopic(topic) : knowledgePostFromTopic(topic)));
+}
+
+function expandProceduralTopic(topic, angle, focus, workflowName, date) {
+  const seed = safeSlug(`${date}-${focus.slug}`).slice(0, 24);
+  const base = {
+    ...topic,
+    slug: `${topic.slug}-${safeSlug(angle.slug)}-${safeSlug(focus.slug)}-${seed}`,
+    angle: `${angle.textFor(topic)}: ${focus.titleFor(topic)}`,
+    description: focus.descriptionFor(topic, angle),
+    duplicateSimilarityThreshold: 0.9,
+  };
+  if (workflowName === 'developer') {
+    return {
+      ...base,
+      problem: focus.developerProblemFor(topic),
+      risk: focus.developerRiskFor(topic),
+      payoff: focus.developerPayoffFor(topic),
+      principles: focus.developerPrinciplesFor(topic),
+      example: focus.developerExampleFor(topic),
+      checklist: focus.developerChecklistFor(topic),
+      actions: focus.developerActionsFor(topic),
+      takeaway: focus.developerTakeawayFor(topic),
+    };
+  }
+  return {
+    ...base,
+    explain: focus.knowledgeExplainFor(topic),
+    why: focus.knowledgeWhyFor(topic),
+    examples: focus.knowledgeExamplesFor(topic),
+    actions: focus.knowledgeActionsFor(topic),
+    takeaway: focus.knowledgeTakeawayFor(topic),
+  };
 }
 
 function readExistingPosts(prefix) {
@@ -172,12 +224,12 @@ function slugFromFilename(name, prefix) {
 
 function isDuplicateTopic(post, existingPosts, currentFile = null) {
   const candidateTokens = topicTokens(`${post.title} ${post.description} ${post.sourceTitle} ${post.body ?? ''}`);
+  const similarityThreshold = post.duplicateSimilarityThreshold ?? 0.58;
   return existingPosts.some((existing) => {
     if (existing.file === currentFile) return false;
     if (existing.slug && existing.slug === post.slug) return true;
     if (existing.title && existing.title === post.title) return true;
-    if (existing.sourceUrl && existing.sourceUrl === post.sourceUrl) return true;
-    return jaccard(candidateTokens, existing.tokens) >= 0.58;
+    return jaccard(candidateTokens, existing.tokens) >= similarityThreshold;
   });
 }
 
@@ -195,9 +247,8 @@ function validateNoDuplicateCuratedPost(filePath, prefix) {
   const duplicate = readExistingPosts(prefix).find((existing) => {
     if (existing.file === currentName) return false;
     if (existing.title && existing.title === post.title) return true;
-    if (existing.sourceUrl && existing.sourceUrl === post.sourceUrl) return true;
     const currentTokens = topicTokens(`${data.title} ${data.description} ${data.sourceTitle} ${stripFrontmatter(content).slice(0, 2200)}`);
-    return jaccard(currentTokens, existing.tokens) >= 0.58;
+    return jaccard(currentTokens, existing.tokens) >= 0.82;
   });
   if (duplicate) {
     throw new Error(`${currentName} duplicates or is too similar to ${duplicate.file}`);
@@ -1909,6 +1960,171 @@ const proceduralKnowledgeAngles = [
   { slug: 'modern-reading', textFor: (topic) => '현대 사회를 읽는 작은 렌즈', descriptionFor: (topic) => `${topic.subject}를 뉴스, 조직, 플랫폼, 개인 습관을 이해하는 렌즈로 소개합니다.` },
   { slug: 'quiet-trap', textFor: (topic) => '조용한 함정은 대개 익숙한 얼굴을 하고 있다', descriptionFor: (topic) => `${topic.subject}가 왜 익숙한 상황에서 더 잘 숨어드는지 사례와 함께 설명합니다.` },
   { slug: 'practical-skepticism', textFor: (topic) => '의심은 부정이 아니라 확인의 기술이다', descriptionFor: (topic) => `${topic.subject}를 통해 더 차분하게 의심하고 더 정확하게 확인하는 태도를 정리합니다.` },
+];
+
+const proceduralDeveloperFocuses = [
+  {
+    slug: 'incident-review',
+    titleFor: () => '장애 회고에서 드러나는 진짜 질문',
+    descriptionFor: (topic) => `${topic.subject}를 장애 회고, 재발 방지, 운영 지표 관점에서 다시 정리합니다.`,
+    developerProblemFor: (topic) => `장애가 난 뒤 ${topic.subject}를 보면 단순한 구현 문제가 아니라 팀이 무엇을 약속했고 무엇을 보지 못했는지가 드러납니다.`,
+    developerRiskFor: (topic) => '회고가 개인 실수 찾기로 끝나면 같은 조건이 다시 만들어지고, 다음 장애는 조금 다른 이름으로 반복됩니다.',
+    developerPayoffFor: (topic) => `${topic.subject}를 회고 언어로 정리하면 재발 방지 항목이 코드 수정, 알림, 문서, 테스트로 나뉘어 실제 개선으로 이어집니다.`,
+    developerPrinciplesFor: (topic) => [
+      `첫 번째는 사건의 시간축입니다. ${topic.subject}와 관련된 결정, 경고, 실패 응답이 언제 나타났는지 순서대로 봐야 합니다.`,
+      '두 번째는 감지 가능성입니다. 문제가 커지기 전에 알 수 있었던 신호와 실제로 놓친 신호를 분리해야 합니다.',
+      '세 번째는 재발 방지의 소유권입니다. 코드 변경만 적지 말고 대시보드, 런북, 리뷰 체크리스트까지 누가 고칠지 정해야 합니다.',
+    ],
+    developerExampleFor: (topic) => `예를 들어 ${topic.subject} 때문에 배치 작업이 지연됐다고 합시다. 회고에서는 왜 지연됐는지만이 아니라, 지연을 언제 알았는지, 사용자는 무엇을 봤는지, 다음에는 어떤 지표가 먼저 울려야 하는지를 함께 적어야 합니다.`,
+    developerChecklistFor: (topic) => [
+      `${topic.subject}와 연결된 실패 신호가 로그와 지표에 남았는가?`,
+      '사용자 영향과 내부 원인을 같은 시간축에서 볼 수 있는가?',
+      '재발 방지 항목이 코드, 테스트, 문서, 알림으로 나뉘어 있는가?',
+      '같은 조건을 재현하는 작은 테스트나 리허설이 있는가?',
+      '다음 당직자가 이 사건을 5분 안에 이해할 수 있는 런북이 있는가?',
+    ],
+    developerActionsFor: (topic) => [
+      `최근 장애나 느린 배포 하나를 골라 ${topic.subject}와 연결된 신호가 어디에 있었는지 표시해보세요.`,
+      '회고 문서의 액션 아이템을 코드 수정 하나로 끝내지 말고 관측 가능성 항목을 하나 이상 추가하세요.',
+      '다음 리뷰에서 이 실패가 다시 생기면 어떤 알림이 울릴지 먼저 물어보세요.',
+    ],
+    developerTakeawayFor: (topic) => `${topic.subject}는 장애 뒤에 비난할 대상을 찾는 도구가 아니라, 다음 장애를 더 작게 만드는 회고 언어입니다.`,
+  },
+  {
+    slug: 'product-contract',
+    titleFor: () => '제품 약속으로 번역해야 오래 간다',
+    descriptionFor: (topic) => `${topic.subject}를 사용자 경험, API 계약, 제품 문구까지 연결해 설명합니다.`,
+    developerProblemFor: (topic) => `${topic.subject}는 백엔드 내부 정책처럼 보여도 사용자는 결국 응답 시간, 오류 문구, 재시도 가능성으로 경험합니다.`,
+    developerRiskFor: () => '기술 정책이 제품 약속으로 번역되지 않으면 클라이언트는 제각각 해석하고, 운영자는 같은 상황을 매번 수동으로 설명하게 됩니다.',
+    developerPayoffFor: (topic) => `${topic.subject}를 제품 계약으로 정리하면 서버, 앱, 고객지원, 운영 대시보드가 같은 기준으로 움직입니다.`,
+    developerPrinciplesFor: (topic) => [
+      `첫 번째는 사용자에게 보이는 경계입니다. ${topic.subject}가 동작할 때 사용자가 무엇을 기다리고 무엇을 다시 시도할 수 있는지 정해야 합니다.`,
+      '두 번째는 API의 표현입니다. 상태 코드, 에러 코드, 응답 본문이 같은 의미를 반복해서 말해야 합니다.',
+      '세 번째는 지원 가능한 문구입니다. 기술적 원인을 그대로 노출하기보다 사용자가 다음 행동을 알 수 있게 해야 합니다.',
+    ],
+    developerExampleFor: (topic) => `${topic.subject}가 적용된 API가 실패했을 때 서버는 내부 예외만 던지면 안 됩니다. 앱은 사용자에게 재시도, 대기, 문의 중 무엇을 보여줄지 알아야 하고 고객지원도 같은 기준을 봐야 합니다.`,
+    developerChecklistFor: (topic) => [
+      `${topic.subject} 상황에서 사용자에게 보여줄 상태와 문구가 정해져 있는가?`,
+      'API 응답이 클라이언트의 다음 행동을 충분히 알려주는가?',
+      '고객지원이나 운영팀이 같은 상태를 확인할 수 있는가?',
+      '문서에는 정상 경로뿐 아니라 제한, 실패, 대기 상태가 포함되어 있는가?',
+      '제품 지표에서 이 정책이 사용자 전환이나 이탈에 미치는 영향을 볼 수 있는가?',
+    ],
+    developerActionsFor: (topic) => [
+      `${topic.subject}가 드러나는 화면이나 API 하나를 골라 사용자 문구와 에러 코드를 함께 점검하세요.`,
+      '기술 문서에 “클라이언트가 해야 할 일” 섹션을 추가하세요.',
+      '운영 대시보드에 사용자에게 보이는 상태별 카운트를 하나 추가하세요.',
+    ],
+    developerTakeawayFor: (topic) => `${topic.subject}는 내부 구현에서 끝나지 않습니다. 사용자가 이해할 수 있는 약속으로 바뀔 때 비로소 설계가 됩니다.`,
+  },
+  {
+    slug: 'scaling-pressure',
+    titleFor: () => '규모가 커질 때 먼저 깨지는 부분',
+    descriptionFor: (topic) => `${topic.subject}가 트래픽, 팀 규모, 데이터 증가 속에서 어떻게 압박을 받는지 다룹니다.`,
+    developerProblemFor: (topic) => `작은 서비스에서는 ${topic.subject}의 빈틈이 잘 보이지 않습니다. 하지만 요청 수, 팀 수, 배포 빈도가 늘면 같은 빈틈이 반복 비용이 됩니다.`,
+    developerRiskFor: () => '규모가 커진 뒤 고치려 하면 이미 클라이언트 계약, 데이터 형태, 운영 습관이 굳어 있어 변경 비용이 커집니다.',
+    developerPayoffFor: (topic) => `${topic.subject}를 미리 규모의 압력으로 점검하면 지금 당장 과설계하지 않으면서도 나중에 바꿀 수 있는 여지를 남길 수 있습니다.`,
+    developerPrinciplesFor: (topic) => [
+      `첫 번째는 증가 방향입니다. ${topic.subject}에서 트래픽, 데이터, 팀 의존성 중 무엇이 가장 빨리 늘어날지 봐야 합니다.`,
+      '두 번째는 되돌리기 비용입니다. 지금 정한 기본값이 나중에 호환성 문제로 고정될 수 있는지 확인해야 합니다.',
+      '세 번째는 단계적 확장입니다. 완성형 아키텍처보다 다음 두 단계의 병목을 미리 없애는 것이 현실적입니다.',
+    ],
+    developerExampleFor: (topic) => `처음에는 ${topic.subject}를 단일 서비스 안에서 처리해도 충분할 수 있습니다. 하지만 호출자가 늘고 배포 주기가 달라지면 같은 판단을 여러 팀이 공유해야 하므로 명시적인 계약과 지표가 필요해집니다.`,
+    developerChecklistFor: (topic) => [
+      `${topic.subject}와 관련해 가장 먼저 늘어날 것은 요청 수, 데이터, 팀 의존성 중 무엇인가?`,
+      '지금의 기본값을 바꾸려면 어떤 클라이언트를 함께 고쳐야 하는가?',
+      '병목이 생겼을 때 수평 확장, 큐잉, 캐싱, 분리 중 어떤 선택지가 남아 있는가?',
+      '성장 단계별로 봐야 할 지표가 정해져 있는가?',
+      '운영자가 수동으로 처리하는 부분이 반복 작업으로 굳어지고 있지 않은가?',
+    ],
+    developerActionsFor: (topic) => [
+      `${topic.subject}가 현재 트래픽의 10배에서 어떻게 동작할지 한 장으로 그려보세요.`,
+      '나중에 바꾸기 어려운 기본값 하나를 찾아 문서에 이유를 남기세요.',
+      '이번 분기에 필요한 확장과 아직 하지 않아도 되는 확장을 구분해두세요.',
+    ],
+    developerTakeawayFor: (topic) => `${topic.subject}의 좋은 설계는 큰 시스템을 미리 흉내 내는 것이 아니라, 커질 때 바꿀 수 있게 길을 남기는 일입니다.`,
+  },
+];
+
+const proceduralKnowledgeFocuses = [
+  {
+    slug: 'meeting-room',
+    titleFor: () => '회의실에서 바로 보이는 패턴',
+    descriptionFor: (topic) => `${topic.subject}를 회의, 협업, 조직 의사결정의 작은 장면으로 풀어 설명합니다.`,
+    knowledgeExplainFor: (topic) => [
+      `${topic.subject}는 거창한 이론보다 회의실에서 먼저 보이는 경우가 많습니다.`,
+      `핵심은 ${topic.angle}는 점입니다. 같은 자료를 보고도 어떤 질문을 먼저 하느냐에 따라 결론이 달라집니다.`,
+      '이 개념은 회의에서 누가 맞는지 가르기보다, 토론이 어떤 방향으로 끌려가고 있는지 알아차리게 해줍니다.',
+    ],
+    knowledgeWhyFor: (topic) => [
+      '조직은 빠른 합의를 좋아하지만 빠른 합의가 항상 좋은 판단은 아닙니다.',
+      `${topic.subject}를 알면 발언의 크기, 최근 사례, 익숙한 선택지가 판단을 대신하고 있지 않은지 점검할 수 있습니다.`,
+      '작은 회의 습관을 바꾸는 것만으로도 잘못된 확신을 줄일 수 있습니다.',
+    ],
+    knowledgeExamplesFor: (topic) => [
+      `회의에서 ${topic.subject}가 작동하면 사람들은 충분한 근거보다 방금 나온 강한 예시에 더 오래 머물 수 있습니다.`,
+      '모두가 동의하는 것처럼 보여도 실제로는 질문을 바꾸지 않았을 뿐일 수 있습니다.',
+      '반대로 누군가 기준을 다시 묻는 순간 논의의 방향이 더 차분해질 수 있습니다.',
+    ],
+    knowledgeActionsFor: (topic) => [
+      `다음 회의에서 ${topic.subject} 관점으로 “우리가 당연하게 둔 기준은 무엇인가”를 물어보세요.`,
+      '결론을 내리기 전에 반대 사례 하나와 빠진 정보 하나를 적어보세요.',
+      '의견의 세기와 근거의 세기를 분리해서 기록해보세요.',
+    ],
+    knowledgeTakeawayFor: () => '좋은 회의는 말을 더 많이 하는 자리가 아니라, 판단을 끌고 가는 기준을 함께 보는 자리입니다.',
+  },
+  {
+    slug: 'news-feed',
+    titleFor: () => '뉴스피드에서 헷갈리기 쉬운 신호',
+    descriptionFor: (topic) => `${topic.subject}를 뉴스, 플랫폼, 정보 과잉 속 판단 습관으로 설명합니다.`,
+    knowledgeExplainFor: (topic) => [
+      `${topic.subject}는 정보가 부족할 때보다 정보가 너무 많을 때 더 잘 드러납니다.`,
+      `핵심은 ${topic.angle}는 점입니다. 자주 보이는 정보가 반드시 중요한 정보는 아닙니다.`,
+      '뉴스피드와 추천 알고리즘은 우리의 관심을 기준으로 세상을 잘라 보여주기 때문에, 판단의 재료가 이미 선택되어 있을 수 있습니다.',
+    ],
+    knowledgeWhyFor: (topic) => [
+      '현대인은 사실을 직접 고르기보다 이미 정렬된 정보를 소비하는 시간이 많습니다.',
+      `${topic.subject}를 이해하면 “많이 봤다”와 “중요하다”를 구분하는 데 도움이 됩니다.`,
+      '이 구분은 뉴스뿐 아니라 투자, 건강, 제품 선택, 사회 이슈를 볼 때도 필요합니다.',
+    ],
+    knowledgeExamplesFor: (topic) => [
+      `특정 사건이 계속 보이면 ${topic.subject} 때문에 실제 빈도보다 훨씬 흔하다고 느낄 수 있습니다.`,
+      '댓글이 많은 글이 꼭 사회 전체의 의견을 대표하지는 않습니다.',
+      '추천 피드가 비슷한 관점을 반복해서 보여주면 다른 설명이 존재한다는 사실 자체를 잊기 쉽습니다.',
+    ],
+    knowledgeActionsFor: (topic) => [
+      `오늘 본 이슈 하나를 ${topic.subject} 관점에서 “자주 보인 것”과 “검증된 것”으로 나눠보세요.`,
+      '중요한 판단일수록 검색 결과 첫 화면 밖의 자료를 하나 더 확인하세요.',
+      '강한 감정이 든 정보는 바로 공유하기 전에 출처와 표본을 확인하세요.',
+    ],
+    knowledgeTakeawayFor: () => '정보가 많아질수록 필요한 것은 더 빠른 반응이 아니라, 무엇이 선택되어 보였는지 묻는 습관입니다.',
+  },
+  {
+    slug: 'personal-habit',
+    titleFor: () => '개인 습관을 바꾸는 작은 렌즈',
+    descriptionFor: (topic) => `${topic.subject}를 개인의 반복 선택, 습관, 자기 점검과 연결해 설명합니다.`,
+    knowledgeExplainFor: (topic) => [
+      `${topic.subject}는 사회나 조직만의 문제가 아니라 매일의 작은 선택에도 숨어 있습니다.`,
+      `핵심은 ${topic.angle}는 점입니다. 우리는 선택한다고 느끼지만, 실제로는 익숙한 단서와 환경에 많이 반응합니다.`,
+      '개념을 안다는 것은 스스로를 탓하기보다 반복되는 선택의 조건을 다시 보는 일입니다.',
+    ],
+    knowledgeWhyFor: (topic) => [
+      '습관은 의지보다 환경과 피드백에 더 많이 기대는 경우가 많습니다.',
+      `${topic.subject}를 알면 “나는 왜 또 이랬을까”라는 자책을 “무엇이 이 선택을 쉽게 만들었을까”라는 질문으로 바꿀 수 있습니다.`,
+      '질문이 바뀌면 해결책도 의지력보다 구조 조정에 가까워집니다.',
+    ],
+    knowledgeExamplesFor: (topic) => [
+      `할 일을 미루는 상황에서도 ${topic.subject}를 보면 단순한 게으름보다 시작 조건, 보상, 두려움이 보입니다.`,
+      '매번 같은 앱을 여는 습관은 개인의 취향이기도 하지만 알림과 배치가 만든 경로일 수 있습니다.',
+      '작은 성공 경험을 보이게 만들면 같은 행동을 반복하기 쉬워집니다.',
+    ],
+    knowledgeActionsFor: (topic) => [
+      `오늘 반복한 선택 하나를 ${topic.subject} 관점에서 다시 적어보세요.`,
+      '그 선택을 쉽게 만든 단서와 어렵게 만든 마찰을 각각 하나씩 찾아보세요.',
+      '의지를 더 쓰기보다 환경을 10초 덜 귀찮게 바꾸는 방법을 시도해보세요.',
+    ],
+    knowledgeTakeawayFor: () => '습관을 바꾸는 첫걸음은 나를 몰아붙이는 것이 아니라, 선택이 쉬워진 경로를 발견하는 일입니다.',
+  },
 ];
 
 function safeSlug(value) {
