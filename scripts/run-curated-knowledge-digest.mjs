@@ -1103,6 +1103,7 @@ function developerPostFromTopic(topic) {
   const payoff = topic.payoff ?? '개발자가 이 개념을 알면 설계 결정의 이유를 더 분명히 설명하고, 장애가 나기 전에 위험을 줄일 수 있습니다.';
   return {
     slug: topic.slug,
+    duplicateSimilarityThreshold: topic.duplicateSimilarityThreshold,
     title: `개발자가 알아야 할 지식: ${topic.subject}, ${topic.angle}`,
     description: topic.description,
     sourceTitle: topic.sourceTitle,
@@ -1164,6 +1165,7 @@ function knowledgePostFromTopic(topic) {
   ];
   return {
     slug: topic.slug,
+    duplicateSimilarityThreshold: topic.duplicateSimilarityThreshold,
     title: `오늘의 지식: ${topic.subject}, ${topic.angle}`,
     description: topic.description,
     sourceTitle: topic.sourceTitle,
