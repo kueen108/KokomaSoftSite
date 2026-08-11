@@ -28,6 +28,10 @@ function hasFlag(name) {
   return process.argv.includes(name);
 }
 
+function isHarnessMode() {
+  return hasFlag('--harness') || hasFlag('--self-test');
+}
+
 function run(command, args) {
   const result = spawnSync(command, args, {
     cwd: repoRoot,
@@ -97,6 +101,22 @@ function firstExistingForDate(prefix, date) {
     .sort()[0] ?? null;
 }
 
+function validExistingForDate(prefix, date) {
+  const filename = firstExistingForDate(prefix, date);
+  if (!filename) return null;
+  try {
+    validateNoDuplicateCuratedPost(join(postDir, filename), prefix);
+    return filename;
+  } catch (error) {
+    writeFileSync(
+      logPath,
+      `\n\nIgnoring existing ${prefix} draft for ${date}: ${filename}\n${error.message}\n`,
+      { flag: 'a' },
+    );
+    return null;
+  }
+}
+
 function selectTopic(prefix, posts, workflowName, date) {
   const existingPosts = readExistingPosts(prefix);
   const candidates = [
@@ -112,6 +132,27 @@ function selectTopic(prefix, posts, workflowName, date) {
     throw new Error(`no usable ${prefix} topic could be generated. Used: ${used}`);
   }
   return candidate;
+}
+
+function selectTopicReport(prefix, posts, workflowName, date) {
+  const existingPosts = readExistingPosts(prefix);
+  const candidates = [
+    ...posts,
+    ...fallbackPostsForWorkflow(workflowName),
+    ...generatedPostsForWorkflow(workflowName),
+    ...proceduralPostsForWorkflow(workflowName, date),
+    ...emergencyProceduralPostsForWorkflow(workflowName, date),
+  ];
+  const rejected = [];
+  for (const post of candidates) {
+    const body = articleBodyForWorkflow(workflowName, post);
+    const duplicate = duplicateTopicReason({ ...post, body }, existingPosts);
+    if (!duplicate) {
+      return { candidate: post, rejected, totalCandidates: candidates.length };
+    }
+    rejected.push({ slug: post.slug, duplicate });
+  }
+  return { candidate: null, rejected, totalCandidates: candidates.length };
 }
 
 function articleBodyForWorkflow(workflowName, post) {
@@ -223,14 +264,22 @@ function slugFromFilename(name, prefix) {
 }
 
 function isDuplicateTopic(post, existingPosts, currentFile = null) {
+  return Boolean(duplicateTopicReason(post, existingPosts, currentFile));
+}
+
+function duplicateTopicReason(post, existingPosts, currentFile = null) {
   const candidateTokens = topicTokens(`${post.title} ${post.description} ${post.sourceTitle} ${post.body ?? ''}`);
   const similarityThreshold = post.duplicateSimilarityThreshold ?? 0.58;
-  return existingPosts.some((existing) => {
-    if (existing.file === currentFile) return false;
-    if (existing.slug && existing.slug === post.slug) return true;
-    if (existing.title && existing.title === post.title) return true;
-    return jaccard(candidateTokens, existing.tokens) >= similarityThreshold;
-  });
+  for (const existing of existingPosts) {
+    if (existing.file === currentFile) continue;
+    if (existing.slug && existing.slug === post.slug) return { file: existing.file, reason: 'slug' };
+    if (existing.title && existing.title === post.title) return { file: existing.file, reason: 'title' };
+    const similarity = jaccard(candidateTokens, existing.tokens);
+    if (similarity >= similarityThreshold) {
+      return { file: existing.file, reason: `topic similarity ${similarity.toFixed(2)}` };
+    }
+  }
+  return null;
 }
 
 function validateNoDuplicateCuratedPost(filePath, prefix) {
@@ -2249,20 +2298,45 @@ const workflows = {
 
 const workflowName = argValue('--workflow', 'developer');
 const workflow = workflows[workflowName];
-if (!workflow) {
+if (!workflow && !(isHarnessMode() && workflowName === 'all')) {
   throw new Error(`Unknown workflow: ${workflowName}`);
 }
 
-const date = argValue('--date', todayInSeoul());
+const rawDate = argValue('--date', todayInSeoul());
+const date = rawDate === 'today' ? todayInSeoul() : rawDate;
 mkdirSync(outputDir, { recursive: true });
 mkdirSync(postDir, { recursive: true });
+
+if (isHarnessMode()) {
+  const workflowsToCheck = workflowName === 'all' ? Object.entries(workflows) : [[workflowName, workflow]];
+  const results = workflowsToCheck.map(([name, config]) => {
+    const existing = validExistingForDate(config.prefix, date);
+    const report = selectTopicReport(config.prefix, config.posts, name, date);
+    if (!existing && !report.candidate) {
+      throw new Error(
+        `${config.prefix} harness failed: no usable topic after ${report.totalCandidates} candidates. ` +
+          `Rejected ${report.rejected.length}.`,
+      );
+    }
+    return {
+      workflow: name,
+      date,
+      existing,
+      selected: existing ?? report.candidate.slug,
+      rejected: report.rejected.length,
+      totalCandidates: report.totalCandidates,
+    };
+  });
+  console.log(JSON.stringify({ ok: true, results }, null, 2));
+  process.exit(0);
+}
 
 if (!hasFlag('--skip-pull')) {
   run('git', ['fetch', 'origin', 'main']);
   run('git', ['merge', '--ff-only', 'FETCH_HEAD']);
 }
 
-let filename = firstExistingForDate(workflow.prefix, date);
+let filename = validExistingForDate(workflow.prefix, date);
 let created = false;
 if (!filename) {
   const post = selectTopic(workflow.prefix, workflow.posts, workflowName, date);

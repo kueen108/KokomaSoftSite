@@ -4,6 +4,8 @@ import { basename, join } from 'node:path';
 
 const repoRoot = new URL('..', import.meta.url).pathname.replace(/\/$/, '');
 const postDir = join(repoRoot, 'src/content/medium-digest');
+const outputDir = join(repoRoot, 'output');
+const rejectedDir = join(outputDir, 'rejected-medium-digest');
 
 const feeds = [
   'https://medium.com/feed/tag/ai-coding',
@@ -27,6 +29,14 @@ function todayInSeoul() {
 function argValue(name, fallback) {
   const index = process.argv.indexOf(name);
   return index >= 0 ? process.argv[index + 1] : fallback;
+}
+
+function hasFlag(name) {
+  return process.argv.includes(name);
+}
+
+function isHarnessMode() {
+  return hasFlag('--harness') || hasFlag('--self-test');
 }
 
 function argValues(name) {
@@ -56,6 +66,10 @@ function stripHtml(value = '') {
     .replace(/\bContinue reading\b\s*»?/gi, ' ')
     .replace(/\s+/g, ' ')
     .trim();
+}
+
+function stripFrontmatter(content) {
+  return String(content).replace(/^---\n[\s\S]*?\n---\n?/, '').trim();
 }
 
 function tagValue(item, tag) {
@@ -165,6 +179,70 @@ async function collectCandidates() {
     }
   }
   return candidates;
+}
+
+function collectFallbackCandidates(date) {
+  return [
+    ...rejectedDraftCandidates(date),
+    ...standbyMediumCandidates(date),
+  ].filter((candidate, index, list) => list.findIndex((item) => item.link === candidate.link) === index);
+}
+
+function rejectedDraftCandidates(date) {
+  if (!existsSync(rejectedDir)) return [];
+  return readdirSync(rejectedDir)
+    .filter((name) => name.endsWith('.md'))
+    .sort()
+    .reverse()
+    .map((name) => {
+      const content = readFileSync(join(rejectedDir, name), 'utf8');
+      const sourceTitle = frontmatterValue(content, 'sourceTitle');
+      const sourceUrl = frontmatterValue(content, 'sourceUrl');
+      if (!sourceTitle || !sourceUrl) return null;
+      return {
+        title: sourceTitle,
+        link: sourceUrl,
+        author: frontmatterValue(content, 'sourceAuthor') || 'Medium author',
+        pubDate: date,
+        categories: ['AI', 'Medium', 'Coding Agents'],
+        summary: stripHtml(stripFrontmatter(content)).slice(0, 900),
+        feed: 'local rejected Medium draft cache',
+      };
+    })
+    .filter(Boolean);
+}
+
+function standbyMediumCandidates(date) {
+  return [
+    {
+      title: 'Agentic RAG Explained: When Should Your AI Decide What to Retrieve?',
+      link: 'https://medium.com/p/agentic-rag-explained-when-should-your-ai-decide-what-to-retrieve',
+      author: 'Medium author',
+      categories: ['AI', 'RAG', 'AI Agents'],
+      summary: 'Agentic RAG changes retrieval from a fixed lookup into a workflow decision. The useful question is when an AI system should search, what evidence it should trust, and how teams should log retrieval choices for later review.',
+    },
+    {
+      title: 'Should an LLM Build Your Data Pipelines on the Fly? Write, Yes. Run, Never.',
+      link: 'https://medium.com/p/should-an-llm-build-your-data-pipelines-on-the-fly-write-yes-run-never',
+      author: 'Medium author',
+      categories: ['AI', 'Data Engineering', 'LLM'],
+      summary: 'LLMs can draft data pipeline code quickly, but production execution needs permissions, tests, lineage, rollback, and human-reviewed guardrails before anything touches real data.',
+    },
+    {
+      title: 'AI Safety Is Growing a Gut Feeling',
+      link: 'https://medium.com/p/ai-safety-is-growing-a-gut-feeling',
+      author: 'Medium author',
+      categories: ['AI Safety', 'AI Agents'],
+      summary: 'AI safety work is moving from abstract warnings toward everyday engineering instincts: noticing brittle outputs, unsafe defaults, missing evaluation loops, and unclear accountability.',
+    },
+    {
+      title: 'The Real AI Development Shift Is Not About Writing Code Faster',
+      link: 'https://medium.com/p/the-real-ai-development-shift-is-not-about-writing-code-faster',
+      author: 'Medium author',
+      categories: ['AI Coding', 'Software Engineering'],
+      summary: 'The bigger shift in AI-assisted development is how teams define tasks, preserve context, review generated changes, and build repeatable verification loops around faster code generation.',
+    },
+  ].map((candidate) => ({ ...candidate, pubDate: date, feed: 'standby Medium candidate bank' }));
 }
 
 function score(candidate, recent) {
@@ -279,6 +357,39 @@ function digestTheme(candidate) {
       summaryBridge: '이 요지는 개발자의 경쟁력이 코드 작성 속도보다 문제 정의와 검증 루프에 더 가까워지고 있음을 보여준다.',
       stepHeadings: ['역할의 변화', '문제 분해', '검증 습관', '협업 방식'],
       finalLine: 'AI 네이티브 개발자의 핵심은 도구 목록이 아니라, AI가 만든 결과를 다룰 수 있는 작업 습관이다.',
+    };
+  }
+  if (/rag|retriev|knowledge graph|vector|embedding/.test(haystack)) {
+    return {
+      title: '오늘의 AI 글: Agentic RAG는 검색을 기능이 아니라 판단 루프로 바꾼다',
+      descriptionFocus: 'Agentic RAG와 검색 결정권을 중심으로, AI가 언제 무엇을 찾아야 하는지와 그 판단을 어떻게 검증해야 하는지 정리한다.',
+      openingFrame: 'RAG는 더 이상 문서를 한 번 붙여 넣는 기술만이 아니다. AI가 어느 순간 검색해야 하는지, 어떤 자료를 믿어야 하는지, 찾은 근거를 어떻게 남겨야 하는지가 실전 품질을 가른다.',
+      sourcePhrase: 'Agentic RAG를 통해 검색을 고정된 기능이 아니라 AI가 선택하고 검증해야 하는 업무 루프로 보자는 관점을 제시한다.',
+      summaryBridge: '이 요지는 코딩 에이전트가 저장소와 문서를 읽는 방식에도 그대로 적용된다.',
+      stepHeadings: ['검색 시점의 판단', '근거 선택의 기준', '로그와 재현성', '검증 가능한 답변'],
+      finalLine: 'Agentic RAG의 핵심은 더 많이 찾는 것이 아니라, 왜 그 근거를 선택했는지 설명 가능한 루프를 만드는 일이다.',
+    };
+  }
+  if (/data pipeline|etl|warehouse|lineage|dataset/.test(haystack)) {
+    return {
+      title: '오늘의 AI 글: LLM 데이터 파이프라인은 작성보다 실행 통제가 더 중요하다',
+      descriptionFocus: 'LLM이 데이터 파이프라인 코드를 만들 때 필요한 권한 분리, 테스트, 계보, 롤백, 운영 통제 기준을 정리한다.',
+      openingFrame: 'LLM은 데이터 파이프라인 초안을 빠르게 만들 수 있다. 하지만 실제 데이터를 움직이는 순간부터 문제는 코드 작성이 아니라 권한, 검증, 계보, 복구의 영역이 된다.',
+      sourcePhrase: 'LLM에게 데이터 파이프라인을 쓰게 할 수는 있지만, 검증 없이 실행하게 해서는 안 된다는 운영 원칙을 다룬다.',
+      summaryBridge: '이 요지는 모든 AI 자동화에 적용된다. 초안 생성과 운영 실행은 같은 단계가 아니다.',
+      stepHeadings: ['초안과 실행의 분리', '권한과 데이터 경계', '테스트와 계보', '롤백 가능한 운영'],
+      finalLine: 'AI가 데이터 코드를 빨리 쓸수록, 사람은 실행 권한과 검증 증거를 더 엄격하게 설계해야 한다.',
+    };
+  }
+  if (/safety|risk|guardrail|eval|alignment/.test(haystack)) {
+    return {
+      title: '오늘의 AI 글: AI 안전은 거창한 원칙보다 반복되는 감각에서 자란다',
+      descriptionFocus: 'AI 안전을 일상적인 제품 개발과 운영에서 발견되는 위험 신호, 평가 습관, 가드레일 감각으로 정리한다.',
+      openingFrame: 'AI 안전은 먼 미래의 큰 담론만이 아니다. 이상한 출력, 불안한 기본값, 빠진 평가, 책임이 흐린 자동화를 매일 알아차리는 감각이 먼저다.',
+      sourcePhrase: 'AI 안전을 추상적 선언이 아니라 제품과 엔지니어링 현장에서 반복해서 길러지는 판단 감각으로 바라본다.',
+      summaryBridge: '이 요지는 코딩 에이전트 운영에서도 중요하다. 위험은 대개 작은 예외를 무시할 때 커진다.',
+      stepHeadings: ['위험 신호의 발견', '평가 습관', '가드레일의 위치', '책임 있는 반복'],
+      finalLine: 'AI 안전의 시작은 완벽한 통제가 아니라, 이상한 신호를 그냥 넘기지 않는 운영 습관이다.',
     };
   }
   if (/parallel|dozens|64|128|multi[-\s]?agent|swarm/.test(haystack)) {
@@ -454,11 +565,12 @@ ${publicNote} 자동화된 블로그 발행 작업에서도 같은 교훈이 보
 `;
 }
 
-const date = argValue('--date', todayInSeoul());
-const force = process.argv.includes('--force');
+const rawDate = argValue('--date', todayInSeoul());
+const date = rawDate === 'today' ? todayInSeoul() : rawDate;
+const force = hasFlag('--force');
 const excludedSourceUrls = new Set(argValues('--exclude-source-url'));
 const existing = existingPostFor(date);
-if (existing && !force) {
+if (existing && !force && !isHarnessMode()) {
   console.log(`existing post: ${existing}`);
   process.exit(0);
 }
@@ -474,8 +586,13 @@ const recent = {
   generatedTitles: recentGeneratedTitles(posts),
   fingerprints: posts.map((post) => topicTokens(`${post.title} ${post.description} ${post.sourceTitle} ${post.bodySample}`)),
 };
-const candidates = await collectCandidates();
-if (candidates.length === 0) throw new Error('no Medium candidates found');
+let candidates = isHarnessMode() ? [] : await collectCandidates();
+let fallbackUsed = false;
+if (candidates.length === 0) {
+  candidates = collectFallbackCandidates(date);
+  fallbackUsed = true;
+}
+if (candidates.length === 0) throw new Error('no Medium candidates found from feeds or fallback cache');
 
 const rankedCandidates = candidates
   .filter((item) => !excludedSourceUrls.has(item.link))
@@ -515,9 +632,23 @@ if (!candidate) {
   throw new Error(`no Medium candidate passed duplicate checks${rejected.length ? `\n${rejected.slice(0, 8).join('\n')}` : ''}`);
 }
 
+if (isHarnessMode()) {
+  console.log(JSON.stringify({
+    ok: true,
+    date,
+    selected: candidate.title,
+    source: candidate.link,
+    fallbackUsed,
+    rejected: rejected.length,
+    candidates: rankedCandidates.length,
+  }, null, 2));
+  process.exit(0);
+}
+
 const slug = `${date}-${slugify(candidate.title)}.md`;
 const postPath = existing && force ? existing : join(postDir, slug);
 writeFileSync(postPath, content || koreanPost({ date, slug, candidate, accessNote }));
 console.log(`created ${postPath}`);
 console.log(`source ${candidate.link}`);
 if (rejected.length) console.log(`rejected ${rejected.length} similar candidate(s) before selecting this post`);
+if (fallbackUsed) console.log('Medium feeds were unavailable; selected from local fallback cache/standby candidates');

@@ -6,6 +6,8 @@
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
+    "harness:curated": "node scripts/run-curated-knowledge-digest.mjs --harness --workflow all --date today",
+    "harness:medium": "node scripts/generate-medium-digest.mjs --harness --date today",
     "preview": "astro preview"
   },
   "dependencies": {
