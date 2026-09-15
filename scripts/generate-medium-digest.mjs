@@ -100,7 +100,6 @@ function recentPosts() {
   return readdirSync(postDir)
     .filter((name) => /^\d{4}-\d{2}-\d{2}-.*\.md$/.test(name))
     .sort()
-    .slice(-30)
     .map((name) => {
       const content = readFileSync(join(postDir, name), 'utf8');
       return {
@@ -131,11 +130,16 @@ function recentGeneratedTitles(posts) {
 }
 
 function validateCandidatePost(candidate, content, recent) {
+  if (/\bundefined\b|\[object Object\]/.test(content)) throw new Error('unresolved template value');
   if (recent.sourceTitles.has(candidate.title)) throw new Error('duplicate source title');
   if (recent.sourceUrls.has(candidate.link)) throw new Error('duplicate source URL');
   if (recent.generatedTitles.has(generatedKoreanTitle(candidate))) throw new Error('duplicate generated title');
 
-  const fingerprint = topicTokens(`${generatedKoreanTitle(candidate)} ${candidate.title} ${candidate.summary}`);
+  const fingerprint = topicTokens([
+    frontmatterValue(content, 'title'),
+    frontmatterValue(content, 'description'),
+    frontmatterValue(content, 'sourceTitle'),
+  ].join(' '));
   let closest = { name: '', similarity: 0 };
   for (const post of recent.posts) {
     const similarity = jaccard(fingerprint, post.fingerprint);
@@ -461,7 +465,7 @@ function compactSourceTitle(title) {
 }
 
 function generatedKoreanTitle(candidate) {
-  return digestTheme(candidate).title;
+  return `오늘의 AI 글: ${compactSourceTitle(candidate.title)}`;
 }
 
 function koreanPost({ date, slug, candidate, accessNote }) {
@@ -478,7 +482,7 @@ function koreanPost({ date, slug, candidate, accessNote }) {
     : 'Medium 공개 페이지와 RSS에서 확인한 정보를 바탕으로 원문의 논점을 한국어 독자를 위해 다시 구성했다.';
 
   return `---
-title: "${theme.title}"
+title: "${generatedKoreanTitle(candidate).replace(/"/g, '\\"')}"
 description: "Medium 글 '${safeTitle}'를 바탕으로, ${theme.descriptionFocus}"
 pubDate: "${date}"
 sourceTitle: "${safeTitle}"
@@ -579,12 +583,12 @@ const posts = recentPosts().filter((post) => !post.name.startsWith(`${date}-`));
 const recent = {
   posts: posts.map((post) => ({
     ...post,
-    fingerprint: topicTokens(`${post.title} ${post.description} ${post.sourceTitle} ${post.bodySample}`),
+    fingerprint: topicTokens(`${post.title} ${post.description} ${post.sourceTitle}`),
   })),
   sourceTitles: recentSourceTitles(posts),
   sourceUrls: recentSourceUrls(posts),
   generatedTitles: recentGeneratedTitles(posts),
-  fingerprints: posts.map((post) => topicTokens(`${post.title} ${post.description} ${post.sourceTitle} ${post.bodySample}`)),
+  fingerprints: posts.map((post) => topicTokens(`${post.title} ${post.description} ${post.sourceTitle}`)),
 };
 let candidates = isHarnessMode() ? [] : await collectCandidates();
 let fallbackUsed = false;
@@ -607,12 +611,14 @@ const rejected = [];
 for (const ranked of rankedCandidates) {
   const item = ranked.item;
   let candidateAccessNote = true;
-  try {
-    const readerUrl = `https://r.jina.ai/http://${item.link.replace(/^https?:\/\//, '')}`;
-    const readerText = await fetchText(readerUrl);
-    candidateAccessNote = readerText.length < 2500 || /sign up|sign in|get app/i.test(readerText);
-  } catch {
-    candidateAccessNote = true;
+  if (!isHarnessMode()) {
+    try {
+      const readerUrl = `https://r.jina.ai/http://${item.link.replace(/^https?:\/\//, '')}`;
+      const readerText = await fetchText(readerUrl);
+      candidateAccessNote = readerText.length < 2500 || /sign up|sign in|get app/i.test(readerText);
+    } catch {
+      candidateAccessNote = true;
+    }
   }
 
   const candidateSlug = `${date}-${slugify(item.title)}.md`;

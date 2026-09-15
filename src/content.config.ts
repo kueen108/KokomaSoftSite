@@ -10,6 +10,7 @@ const mediumDigest = defineCollection({
     sourceTitle: z.string(),
     sourceUrl: z.string().url(),
     sourceAuthor: z.string().optional(),
+    duplicateSimilarityThreshold: z.number().min(0).max(1).optional(),
     tags: z.array(z.string()).optional(),
     hero: z.string().optional(),
   }),

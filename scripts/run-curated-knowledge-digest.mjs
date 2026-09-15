@@ -88,6 +88,9 @@ function frontmatter(post, date, workflow) {
     `sourceTitle: ${yamlString(post.sourceTitle)}`,
     `sourceUrl: ${yamlString(post.sourceUrl)}`,
     `sourceAuthor: ${yamlString(post.sourceAuthor)}`,
+    ...(Number.isFinite(post.duplicateSimilarityThreshold)
+      ? [`duplicateSimilarityThreshold: ${post.duplicateSimilarityThreshold}`]
+      : []),
     `tags: [${[tagPrefix, ...post.tags].map(yamlString).join(', ')}]`,
     '---',
     '',
@@ -105,6 +108,7 @@ function validExistingForDate(prefix, date) {
   const filename = firstExistingForDate(prefix, date);
   if (!filename) return null;
   try {
+    assertNoTemplateArtifacts(readFileSync(join(postDir, filename), 'utf8'), filename);
     validateNoDuplicateCuratedPost(join(postDir, filename), prefix);
     return filename;
   } catch (error) {
@@ -114,6 +118,12 @@ function validExistingForDate(prefix, date) {
       { flag: 'a' },
     );
     return null;
+  }
+}
+
+function assertNoTemplateArtifacts(content, filename) {
+  if (/\bundefined\b|\[object Object\]/.test(content)) {
+    throw new Error(`${filename} contains an unresolved template value`);
   }
 }
 
@@ -213,36 +223,37 @@ function expandProceduralTopic(topic, angle, focus, workflowName, date) {
     ...topic,
     slug: `${topic.slug}-${safeSlug(angle.slug)}-${safeSlug(focus.slug)}-${seed}`,
     angle: `${angle.textFor(topic)}: ${focus.titleFor(topic)}`,
-    description: focus.descriptionFor(topic, angle),
     duplicateSimilarityThreshold: 0.9,
   };
+  base.description = focus.descriptionFor(base, angle);
   if (workflowName === 'developer') {
     return {
       ...base,
-      problem: focus.developerProblemFor(topic),
-      risk: focus.developerRiskFor(topic),
-      payoff: focus.developerPayoffFor(topic),
-      principles: focus.developerPrinciplesFor(topic),
-      example: focus.developerExampleFor(topic),
-      checklist: focus.developerChecklistFor(topic),
-      actions: focus.developerActionsFor(topic),
-      takeaway: focus.developerTakeawayFor(topic),
+      problem: focus.developerProblemFor(base),
+      risk: focus.developerRiskFor(base),
+      payoff: focus.developerPayoffFor(base),
+      principles: focus.developerPrinciplesFor(base),
+      example: focus.developerExampleFor(base),
+      checklist: focus.developerChecklistFor(base),
+      actions: focus.developerActionsFor(base),
+      takeaway: focus.developerTakeawayFor(base),
     };
   }
   return {
     ...base,
-    explain: focus.knowledgeExplainFor(topic),
-    why: focus.knowledgeWhyFor(topic),
-    examples: focus.knowledgeExamplesFor(topic),
-    actions: focus.knowledgeActionsFor(topic),
-    takeaway: focus.knowledgeTakeawayFor(topic),
+    explain: focus.knowledgeExplainFor(base),
+    why: focus.knowledgeWhyFor(base),
+    examples: focus.knowledgeExamplesFor(base),
+    actions: focus.knowledgeActionsFor(base),
+    takeaway: focus.knowledgeTakeawayFor(base),
   };
 }
 
 function readExistingPosts(prefix) {
   if (!existsSync(postDir)) return [];
+  const tracked = trackedPostNames();
   return readdirSync(postDir)
-    .filter((name) => name.startsWith(`${prefix}-`) && name.endsWith('.md'))
+    .filter((name) => tracked.has(name) && name.startsWith(`${prefix}-`) && name.endsWith('.md'))
     .map((name) => {
       const content = readFileSync(join(postDir, name), 'utf8');
       const data = parseFrontmatter(content);
@@ -253,9 +264,20 @@ function readExistingPosts(prefix) {
         sourceTitle: data.sourceTitle,
         sourceUrl: data.sourceUrl,
         slug: slugFromFilename(name, prefix),
-        tokens: topicTokens(`${data.title} ${data.description} ${data.sourceTitle} ${stripFrontmatter(content).slice(0, 2200)}`),
+        tokens: topicTokens(`${data.title} ${data.description} ${data.sourceTitle}`),
       };
     });
+}
+
+function trackedPostNames() {
+  const result = spawnSync('git', ['ls-files', '--', 'src/content/medium-digest'], {
+    cwd: repoRoot,
+    encoding: 'utf8',
+  });
+  if (result.status !== 0) {
+    throw new Error(`could not list published digest posts: ${result.stderr?.trim() || 'git ls-files failed'}`);
+  }
+  return new Set(result.stdout.split('\n').filter(Boolean).map((name) => basename(name)));
 }
 
 function slugFromFilename(name, prefix) {
@@ -274,6 +296,9 @@ function duplicateTopicReason(post, existingPosts, currentFile = null) {
     if (existing.file === currentFile) continue;
     if (existing.slug && existing.slug === post.slug) return { file: existing.file, reason: 'slug' };
     if (existing.title && existing.title === post.title) return { file: existing.file, reason: 'title' };
+    if (existing.sourceUrl && post.sourceUrl && existing.sourceUrl === post.sourceUrl) {
+      return { file: existing.file, reason: 'sourceUrl' };
+    }
     const similarity = jaccard(candidateTokens, existing.tokens);
     if (similarity >= similarityThreshold) {
       return { file: existing.file, reason: `topic similarity ${similarity.toFixed(2)}` };
@@ -293,11 +318,13 @@ function validateNoDuplicateCuratedPost(filePath, prefix) {
     sourceTitle: data.sourceTitle,
     sourceUrl: data.sourceUrl,
   };
+  const similarityThreshold = Number(data.duplicateSimilarityThreshold || 0.82);
+  const currentTokens = topicTokens(`${data.title} ${data.description} ${data.sourceTitle}`);
   const duplicate = readExistingPosts(prefix).find((existing) => {
     if (existing.file === currentName) return false;
     if (existing.title && existing.title === post.title) return true;
-    const currentTokens = topicTokens(`${data.title} ${data.description} ${data.sourceTitle} ${stripFrontmatter(content).slice(0, 2200)}`);
-    return jaccard(currentTokens, existing.tokens) >= 0.82;
+    if (existing.sourceUrl && post.sourceUrl && existing.sourceUrl === post.sourceUrl) return true;
+    return jaccard(currentTokens, existing.tokens) >= similarityThreshold;
   });
   if (duplicate) {
     throw new Error(`${currentName} duplicates or is too similar to ${duplicate.file}`);
@@ -2318,6 +2345,10 @@ if (isHarnessMode()) {
           `Rejected ${report.rejected.length}.`,
       );
     }
+    if (report.candidate) {
+      const candidateContent = `${frontmatter(report.candidate, date, name)}${config.article(report.candidate)}`;
+      assertNoTemplateArtifacts(candidateContent, report.candidate.slug);
+    }
     return {
       workflow: name,
       date,
@@ -2342,6 +2373,7 @@ if (!filename) {
   const post = selectTopic(workflow.prefix, workflow.posts, workflowName, date);
   filename = `${workflow.prefix}-${date}-${post.slug}.md`;
   const content = `${frontmatter(post, date, workflowName)}${workflow.article(post)}`;
+  assertNoTemplateArtifacts(content, filename);
   writeFileSync(join(postDir, filename), content);
   created = true;
 }
