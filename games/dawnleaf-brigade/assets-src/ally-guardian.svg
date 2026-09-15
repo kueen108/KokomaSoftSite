@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="42" height="50" viewBox="0 0 42 50" shape-rendering="crispEdges">
+  <!-- Guardian — tortoise defender, faces RIGHT, shell carried like a wall.
+       Dominant steel blue-gray 0x6b7c93. The shell dominates the silhouette
+       on purpose — this unit reads as "mass and defense" before anything
+       else, the opposite read from the archer's thin frame at 32px. -->
+  <g>
+    <!-- head, small, poking out ahead of the shell -->
+    <rect x="2" y="8" width="14" height="12" fill="#4a5568"/>
+    <rect x="2" y="8" width="14" height="3" fill="#6b7c93"/>
+    <rect x="11" y="13" width="3" height="3" fill="#1c1c1c"/>
+    <rect x="14" y="16" width="4" height="3" fill="#3a4454"/>
+    <!-- the shell: dominant shape, most of the body -->
+    <rect x="14" y="6" width="26" height="30" fill="#6b7c93"/>
+    <rect x="14" y="6" width="26" height="5" fill="#8a9bb0"/>
+    <rect x="14" y="31" width="26" height="5" fill="#4a5568"/>
+    <!-- shell plate seams -->
+    <rect x="20" y="14" width="6" height="6" fill="#4a5568"/>
+    <rect x="28" y="14" width="6" height="6" fill="#4a5568"/>
+    <rect x="24" y="20" width="6" height="6" fill="#4a5568"/>
+    <!-- torso, mostly hidden -->
+    <rect x="8" y="20" width="8" height="14" fill="#4a5568"/>
+    <!-- short, thick legs -->
+    <rect x="6" y="34" width="8" height="10" fill="#3a4454"/>
+    <rect x="16" y="34" width="8" height="10" fill="#3a4454"/>
+    <rect x="5" y="44" width="10" height="5" fill="#2b323d"/>
+    <rect x="15" y="44" width="10" height="5" fill="#2b323d"/>
+  </g>
+</svg>

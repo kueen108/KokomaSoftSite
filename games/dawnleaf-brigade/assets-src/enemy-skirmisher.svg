@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="34" height="44" viewBox="0 0 34 44" shape-rendering="crispEdges">
+  <!-- Skirmisher — bat-imp dart-thrower, faces LEFT (enemies advance
+       leftward). Dominant orange 0xd9843c, new to the enemy palette
+       (red/brown already taken). Trailing membrane wings on the right read
+       as "flying skirmisher" against the grunt's hunched-and-grounded shape. -->
+  <g>
+    <!-- ears -->
+    <path d="M9 6 L5 0 L12 5 Z" fill="#b8632c"/>
+    <path d="M22 5 L26 0 L25 6 Z" fill="#b8632c"/>
+    <!-- skull, tilted toward the left -->
+    <rect x="6" y="5" width="22" height="14" fill="#d9843c"/>
+    <rect x="6" y="5" width="22" height="3" fill="#f0a866"/>
+    <!-- jaw juts left -->
+    <rect x="3" y="14" width="8" height="5" fill="#f0a866"/>
+    <!-- glowing eyes, looking left -->
+    <rect x="9" y="10" width="4" height="4" fill="#ffe14a"/>
+    <rect x="17" y="10" width="4" height="4" fill="#ffe14a"/>
+    <!-- membrane wings, trailing on the right -->
+    <path d="M28 16 L34 10 L34 24 L28 22 Z" fill="#7a4520"/>
+    <path d="M28 22 L34 26 L34 36 L28 30 Z" fill="#7a4520"/>
+    <!-- torso -->
+    <rect x="7" y="19" width="20" height="13" fill="#b8632c"/>
+    <rect x="7" y="19" width="20" height="3" fill="#d9843c"/>
+    <rect x="7" y="29" width="20" height="3" fill="#7a4520"/>
+    <!-- thrown dart, ahead of the leading arm -->
+    <path d="M0 22 L5 20 L5 24 Z" fill="#e8e4dc"/>
+    <rect x="2" y="23" width="6" height="4" fill="#b8632c"/>
+    <!-- legs -->
+    <rect x="10" y="32" width="6" height="8" fill="#7a4520"/>
+    <rect x="18" y="32" width="6" height="8" fill="#7a4520"/>
+    <rect x="8" y="40" width="8" height="4" fill="#4a2c14"/>
+    <rect x="17" y="40" width="8" height="4" fill="#4a2c14"/>
+  </g>
+</svg>

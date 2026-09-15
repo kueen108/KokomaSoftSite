@@ -1,0 +1,47 @@
+{
+  "name": "dawnleaf-brigade",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Dawnleaf Brigade: an animal-knight side-scrolling defense adventure (Phaser 3 + TypeScript)",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "test:runtime": "node scripts/verify-runtime.mjs",
+    "test:scroll": "node scripts/verify-scroll.mjs",
+    "test:combat": "node scripts/verify-combat.mjs",
+    "test:vitality": "node scripts/verify-vitality.mjs",
+    "test:expedition": "node scripts/verify-expedition.mjs",
+    "test:expedition-features": "node scripts/verify-expedition-features.mjs",
+    "test:polish": "node scripts/verify-polish.mjs",
+    "test:balance": "node scripts/verify-balance.mjs",
+    "test:growth": "node scripts/verify-growth.mjs",
+    "test:art-quality": "node scripts/verify-art-quality.mjs",
+    "test:cadence": "node scripts/verify-cadence.mjs",
+    "test:realtime": "node scripts/verify-realtime.mjs",
+    "test:visual-ui": "node scripts/verify-visual-ui.mjs",
+    "test:i18n": "vitest run tests/i18n && node scripts/verify-i18n.mjs"
+  },
+  "dependencies": {
+    "phaser": "^3.90.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.5",
+    "@vitest/coverage-v8": "^4.1.11",
+    "eslint": "^9.39.5",
+    "eslint-config-prettier": "^10.1.8",
+    "globals": "^17.11.0",
+    "playwright": "^1.63.0",
+    "prettier": "^3.9.6",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.69.0",
+    "vite": "^7.3.6",
+    "vitest": "^4.1.11"
+  }
+}

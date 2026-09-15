@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" shape-rendering="crispEdges">
+  <!-- Mace projectile — a magic orb. Dominant yellow 0xf5d76e as established.
+       Bright core with a hot white centre so it stays legible against both the
+       tan ground and the enemies' red/brown palette. The original texture was a
+       circle of radius 8; this keeps that footprint exactly. -->
+  <g>
+    <rect x="5" y="1" width="6" height="14" fill="#f5d76e"/>
+    <rect x="1" y="5" width="14" height="6" fill="#f5d76e"/>
+    <rect x="3" y="3" width="10" height="10" fill="#f5d76e"/>
+    <rect x="4" y="4" width="8" height="8" fill="#ffeaa0"/>
+    <rect x="5" y="5" width="6" height="6" fill="#fff8d8"/>
+    <rect x="6" y="6" width="4" height="4" fill="#ffffff"/>
+  </g>
+</svg>

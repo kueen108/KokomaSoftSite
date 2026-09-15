@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="70" height="130" viewBox="0 0 70 130" shape-rendering="crispEdges">
+  <!-- Enemy keep. Same footprint and structure as the ally keep so the two read
+       as a matched pair at opposite ends of the lane — only the palette and the
+       detailing differ. Dominant purple 0x8a4fbe as established, with cracked
+       stone and a jagged roofline instead of clean battlements. -->
+  <g>
+    <!-- banner, torn -->
+    <rect x="33" y="0" width="3" height="20" fill="#3a2416"/>
+    <path d="M36 3 L58 8 L48 11 L58 14 L36 15 Z" fill="#8a4fbe"/>
+    <!-- jagged spikes instead of battlements -->
+    <path d="M6 20 L11 8 L16 20 Z" fill="#8a4fbe"/>
+    <path d="M22 20 L28 6 L34 20 Z" fill="#8a4fbe"/>
+    <path d="M40 20 L46 8 L52 20 Z" fill="#8a4fbe"/>
+    <path d="M56 20 L62 10 L66 20 Z" fill="#8a4fbe"/>
+    <rect x="6" y="18" width="58" height="10" fill="#8a4fbe"/>
+    <rect x="6" y="18" width="58" height="3" fill="#a97ad4"/>
+    <!-- corrupted stone -->
+    <rect x="10" y="28" width="50" height="92" fill="#8f8496"/>
+    <rect x="10" y="28" width="50" height="4" fill="#a99fb0"/>
+    <!-- cracks -->
+    <rect x="18" y="34" width="2" height="16" fill="#5f5566"/>
+    <rect x="20" y="46" width="2" height="12" fill="#5f5566"/>
+    <rect x="46" y="60" width="2" height="18" fill="#5f5566"/>
+    <rect x="44" y="72" width="2" height="14" fill="#5f5566"/>
+    <rect x="10" y="52" width="50" height="2" fill="#5f5566"/>
+    <rect x="10" y="90" width="50" height="2" fill="#5f5566"/>
+    <!-- windows, lit sickly green -->
+    <rect x="20" y="58" width="8" height="10" fill="#2a1c3a"/>
+    <rect x="22" y="60" width="4" height="6" fill="#7ad48a"/>
+    <rect x="42" y="58" width="8" height="10" fill="#2a1c3a"/>
+    <rect x="44" y="60" width="4" height="6" fill="#7ad48a"/>
+    <!-- gate -->
+    <rect x="25" y="86" width="20" height="34" fill="#3a2850"/>
+    <rect x="25" y="86" width="20" height="4" fill="#8a4fbe"/>
+    <rect x="29" y="96" width="12" height="14" fill="#5f2f7a"/>
+    <!-- footing -->
+    <rect x="6" y="120" width="58" height="7" fill="#5f5566"/>
+    <rect x="6" y="127" width="58" height="3" fill="#3f3746"/>
+  </g>
+</svg>

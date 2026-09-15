@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="40" height="48" viewBox="0 0 40 48" shape-rendering="crispEdges">
+  <!-- Grunt — shambling skeleton-imp, faces LEFT (enemies advance leftward).
+       Dominant red 0xd0503c as established. Hunched, asymmetric silhouette so
+       it never reads as an ally even in a crowded lane. -->
+  <g>
+    <!-- horns -->
+    <path d="M9 8 L7 2 L13 7 Z" fill="#7a2b20"/>
+    <path d="M27 7 L31 2 L30 8 Z" fill="#7a2b20"/>
+    <!-- skull, tilted toward the left -->
+    <rect x="8" y="6" width="22" height="15" fill="#d0503c"/>
+    <rect x="8" y="6" width="22" height="3" fill="#e87a66"/>
+    <!-- jaw juts left -->
+    <rect x="5" y="15" width="9" height="6" fill="#e87a66"/>
+    <rect x="6" y="19" width="7" height="2" fill="#7a2b20"/>
+    <!-- glowing eyes, looking left -->
+    <rect x="10" y="11" width="4" height="4" fill="#ffe14a"/>
+    <rect x="18" y="11" width="4" height="4" fill="#ffe14a"/>
+    <!-- hunched torso: heavier on the left shoulder -->
+    <rect x="7" y="21" width="22" height="14" fill="#b8422f"/>
+    <rect x="5" y="21" width="8" height="6" fill="#d0503c"/>
+    <rect x="7" y="31" width="22" height="4" fill="#7a2b20"/>
+    <!-- ribs -->
+    <rect x="12" y="24" width="14" height="2" fill="#e87a66"/>
+    <rect x="12" y="28" width="14" height="2" fill="#e87a66"/>
+    <!-- clawed arm reaching left -->
+    <rect x="1" y="26" width="7" height="4" fill="#b8422f"/>
+    <rect x="0" y="24" width="2" height="3" fill="#f3e6d0"/>
+    <rect x="0" y="29" width="2" height="3" fill="#f3e6d0"/>
+    <!-- legs -->
+    <rect x="10" y="35" width="6" height="10" fill="#7a2b20"/>
+    <rect x="21" y="35" width="6" height="10" fill="#7a2b20"/>
+    <rect x="8" y="44" width="9" height="4" fill="#4a1a12"/>
+    <rect x="20" y="44" width="9" height="4" fill="#4a1a12"/>
+  </g>
+</svg>

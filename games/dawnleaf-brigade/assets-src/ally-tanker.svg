@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="34" height="46" viewBox="0 0 34 46" shape-rendering="crispEdges">
+  <!-- Tanker — stocky badger warrior, faces RIGHT, shield forward.
+       Dominant blue 0x4f8fd0 matches the established ally read; the wide
+       shield silhouette is what separates it from the dealer at 34px. -->
+  <g>
+    <!-- ears -->
+    <rect x="7" y="2" width="4" height="4" fill="#6b6b6b"/>
+    <rect x="19" y="2" width="4" height="4" fill="#6b6b6b"/>
+    <!-- head: badger stripe -->
+    <rect x="6" y="5" width="18" height="13" fill="#4a4a4a"/>
+    <rect x="13" y="5" width="5" height="13" fill="#e8e4dc"/>
+    <rect x="10" y="10" width="3" height="3" fill="#1c1c1c"/>
+    <rect x="19" y="10" width="3" height="3" fill="#1c1c1c"/>
+    <rect x="22" y="13" width="3" height="3" fill="#1c1c1c"/>
+    <!-- broad torso -->
+    <rect x="4" y="18" width="21" height="16" fill="#4f8fd0"/>
+    <rect x="4" y="18" width="21" height="4" fill="#74aee8"/>
+    <rect x="4" y="30" width="21" height="4" fill="#31659c"/>
+    <!-- club, tucked low -->
+    <rect x="2" y="24" width="4" height="10" fill="#6b4a2e"/>
+    <!-- round shield, held to the right -->
+    <rect x="24" y="18" width="9" height="16" fill="#9aa6b2"/>
+    <rect x="26" y="16" width="5" height="20" fill="#9aa6b2"/>
+    <rect x="26" y="23" width="5" height="6" fill="#f0c95a"/>
+    <!-- stubby legs -->
+    <rect x="7" y="34" width="6" height="10" fill="#31659c"/>
+    <rect x="16" y="34" width="6" height="10" fill="#31659c"/>
+    <rect x="6" y="42" width="8" height="4" fill="#3a3a3a"/>
+    <rect x="15" y="42" width="8" height="4" fill="#3a3a3a"/>
+  </g>
+</svg>

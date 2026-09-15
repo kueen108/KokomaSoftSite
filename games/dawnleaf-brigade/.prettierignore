@@ -1,0 +1,14 @@
+node_modules
+dist
+coverage
+package-lock.json
+
+# Out of this project's formatting scope: harness config and workflow artifacts
+# are owned elsewhere and must not be rewritten by `npm run format`.
+.moai
+.claude
+.github
+.git_hooks
+.mcp.json
+.mcp.json.lock
+*.md

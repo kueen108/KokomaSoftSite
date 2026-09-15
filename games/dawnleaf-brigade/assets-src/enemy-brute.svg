@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="56" height="66" viewBox="0 0 56 66" shape-rendering="crispEdges">
+  <!-- Brute — heavy armoured ogre, faces LEFT. Dominant brown 0x8a5a3c as
+       established. Its size already separates it from the grunt (56x66 vs
+       40x48); the wide shoulder plate makes that difference read as mass
+       rather than as "the same enemy, closer". -->
+  <g>
+    <!-- horns, thicker than the grunt's -->
+    <path d="M13 10 L9 2 L19 9 Z" fill="#5a3722"/>
+    <path d="M40 9 L47 2 L44 10 Z" fill="#5a3722"/>
+    <!-- head -->
+    <rect x="12" y="8" width="30" height="18" fill="#8a5a3c"/>
+    <rect x="12" y="8" width="30" height="4" fill="#a87550"/>
+    <!-- heavy jaw jutting left, with tusks -->
+    <rect x="7" y="18" width="13" height="9" fill="#a87550"/>
+    <rect x="8" y="14" width="3" height="5" fill="#f3e6d0"/>
+    <rect x="14" y="24" width="3" height="4" fill="#f3e6d0"/>
+    <!-- sunken glowing eyes -->
+    <rect x="15" y="14" width="5" height="5" fill="#ff8a3c"/>
+    <rect x="26" y="14" width="5" height="5" fill="#ff8a3c"/>
+    <!-- massive torso -->
+    <rect x="10" y="26" width="34" height="22" fill="#8a5a3c"/>
+    <rect x="10" y="43" width="34" height="5" fill="#5a3722"/>
+    <!-- shoulder plate on the leading (left) side -->
+    <rect x="4" y="25" width="14" height="12" fill="#6b6b6b"/>
+    <rect x="4" y="25" width="14" height="3" fill="#9aa6b2"/>
+    <!-- chest bindings -->
+    <rect x="20" y="31" width="20" height="3" fill="#5a3722"/>
+    <rect x="20" y="37" width="20" height="3" fill="#5a3722"/>
+    <!-- club dragged forward-left -->
+    <rect x="0" y="38" width="10" height="5" fill="#6b4a2e"/>
+    <rect x="0" y="34" width="5" height="13" fill="#4a3320"/>
+    <!-- thick legs -->
+    <rect x="14" y="48" width="10" height="13" fill="#5a3722"/>
+    <rect x="31" y="48" width="10" height="13" fill="#5a3722"/>
+    <rect x="12" y="60" width="13" height="6" fill="#3a2416"/>
+    <rect x="30" y="60" width="13" height="6" fill="#3a2416"/>
+  </g>
+</svg>
