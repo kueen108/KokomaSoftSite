@@ -2,6 +2,8 @@
 
 Source snapshot from the PaladogWeb workspace, including six-language localization, Dawnleaf Brigade branding, growth/balance improvements and native-resolution rank portraits (2026-09-15).
 
+Updated 2026-09-16 with native-size mobile controls, responsive battle camera, fullscreen controls and a home-screen manifest. Fullscreen availability depends on the browser and OS; no offline support is claimed.
+
 Public URL: https://www.kokomasoft.com/games/dawnleaf-brigade/
 
 The site build installs the pinned game dependencies with `npm ci`, builds this source for `/games/dawnleaf-brigade/`, then runs Astro. Output under the site's `public/games/dawnleaf-brigade/` is generated and ignored by Git; only this game's own output directory is cleared by Vite. No other site assets or Worker routes are replaced.

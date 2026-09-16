@@ -1,6 +1,14 @@
 import { translate } from '../i18n/index';
 import Phaser from 'phaser';
 import './interface.css';
+import './mobile.css';
+import {
+  mobileViewport,
+  visibleViewport,
+  standaloneDisplay,
+  toggleFullscreen,
+  mobileBattleLayout,
+} from './MobileViewport';
 import { icon, infoButton } from './Icons';
 import { growthPortraits } from './PortraitArt';
 import { growthRank } from '../systems/HeroProgressSystem';
@@ -15,6 +23,7 @@ export class Interface {
   constructor(scene: Phaser.Scene, html: string, className = '') {
     this.root = document.createElement('div');
     this.root.className = `game-interface ${className}`;
+    this.root.dataset.scene = scene.sys.settings.key;
     this.root.innerHTML = `<div class="interface-content">${html}</div><div class="info-scrim" hidden><section class="info-dialog" role="dialog" aria-modal="true" aria-labelledby="info-title" tabindex="-1"><button class="info-close" aria-label="${translate('설명 닫기')}">×</button><div class="info-emblem">${icon('book')}</div><h2 id="info-title"></h2><div class="info-body"></div></section></div>`;
     this.popup = this.root.querySelector<HTMLDivElement>('.info-scrim')!;
     this.root.addEventListener('click', (e) => {
@@ -45,21 +54,91 @@ export class Interface {
     window.addEventListener('keydown', guard, true);
     window.addEventListener('keyup', guard, true);
     document.body.append(this.root);
+    const display = document.createElement('button');
+    display.className = 'display-button tool';
+    display.id = 'display-mode';
+    display.textContent = '⛶';
+    const displayState = () => {
+      display.hidden = standaloneDisplay() && !document.fullscreenElement;
+      display.setAttribute(
+        'aria-label',
+        document.fullscreenElement ? translate('전체화면 나가기') : translate('전체화면'),
+      );
+      display.setAttribute('aria-pressed', String(Boolean(document.fullscreenElement)));
+    };
+    (this.root.querySelector('.battle-tools') ??
+      this.root.querySelector('.interface-content'))!.append(display);
+    display.addEventListener('click', () => {
+      void toggleFullscreen().then((opened) => {
+        if (opened || !this.root.isConnected) return;
+        const title = translate('화면 크게 보기');
+        const body = translate(
+          '이 브라우저에서는 전체화면을 열 수 없습니다. 브라우저 메뉴에서 홈 화면에 추가한 뒤, 생성된 아이콘으로 실행해 보세요. iPhone에서는 웹 앱으로 열기를 켜세요. 브라우저와 OS에 따라 일부 시스템 표시줄은 남을 수 있습니다.',
+        );
+        if (this.infoHandler) this.infoHandler(title, body);
+        else this.showInfo(title, body);
+      });
+    });
+    displayState();
+    document.addEventListener('fullscreenchange', displayState);
+    let lastLayout = '';
     const resize = () => {
-      const rect = scene.game.canvas.getBoundingClientRect();
-      this.root.style.left = `${rect.left}px`;
-      this.root.style.top = `${rect.top}px`;
-      this.root.style.transform = `scale(${rect.width / 1280})`;
+      const mobile = mobileViewport();
+      this.root.classList.toggle('mobile-ui', mobile);
+      document.documentElement.classList.toggle('mobile-game', mobile);
+      const viewport = visibleViewport();
+      const parent = document.getElementById('game')!;
+      if (mobile) {
+        this.root.style.left = `${viewport.left}px`;
+        this.root.style.top = `${viewport.top}px`;
+        this.root.style.width = `${viewport.width}px`;
+        this.root.style.height = `${viewport.height}px`;
+        this.root.style.transform = 'none';
+        const battle = this.root.classList.contains('battle-interface');
+        // Fill the width, cropping unused sky/ground, never stretching characters.
+        const battleLayout = mobileBattleLayout(viewport.width, viewport.height);
+        const canvasHeight = battle
+          ? battleLayout.renderHeight
+          : Math.max(viewport.height, (viewport.width * 720) / 1280);
+        parent.style.width = `${battle ? battleLayout.renderWidth : Math.max(viewport.width, (viewport.height * 1280) / 720)}px`;
+        parent.style.height = `${canvasHeight}px`;
+        parent.style.left = `${viewport.left}px`;
+        parent.style.top = `${viewport.top + (battle ? battleLayout.top : 0)}px`;
+      } else {
+        parent.removeAttribute('style');
+        this.root.style.width = '';
+        this.root.style.height = '';
+        const rect = scene.game.canvas.getBoundingClientRect();
+        this.root.style.left = `${rect.left}px`;
+        this.root.style.top = `${rect.top}px`;
+        this.root.style.transform = `scale(${rect.width / 1280})`;
+      }
+      const layout = `${mobile}:${viewport.width}:${viewport.height}:${scene.sys.settings.key}`;
+      if (layout !== lastLayout) {
+        lastLayout = layout;
+        scene.scale.refresh();
+        if (!mobile) {
+          const rect = scene.game.canvas.getBoundingClientRect();
+          this.root.style.left = `${rect.left}px`;
+          this.root.style.top = `${rect.top}px`;
+          this.root.style.transform = `scale(${rect.width / 1280})`;
+        }
+      }
     };
     resize();
     scene.scale.on('resize', resize);
     window.addEventListener('resize', resize);
+    window.visualViewport?.addEventListener('resize', resize);
+    window.visualViewport?.addEventListener('scroll', resize);
     scene.events.once('shutdown', () => {
       window.removeEventListener('keydown', guard, true);
       window.removeEventListener('keyup', guard, true);
       this.root.remove();
       scene.scale.off('resize', resize);
       window.removeEventListener('resize', resize);
+      window.visualViewport?.removeEventListener('resize', resize);
+      window.visualViewport?.removeEventListener('scroll', resize);
+      document.removeEventListener('fullscreenchange', displayState);
     });
   }
   showInfo(title: string, body: string, onClose?: () => void): void {

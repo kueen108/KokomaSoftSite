@@ -1,0 +1,680 @@
+/* Native CSS-pixel layout. Do not scale this UI with the Phaser canvas. */
+.mobile-pause-details {
+  display: none;
+}
+.mobile-ui .mobile-pause-details {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 12px;
+}
+.mobile-ui .mobile-pause-details .secondary {
+  width: 100%;
+  margin: 0;
+  padding: 8px;
+  font-size: 16px;
+}
+.mobile-ui .interface-content > .display-button {
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0;
+}
+.display-button {
+  font: 28px/1 Arial;
+  min-width: 44px;
+  min-height: 44px;
+}
+.interface-content > .display-button {
+  position: absolute;
+  right: 22px;
+  top: 20px;
+}
+.mobile-game #game {
+  position: fixed;
+}
+.mobile-game .landscape-note {
+  display: none;
+}
+.mobile-ui {
+  padding: max(8px, env(safe-area-inset-top)) max(10px, env(safe-area-inset-right))
+    max(8px, env(safe-area-inset-bottom)) max(10px, env(safe-area-inset-left));
+  font-size: 16px;
+}
+.mobile-ui .interface-content {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+.mobile-ui button {
+  min-height: 44px;
+  font-size: 16px;
+}
+.mobile-ui .glyph {
+  width: 22px;
+  height: 22px;
+}
+.mobile-ui .info-button {
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  padding: 0;
+  font-size: 24px;
+}
+.mobile-ui .display-button {
+  position: absolute;
+  top: 0;
+  right: 52px;
+  font-size: 28px;
+  z-index: 3;
+}
+.mobile-ui .back-button {
+  top: 0;
+  right: 0;
+  padding: 8px;
+  width: 44px;
+  height: 44px;
+}
+.mobile-ui .screen-heading {
+  top: 0;
+  left: 0;
+  max-width: calc(100% - 108px);
+  height: 48px;
+  gap: 6px;
+}
+.mobile-ui .screen-heading h1 {
+  margin: 0;
+  font-size: clamp(21px, 3vw, 28px);
+  letter-spacing: -0.5px;
+}
+.mobile-ui .screen-foot {
+  bottom: 0;
+  left: 0;
+  right: 0;
+  font-size: 14px;
+}
+.mobile-ui .menu-copy {
+  left: 10px;
+  top: 12%;
+  width: 57%;
+  z-index: 1;
+}
+.mobile-ui .menu-copy h1 {
+  font-size: clamp(26px, 5vw, 42px);
+  margin: 0;
+}
+.mobile-ui .menu-copy .subtitle {
+  font-size: 16px;
+  letter-spacing: 3px;
+  margin: 10px 0;
+}
+.mobile-ui .menu-actions {
+  gap: 8px;
+  margin-top: 12px;
+  flex-wrap: wrap;
+}
+.mobile-ui .menu-actions button {
+  padding: 12px 16px;
+  min-width: 128px;
+  font-size: 18px;
+}
+.mobile-ui .menu-hero {
+  right: 0;
+  top: 4%;
+  width: 42%;
+  height: 78%;
+}
+.mobile-ui .menu-footer {
+  left: 10px;
+  right: 10px;
+  bottom: 0;
+  padding-top: 4px;
+  font-size: 16px;
+}
+.mobile-ui .menu-footer .sound-button {
+  padding: 8px;
+  width: 44px;
+  height: 44px;
+}
+.mobile-ui .sound-panel {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  top: 48px;
+  width: min(360px, 100%);
+  overflow-y: auto;
+  padding: 12px;
+  pointer-events: auto;
+  touch-action: pan-y;
+  z-index: 8;
+}
+.mobile-ui .sound-panel h2 {
+  font-size: 20px;
+  margin: 4px 0;
+}
+.mobile-ui .mode-grid {
+  top: 58px;
+  bottom: 32px;
+  left: 0;
+  right: 0;
+  height: auto;
+  gap: 10px;
+  overflow-y: auto;
+  pointer-events: auto;
+}
+.mobile-ui .mode-card {
+  width: 100%;
+  height: 100%;
+  min-height: 164px;
+  padding: 12px;
+}
+.mobile-ui .mode-card .portrait {
+  width: 100px;
+  height: 100px;
+  top: 8px;
+  right: 8px;
+}
+.mobile-ui .mode-card h2 {
+  font-size: 20px;
+  bottom: 28px;
+  left: 12px;
+  right: 12px;
+}
+.mobile-ui .mode-card .number {
+  font-size: 18px;
+}
+.mobile-ui .mode-choice > .info-button,
+.mobile-ui .stage-choice > .info-button {
+  width: 44px;
+  height: 44px;
+  bottom: 0;
+  right: 0;
+  top: auto;
+}
+.mobile-ui .difficulty-row {
+  top: 54px;
+  left: 0;
+  right: 0;
+  font-size: 14px;
+  gap: 8px;
+}
+.mobile-ui .difficulty-switch {
+  gap: 4px;
+}
+.mobile-ui .difficulty-switch button {
+  min-width: 66px;
+  padding: 6px 10px;
+  font-size: 14px;
+}
+.mobile-ui .region-tabs {
+  top: 106px;
+  left: 0;
+  right: 0;
+  gap: 4px;
+}
+.mobile-ui .region-tabs button {
+  min-width: 0;
+  padding: 8px;
+  font-size: 14px;
+  flex: 1;
+}
+.mobile-ui .stage-grid {
+  top: 158px;
+  bottom: 26px;
+}
+.mobile-ui .stage-card .stage-icon {
+  top: 10px;
+  left: 12px;
+  font-size: 40px;
+}
+.mobile-ui .stage-card h2 {
+  font-size: 18px;
+  bottom: 14px;
+}
+.mobile-ui .stage-card {
+  min-height: 112px;
+}
+.mobile-ui .wallet {
+  top: 6px;
+  right: 112px;
+  font-size: 16px;
+}
+.mobile-ui[data-scene='Upgrade'] .screen-heading {
+  max-width: 42%;
+}
+.mobile-ui .upgrade-layout {
+  top: 56px;
+  bottom: 8px;
+  left: 0;
+  right: 0;
+  height: auto;
+  grid-template-columns: minmax(140px, 26%) 1fr;
+  gap: 10px;
+}
+.mobile-ui .roster-row {
+  min-height: 56px;
+  padding: 4px 8px;
+  gap: 6px;
+}
+.mobile-ui .roster-row .portrait {
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+}
+.mobile-ui .roster-row strong {
+  font-size: 14px;
+}
+.mobile-ui .roster-row small {
+  font-size: 12px;
+}
+.mobile-ui .unit-detail {
+  padding: 12px;
+  min-width: 0;
+}
+.mobile-ui .unit-detail h2 {
+  font-size: 22px;
+}
+.mobile-ui .unit-detail .unit-growth-art {
+  width: 150px;
+}
+.mobile-ui .unit-detail .growth-preview .portrait {
+  width: 58px;
+  height: 62px;
+}
+.mobile-ui .unit-detail .growth-preview b {
+  font-size: 14px;
+}
+.mobile-ui .unit-detail .aura-upgrade {
+  gap: 8px;
+  padding: 8px;
+}
+.mobile-ui .unit-detail .equipment {
+  min-height: 88px;
+  padding: 8px 36px 8px 6px;
+}
+.mobile-ui .unit-detail .equipment > b {
+  font-size: 14px;
+}
+.mobile-ui .unit-detail .equipment-slot > .info-button {
+  top: 0;
+  right: 0;
+  width: 44px;
+  height: 44px;
+}
+.mobile-ui .unit-detail .equipment-heading {
+  height: 44px;
+  margin: 6px 0;
+}
+.mobile-ui .result-panel {
+  top: 8px;
+  bottom: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(560px, 100%);
+  overflow-y: auto;
+  padding: 16px;
+  pointer-events: auto;
+  touch-action: pan-y;
+}
+.mobile-ui .result-panel h1 {
+  font-size: 30px;
+}
+.mobile-ui .result-panel .result-medal {
+  width: 70px;
+  height: 70px;
+  margin: 0 auto 6px;
+}
+.mobile-ui .info-scrim,
+.mobile-ui .pause-scrim {
+  position: absolute;
+  inset: 0;
+  padding: 8px;
+  z-index: 30;
+}
+.mobile-ui .info-dialog,
+.mobile-ui .pause-box {
+  width: min(520px, 100%);
+  max-height: 100%;
+  overflow-y: auto;
+  padding: 18px 24px;
+  touch-action: pan-y;
+}
+.mobile-ui .info-dialog h2,
+.mobile-ui .pause-box h2 {
+  font-size: 22px;
+  margin: 6px 44px 10px 0;
+}
+.mobile-ui .info-body {
+  font-size: 16px;
+  line-height: 1.6;
+  max-height: none;
+}
+.mobile-ui .info-emblem,
+.mobile-ui .pause-art {
+  display: none;
+}
+.mobile-ui .info-close {
+  width: 44px;
+  height: 44px;
+  top: 4px;
+  right: 4px;
+}
+.mobile-ui .pause-box .primary,
+.mobile-ui .pause-box .secondary {
+  padding: 10px 16px;
+  font-size: 18px;
+}
+/* Battle: one readable top strip, thumb controls, a swipeable summon shelf. */
+.mobile-ui.visual-battle .battle-top {
+  top: 0;
+  left: 0;
+  right: 150px;
+  height: 48px;
+  grid-template-columns: minmax(95px, 1fr) minmax(110px, 1.2fr) minmax(70px, 1fr);
+  gap: 6px;
+  padding: 4px 8px;
+  border-radius: 9px;
+}
+.mobile-ui.visual-battle .battle-top .glyph {
+  width: 20px;
+  height: 20px;
+}
+.mobile-ui.visual-battle .fortress-health,
+.mobile-ui.visual-battle .enemy-health {
+  gap: 4px;
+  font-size: 14px;
+}
+.mobile-ui.visual-battle .fortress-health .info-button {
+  display: none;
+}
+.mobile-ui.visual-battle .meter {
+  min-width: 26px;
+  height: 6px;
+}
+.mobile-ui.visual-battle .battle-title {
+  font-size: 14px;
+  line-height: 1.2;
+}
+.mobile-ui.visual-battle .battle-title > span {
+  display: none;
+}
+.mobile-ui.visual-battle .objective-line {
+  gap: 4px;
+  font-size: 14px;
+  margin: 0;
+}
+.mobile-ui.visual-battle .time-chip {
+  display: none;
+}
+.mobile-ui.visual-battle .hero-health {
+  top: 54px;
+  left: 0;
+  width: 148px;
+  height: 46px;
+  padding: 2px 4px;
+  gap: 4px;
+}
+.mobile-ui.visual-battle .hero-health .portrait {
+  width: 32px;
+  height: 40px;
+  min-width: 32px;
+}
+.mobile-ui.visual-battle .hero-vitals {
+  flex: 1;
+  min-width: 0;
+}
+.mobile-ui.visual-battle .vital-value {
+  font-size: 14px;
+}
+.mobile-ui.visual-battle .hero-health .info-button {
+  position: static;
+}
+.mobile-ui.visual-battle .battle-info {
+  top: 54px;
+  left: 154px;
+  gap: 4px;
+  font-size: 16px;
+  height: 44px;
+}
+.mobile-ui.visual-battle .battle-info > span {
+  padding: 5px 7px;
+  gap: 3px;
+}
+.mobile-ui.visual-battle .battle-info .glyph {
+  width: 18px;
+  height: 18px;
+}
+.mobile-ui.visual-battle .battle-tools {
+  top: 0;
+  right: 0;
+  gap: 4px;
+}
+.mobile-ui.visual-battle .battle-tools .tool {
+  width: 44px;
+  min-width: 44px;
+  min-height: 44px;
+  height: 44px;
+  padding: 8px;
+}
+.mobile-ui.visual-battle .battle-tools .display-button {
+  position: static;
+  padding: 0;
+  font-size: 28px;
+}
+.mobile-ui.visual-battle #mute {
+  display: none;
+}
+.mobile-ui.visual-battle .aura-badge,
+.mobile-ui.visual-battle .battle-map {
+  display: none;
+}
+.mobile-ui.visual-battle .battle-bottom {
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 88px;
+  padding: 6px;
+  gap: 8px;
+  border-radius: 12px;
+}
+.mobile-ui.visual-battle .move-pad {
+  width: 108px;
+}
+.mobile-ui.visual-battle .move-buttons {
+  gap: 4px;
+}
+.mobile-ui.visual-battle .move-buttons button {
+  width: 52px;
+  height: 64px;
+  min-width: 52px;
+}
+.mobile-ui.visual-battle .summon-deck {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  gap: 6px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  overscroll-behavior: contain;
+  touch-action: pan-x;
+  pointer-events: auto;
+  scroll-snap-type: x proximity;
+  scrollbar-width: thin;
+}
+.mobile-ui.visual-battle .summon-slot {
+  flex: 0 0 96px;
+  width: 96px;
+  height: 70px;
+  scroll-snap-align: start;
+}
+.mobile-ui.visual-battle .summon-card {
+  width: 96px;
+  min-width: 96px;
+  height: 70px;
+  min-height: 70px;
+  padding: 2px;
+  touch-action: pan-x;
+}
+.mobile-ui.visual-battle .summon-card .portrait {
+  left: 0;
+  top: 0;
+  width: 54px;
+  height: 50px;
+}
+.mobile-ui.visual-battle .summon-card .keycap {
+  display: none;
+}
+.mobile-ui.visual-battle .summon-card .cost {
+  left: 3px;
+  right: auto;
+  top: auto;
+  bottom: 4px;
+  font-size: 14px;
+}
+.mobile-ui.visual-battle .summon-card .unit-state {
+  top: 0;
+  right: 4px;
+  bottom: auto;
+  font-size: 14px;
+}
+.mobile-ui.visual-battle .summon-slot > .info-button {
+  top: auto;
+  bottom: 4px;
+  right: 0;
+  width: 44px;
+  height: 44px;
+  font-size: 24px;
+  touch-action: pan-x;
+}
+.mobile-ui.visual-battle .spell-deck {
+  width: 116px;
+  gap: 4px;
+  flex-shrink: 0;
+}
+.mobile-ui.visual-battle .spell {
+  width: 56px;
+  height: 70px;
+  min-height: 70px;
+  padding: 4px;
+}
+.mobile-ui.visual-battle .spell > .glyph,
+.mobile-ui.visual-battle #weapon-icon > .glyph {
+  width: 28px;
+  height: 28px;
+}
+.mobile-ui.visual-battle .spell-cost {
+  font-size: 14px;
+  gap: 2px;
+}
+.mobile-ui.visual-battle .spell-slot > .info-button {
+  display: none;
+}
+.mobile-ui.visual-battle .toast {
+  top: 106px;
+  left: 50%;
+  width: min(360px, 90%);
+  font-size: 16px;
+}
+@media (max-width: 599px) {
+  .mobile-ui .menu-copy {
+    top: 8%;
+    width: 100%;
+    left: 0;
+    text-align: center;
+  }
+  .mobile-ui .menu-copy h1 {
+    font-size: 34px;
+  }
+  .mobile-ui .menu-actions {
+    justify-content: center;
+  }
+  .mobile-ui .menu-hero {
+    top: 40%;
+    right: 10%;
+    width: 80%;
+    height: 46%;
+  }
+  .mobile-ui .mode-grid {
+    grid-template-columns: 1fr;
+  }
+  .mobile-ui .mode-card {
+    min-height: 156px;
+  }
+  .mobile-ui .stage-grid {
+    grid-template-columns: 1fr;
+  }
+  .mobile-ui .difficulty-row > small {
+    display: none;
+  }
+  .mobile-ui .upgrade-layout {
+    grid-template-columns: 1fr;
+    grid-template-rows: 64px 1fr;
+  }
+  .mobile-ui .upgrade-layout > .roster {
+    display: flex;
+    overflow-x: auto;
+    overflow-y: hidden;
+    touch-action: pan-x;
+    gap: 6px;
+  }
+  .mobile-ui #roster {
+    display: flex;
+    gap: 6px;
+  }
+  .mobile-ui .roster-row {
+    min-width: 116px;
+    height: 56px;
+  }
+  .mobile-ui .roster-row small {
+    display: none;
+  }
+  .mobile-ui.visual-battle .battle-top {
+    right: 96px;
+    grid-template-columns: 1fr 1fr;
+  }
+  .mobile-ui.visual-battle .enemy-health {
+    display: none;
+  }
+  .mobile-ui.visual-battle #help {
+    display: none;
+  }
+  .mobile-ui.visual-battle .battle-info {
+    left: 0;
+    top: 104px;
+  }
+  .mobile-ui.visual-battle .battle-bottom {
+    height: 158px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 70px 70px;
+  }
+  .mobile-ui.visual-battle .summon-deck {
+    grid-column: 1 / 3;
+    grid-row: 1;
+  }
+  .mobile-ui.visual-battle .move-pad {
+    grid-column: 1;
+    grid-row: 2;
+  }
+  .mobile-ui.visual-battle .spell-deck {
+    grid-column: 2;
+    grid-row: 2;
+    justify-self: end;
+  }
+}
+@media (max-height: 340px) {
+  .mobile-ui .difficulty-row {
+    top: 48px;
+  }
+  .mobile-ui .region-tabs {
+    top: 96px;
+  }
+  .mobile-ui .stage-grid {
+    top: 146px;
+    bottom: 0;
+  }
+  .mobile-ui[data-scene='StageSelect'] .screen-foot {
+    display: none;
+  }
+}

@@ -1,6 +1,7 @@
 import { rows } from './catalog';
 import { messageRows } from './messages';
 import { storyRows } from './story';
+import { mobileRows } from './mobile';
 
 export const SUPPORTED_LOCALES = ['en', 'ja', 'zh', 'fr', 'es', 'ko'] as const;
 export type Locale = (typeof SUPPORTED_LOCALES)[number];
@@ -19,7 +20,7 @@ export const locale: Locale = resolveLocale(
   typeof navigator === 'undefined' ? undefined : navigator.language || navigator.languages?.[0],
 );
 
-const entries = [...rows, ...storyRows, ...messageRows];
+const entries = [...rows, ...storyRows, ...messageRows, ...mobileRows];
 export const catalogs: Record<Locale, Readonly<Record<string, string>>> = Object.fromEntries(
   SUPPORTED_LOCALES.map((language) => {
     const column = { ko: 0, en: 1, ja: 2, zh: 3, fr: 4, es: 5 }[language];

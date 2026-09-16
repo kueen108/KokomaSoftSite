@@ -1,4 +1,5 @@
 import { translate } from '../i18n/index';
+import { mobileViewport, visibleViewport, mobileBattleLayout } from '../ui/MobileViewport';
 import { readExperience, DIFFICULTIES } from '../systems/ExperienceSystem';
 import { formationStops, SPLASH_TARGET_LIMIT, HEAL_TARGET_LIMIT } from '../systems/PolishSystem';
 import { CAMPAIGN_STORY, MISSION_NAMES } from '../data/expedition';
@@ -211,6 +212,7 @@ export class BattleScene extends Phaser.Scene {
   private prevPhase: BossPhase | null = null;
 
   private backdrop!: Backdrop;
+  private cameraViewWidth = GAME_WIDTH;
 
   private motion!: UnitMotion;
 
@@ -314,6 +316,7 @@ export class BattleScene extends Phaser.Scene {
   }
 
   create(): void {
+    this.cameraViewWidth = GAME_WIDTH;
     this.fx = new BattleFx(this, this.experience.effects === 'light');
     this.physics.world.setBounds(0, 0, WORLD_WIDTH, GAME_HEIGHT);
     this.fx.world.setBounds(0, 0, WORLD_WIDTH, GAME_HEIGHT).setScroll(0, 0);
@@ -628,10 +631,20 @@ export class BattleScene extends Phaser.Scene {
 
     this.arrangeFormation();
     this.motion.update(this.motionTargets());
+    const viewport = visibleViewport();
+    const viewWidth = mobileViewport()
+      ? mobileBattleLayout(viewport.width, viewport.height).visibleWorldWidth
+      : GAME_WIDTH;
+    if (viewWidth !== this.cameraViewWidth) {
+      this.cameraViewWidth = viewWidth;
+      // The canvas may extend beyond a portrait viewport; follow its visible
+      // portion without altering simulation bounds or actor coordinates.
+      this.fx.world.setBounds(0, 0, WORLD_WIDTH + GAME_WIDTH - viewWidth, GAME_HEIGHT);
+    }
     const desiredScroll = Phaser.Math.Clamp(
-      this.paladog.x - GAME_WIDTH * 0.38,
+      this.paladog.x - this.cameraViewWidth * 0.38,
       0,
-      WORLD_WIDTH - GAME_WIDTH,
+      WORLD_WIDTH - this.cameraViewWidth,
     );
     this.fx.world.scrollX += (desiredScroll - this.fx.world.scrollX) * (1 - Math.exp(-delta / 110));
     this.backdrop.updateScroll(this.fx.world.scrollX);
@@ -1647,7 +1660,7 @@ export class BattleScene extends Phaser.Scene {
       world: {
         width: WORLD_WIDTH,
         cameraX: this.fx.world.scrollX,
-        viewport: GAME_WIDTH,
+        viewport: this.cameraViewWidth,
         heroX: this.paladog.x,
         allyBaseX: ALLY_BASE_X,
         enemyBaseX: this.boss?.x ?? ENEMY_BASE_X,

@@ -177,13 +177,41 @@ export class BattleInterface extends Interface {
     this.on('resume', controls.resume);
     this.on('retreat', controls.retreat);
     this.on('mute', controls.mute);
+    const more = document.createElement('div');
+    more.className = 'mobile-pause-details';
+    more.innerHTML =
+      [
+        [translate('성역'), 'base'],
+        [translate('전황 지도'), 'map'],
+        [translate('아우라'), 'aura'],
+        [translate('장착 무기'), 'weapon'],
+        [translate('신성한 파동'), 'nova'],
+        [translate('조작 안내'), 'controls'],
+      ]
+        .map(
+          ([title, key]) =>
+            `<button class="secondary" data-info="${key}" data-info-title="${title}">${title}</button>`,
+        )
+        .join('') + `<button class="secondary" id="mobile-mute">${translate('음소거')}</button>`;
+    this.get('paused').querySelector('.pause-box')!.append(more);
+    this.on('mobile-mute', controls.mute);
+    const releaseHeld = () => {
+      controls.left = controls.right = controls.fire = false;
+    };
+    window.addEventListener('blur', releaseHeld);
+    window.addEventListener('resize', releaseHeld);
+    window.visualViewport?.addEventListener('resize', releaseHeld);
     scene.events.once('shutdown', () => {
+      window.removeEventListener('blur', releaseHeld);
+      window.removeEventListener('resize', releaseHeld);
+      window.visualViewport?.removeEventListener('resize', releaseHeld);
       clearTimeout(this.toastTimer);
       controls.left = controls.right = controls.fire = false;
     });
   }
   render(v: BattleView): void {
     this.latest = v;
+    this.text('mobile-mute', v.muted ? translate('소리 켜기') : translate('음소거'));
     for (const [id, label, health] of [
       ['hero-fill', translate('루미 체력'), v.hero],
       ['ally-fill', translate('성역 체력'), v.ally],
