@@ -182,7 +182,11 @@ try {
     console.log(reports.at(-1));
     await page.close();
   }
-  const page = await browser.newPage({ viewport: { width: 844, height: 390 }, hasTouch: true });
+  const page = await browser.newPage({
+    viewport: { width: 844, height: 390 },
+    hasTouch: true,
+    locale: 'en-US',
+  });
   await page.goto(url);
   await page.waitForSelector('#display-mode');
   await page.click('#display-mode');
