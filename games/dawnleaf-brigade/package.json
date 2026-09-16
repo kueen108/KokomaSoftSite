@@ -26,6 +26,7 @@
     "test:cadence": "node scripts/verify-cadence.mjs",
     "test:realtime": "node scripts/verify-realtime.mjs",
     "test:visual-ui": "node scripts/verify-visual-ui.mjs",
+    "test:mobile-ux": "node scripts/verify-mobile-ux.mjs",
     "test:i18n": "vitest run tests/i18n && node scripts/verify-i18n.mjs"
   },
   "dependencies": {

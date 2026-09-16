@@ -112,7 +112,17 @@ try {
     await page.waitForSelector('#resume');
     await target(page, '#resume');
     await page.click('#resume');
-    for (const id of ['#left', '#right', '#fire', '#nova', '#pause', '#display-mode'])
+    for (const id of [
+      '#left',
+      '#right',
+      '#fire',
+      '#nova',
+      '#pause',
+      '#display-mode',
+      '#mission-info',
+      '#resource-info',
+      '#hero-info',
+    ])
       await target(page, id);
     for (const id of ['#hero-hp', '#gold', '#mana', '#cost-tanker'])
       assert.ok(
@@ -120,6 +130,33 @@ try {
         `${id} font`,
       );
     await page.screenshot({ path: `${root}/${width}-${height}-${locale}-battle.png` });
+    const cdp = await page.context().newCDPSession(page);
+    const shelf = await page.locator('.summon-deck').boundingBox();
+    const populationBeforeSwipe = await page.locator('#population').innerText();
+    const swipeX = shelf.x + shelf.width - 20;
+    const swipeY = shelf.y + 10;
+    await cdp.send('Input.dispatchTouchEvent', {
+      type: 'touchStart',
+      touchPoints: [{ x: swipeX, y: swipeY, id: 1 }],
+    });
+    for (let step = 1; step <= 6; step++) {
+      await cdp.send('Input.dispatchTouchEvent', {
+        type: 'touchMove',
+        touchPoints: [{ x: swipeX - ((shelf.width - 40) * step) / 6, y: swipeY, id: 1 }],
+      });
+    }
+    await cdp.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
+    // Let native momentum/snap finish before a later programmatic target scroll.
+    await page.waitForTimeout(1200);
+    assert.ok(
+      await page.locator('.summon-deck').evaluate((e) => e.scrollLeft > 0),
+      'touch swipe scrolls the summon shelf',
+    );
+    assert.equal(
+      await page.locator('#population').innerText(),
+      populationBeforeSwipe,
+      'swipe must not summon',
+    );
     for (const unit of [
       'tanker',
       'dealer',
@@ -135,7 +172,6 @@ try {
       assert.equal(await page.evaluate(() => window.__game.scene.getScene('Battle').paused), true);
       await page.click('.info-close');
     }
-    const cdp = await page.context().newCDPSession(page);
     const right = await page.locator('#right').boundingBox(),
       fire = await page.locator('#fire').boundingBox();
     await cdp.send('Input.dispatchTouchEvent', {
@@ -162,6 +198,9 @@ try {
       [false, false],
     );
     await page.click('#pause');
+    await page.locator('.mobile-pause-details [data-info="controls"]').click();
+    assert.doesNotMatch(await page.locator('.info-body').innerText(), /SPACE|ESC|1–8/);
+    await page.click('.info-close');
     await page.locator('.mobile-pause-details [data-info="weapon"]').click();
     await page.click('.info-close');
     assert.equal(await page.evaluate(() => window.__game.scene.getScene('Battle').paused), true);
@@ -177,6 +216,41 @@ try {
     });
     assert.ok(camera.hero >= 0 && camera.hero < width, JSON.stringify(camera));
     if (width < 600) assert.ok(camera.view < 700, 'Portrait needs a closer camera');
+    // Rotation at the far end of the battlefield must keep the hero visible
+    // and release a held gesture, rather than carrying it into the new layout.
+    await page.evaluate(() => {
+      const s = window.__game.scene.getScene('Battle');
+      s.paladog.setPosition(3200, s.paladog.y);
+      s.controls.right = s.controls.fire = true;
+    });
+    await page.setViewportSize({ width: height, height: width });
+    await page.waitForTimeout(200);
+    assert.deepEqual(
+      await page.evaluate(() => {
+        const s = window.__game.scene.getScene('Battle');
+        const rect = window.__game.canvas.getBoundingClientRect();
+        const x = ((s.paladog.x - s.fx.world.scrollX) * rect.width) / 1280;
+        return [s.controls.right, s.controls.fire, x >= 0 && x < window.innerWidth];
+      }),
+      [false, false, true],
+    );
+    await page.setViewportSize({ width, height });
+    await page.waitForTimeout(200);
+    await page.evaluate(() => {
+      const s = window.__game.scene.getScene('Battle');
+      s.scene.start('Result', {
+        outcome: 'defeat',
+        launch: s.launch,
+        stage: s.stage,
+        settlement: 0,
+        survival: null,
+      });
+    });
+    await page.waitForSelector('#next');
+    for (const id of ['#next', '#upgrade', '#menu', '#result-info']) await target(page, id);
+    await page.screenshot({ path: `${root}/${width}-${height}-${locale}-result.png` });
+    await page.click('#menu');
+    await page.waitForSelector('#play');
     assert.deepEqual(errors, []);
     reports.push({ width, height, locale, camera, pass: true });
     console.log(reports.at(-1));

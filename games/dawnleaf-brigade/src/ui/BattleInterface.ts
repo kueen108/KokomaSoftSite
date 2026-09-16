@@ -1,4 +1,5 @@
 import { translate } from '../i18n/index';
+import { mobileViewport } from './MobileViewport';
 import Phaser from 'phaser';
 import { Interface, portrait, UNIT_NAMES, UNIT_ROLES } from './Interface';
 import { icon, infoButton } from './Icons';
@@ -152,6 +153,11 @@ export class BattleInterface extends Interface {
         ),
       };
       let body = descriptions[key] ?? key;
+      if (key === 'controls' && mobileViewport()) {
+        body = translate(
+          '왼쪽 화살표를 길게 눌러 이동하고 오른쪽 무기 버튼을 길게 눌러 공격하세요. 이동과 공격은 동시에 누를 수 있습니다.\n동료 카드를 좌우로 넘기고 원하는 카드를 눌러 소환하세요. 태양 버튼은 신성한 파동입니다.\nⓘ에서 설명을 확인하고, 일시정지 메뉴에서 장비·아우라·소리 설정을 확인하세요. ⛶ 버튼으로 전체화면을 열 수 있습니다.',
+        );
+      }
       if (key.startsWith('unit:')) {
         const type = key.slice(5) as AllyUnitType,
           slot = v?.slots.find((s) => s.definition.type === type);

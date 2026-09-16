@@ -3,6 +3,7 @@ import { catalogs, resolveLocale, SUPPORTED_LOCALES, translate } from '../../src
 import { rows } from '../../src/i18n/catalog';
 import { storyRows } from '../../src/i18n/story';
 import { messageRows } from '../../src/i18n/messages';
+import { mobileRows } from '../../src/i18n/mobile';
 import ts from 'typescript';
 
 describe('language selection', () => {
@@ -49,7 +50,7 @@ describe('language selection', () => {
 });
 
 describe('catalog coverage', () => {
-  const entries = [...rows, ...storyRows, ...messageRows];
+  const entries = [...rows, ...storyRows, ...messageRows, ...mobileRows];
   const placeholders = (text: string) =>
     [...text.matchAll(/\{\d+\}/g)].map((match) => match[0]).sort();
 

@@ -1,5 +1,13 @@
 /** Korean, English, Japanese, Simplified Chinese, French, Spanish. */
 export const mobileRows: readonly (readonly [string, string, string, string, string, string])[] = [
+  [
+    '왼쪽 화살표를 길게 눌러 이동하고 오른쪽 무기 버튼을 길게 눌러 공격하세요. 이동과 공격은 동시에 누를 수 있습니다.\n동료 카드를 좌우로 넘기고 원하는 카드를 눌러 소환하세요. 태양 버튼은 신성한 파동입니다.\nⓘ에서 설명을 확인하고, 일시정지 메뉴에서 장비·아우라·소리 설정을 확인하세요. ⛶ 버튼으로 전체화면을 열 수 있습니다.',
+    'Hold the arrows on the left to move and the weapon button on the right to attack. You can hold both at once.\nSwipe the ally cards sideways, then tap a card to summon. The sun button casts Holy Nova.\nTap ⓘ for details. Find equipment, aura and sound in the pause menu. Tap ⛶ for fullscreen.',
+    '左の矢印を長押しして移動し、右の武器ボタンを長押しして攻撃します。同時に押すこともできます。\n仲間のカードを左右にスワイプし、カードをタップして召喚します。太陽ボタンは聖なる波動です。\nⓘで説明を確認できます。装備・オーラ・音の設定は一時停止メニューにあります。⛶で全画面を開きます。',
+    '长按左侧箭头移动，长按右侧武器按钮攻击。移动和攻击可以同时进行。\n左右滑动伙伴卡片，点击卡片召唤。太阳按钮施放神圣波动。\n点击ⓘ查看说明。在暂停菜单查看装备、光环和声音设置。点击⛶进入全屏。',
+    'Maintenez les flèches à gauche pour avancer et le bouton d’arme à droite pour attaquer. Vous pouvez maintenir les deux à la fois.\nFaites glisser les cartes des alliés, puis touchez une carte pour invoquer. Le soleil lance la Nova sacrée.\nTouchez ⓘ pour les détails. Équipement, aura et son se trouvent dans le menu pause. Touchez ⛶ pour le plein écran.',
+    'Mantén pulsadas las flechas de la izquierda para moverte y el arma de la derecha para atacar. Puedes pulsar ambas a la vez.\nDesliza las cartas de aliados y toca una para invocar. El sol lanza la Nova sagrada.\nToca ⓘ para ver detalles. Equipo, aura y sonido están en el menú de pausa. Toca ⛶ para abrir la pantalla completa.',
+  ],
   ['전체화면', 'Fullscreen', '全画面', '全屏', 'Plein écran', 'Pantalla completa'],
   [
     '전체화면 나가기',

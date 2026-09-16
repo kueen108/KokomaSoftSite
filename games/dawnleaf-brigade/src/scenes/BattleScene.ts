@@ -635,7 +635,8 @@ export class BattleScene extends Phaser.Scene {
     const viewWidth = mobileViewport()
       ? mobileBattleLayout(viewport.width, viewport.height).visibleWorldWidth
       : GAME_WIDTH;
-    if (viewWidth !== this.cameraViewWidth) {
+    const viewChanged = viewWidth !== this.cameraViewWidth;
+    if (viewChanged) {
       this.cameraViewWidth = viewWidth;
       // The canvas may extend beyond a portrait viewport; follow its visible
       // portion without altering simulation bounds or actor coordinates.
@@ -646,7 +647,10 @@ export class BattleScene extends Phaser.Scene {
       0,
       WORLD_WIDTH - this.cameraViewWidth,
     );
-    this.fx.world.scrollX += (desiredScroll - this.fx.world.scrollX) * (1 - Math.exp(-delta / 110));
+    this.fx.world.scrollX = viewChanged
+      ? desiredScroll
+      : this.fx.world.scrollX +
+        (desiredScroll - this.fx.world.scrollX) * (1 - Math.exp(-delta / 110));
     this.backdrop.updateScroll(this.fx.world.scrollX);
     this.drawUnitDetails();
     this.hudElapsed += delta;

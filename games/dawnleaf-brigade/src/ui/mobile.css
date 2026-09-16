@@ -48,6 +48,7 @@
   height: 100%;
 }
 .mobile-ui button {
+  min-width: 44px;
   min-height: 44px;
   font-size: 16px;
 }
@@ -271,6 +272,29 @@
 .mobile-ui .unit-detail {
   padding: 12px;
   min-width: 0;
+  min-height: 0;
+  height: 100%;
+  overflow-x: hidden;
+}
+.mobile-ui .hero-workshop {
+  padding-right: 0;
+}
+.mobile-ui .unit-detail .aura-upgrade {
+  flex-wrap: wrap;
+}
+.mobile-ui .aura-growth {
+  min-width: 100px;
+}
+.mobile-ui .level-pips {
+  gap: 4px;
+}
+.mobile-ui .level-pips > i {
+  flex: 1;
+  min-width: 6px;
+  max-width: 25px;
+}
+.mobile-ui .growth-stat-preview {
+  flex-wrap: wrap;
 }
 .mobile-ui .unit-detail h2 {
   font-size: 22px;
@@ -382,6 +406,7 @@
 }
 .mobile-ui.visual-battle .fortress-health,
 .mobile-ui.visual-battle .enemy-health {
+  min-width: 0;
   gap: 4px;
   font-size: 14px;
 }
@@ -391,6 +416,10 @@
 .mobile-ui.visual-battle .meter {
   min-width: 26px;
   height: 6px;
+}
+.mobile-ui.visual-battle .battle-top .meter {
+  width: auto;
+  flex: 1;
 }
 .mobile-ui.visual-battle .battle-title {
   font-size: 14px;
@@ -608,11 +637,23 @@
     display: none;
   }
   .mobile-ui .upgrade-layout {
+    top: 96px;
     grid-template-columns: 1fr;
-    grid-template-rows: 64px 1fr;
+    grid-template-rows: 64px minmax(0, 1fr);
+  }
+  .mobile-ui[data-scene='Upgrade'] .screen-heading {
+    max-width: calc(100% - 108px);
+  }
+  .mobile-ui .wallet {
+    top: 56px;
+    right: 0;
+  }
+  .mobile-ui .equipment-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
   .mobile-ui .upgrade-layout > .roster {
     display: flex;
+    flex-direction: row;
     overflow-x: auto;
     overflow-y: hidden;
     touch-action: pan-x;
@@ -620,18 +661,22 @@
   }
   .mobile-ui #roster {
     display: flex;
+    flex-direction: row;
     gap: 6px;
   }
   .mobile-ui .roster-row {
+    flex: 0 0 116px;
+    width: 116px;
     min-width: 116px;
     height: 56px;
+    touch-action: pan-x;
   }
   .mobile-ui .roster-row small {
     display: none;
   }
   .mobile-ui.visual-battle .battle-top {
     right: 96px;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: minmax(0, 1fr) minmax(110px, 1fr);
   }
   .mobile-ui.visual-battle .enemy-health {
     display: none;
