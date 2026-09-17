@@ -7,7 +7,7 @@
     "dev": "astro dev",
     "build": "npm run build:game && astro build",
     "build:game": "npm ci --prefix games/dawnleaf-brigade --no-audit --no-fund && npm --prefix games/dawnleaf-brigade run build -- --base /games/dawnleaf-brigade/ --outDir ../../public/games/dawnleaf-brigade --emptyOutDir",
-    "harness:curated": "node scripts/run-curated-knowledge-digest.mjs --harness --workflow all --date today",
+    "harness:curated": "node scripts/run-curated-knowledge-digest.mjs --harness --workflow all --date today --projection-days 30",
     "harness:medium": "node scripts/generate-medium-digest.mjs --harness --date today",
     "preview": "astro preview"
   },

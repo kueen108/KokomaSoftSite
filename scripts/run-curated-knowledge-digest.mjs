@@ -2,6 +2,7 @@
 import { spawnSync } from 'node:child_process';
 import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { basename, join } from 'node:path';
+import { validateCuratedQuality } from './curated-content-quality.mjs';
 
 const repoRoot = new URL('..', import.meta.url).pathname.replace(/\/$/, '');
 const postDir = join(repoRoot, 'src/content/medium-digest');
@@ -127,8 +128,7 @@ function assertNoTemplateArtifacts(content, filename) {
   }
 }
 
-function selectTopic(prefix, posts, workflowName, date) {
-  const existingPosts = readExistingPosts(prefix);
+function selectTopic(prefix, posts, workflowName, date, existingPosts = readExistingPosts(prefix)) {
   const candidates = [
     ...posts,
     ...fallbackPostsForWorkflow(workflowName),
@@ -144,8 +144,7 @@ function selectTopic(prefix, posts, workflowName, date) {
   return candidate;
 }
 
-function selectTopicReport(prefix, posts, workflowName, date) {
-  const existingPosts = readExistingPosts(prefix);
+function selectTopicReport(prefix, posts, workflowName, date, existingPosts = readExistingPosts(prefix)) {
   const candidates = [
     ...posts,
     ...fallbackPostsForWorkflow(workflowName),
@@ -296,9 +295,6 @@ function duplicateTopicReason(post, existingPosts, currentFile = null) {
     if (existing.file === currentFile) continue;
     if (existing.slug && existing.slug === post.slug) return { file: existing.file, reason: 'slug' };
     if (existing.title && existing.title === post.title) return { file: existing.file, reason: 'title' };
-    if (existing.sourceUrl && post.sourceUrl && existing.sourceUrl === post.sourceUrl) {
-      return { file: existing.file, reason: 'sourceUrl' };
-    }
     const similarity = jaccard(candidateTokens, existing.tokens);
     if (similarity >= similarityThreshold) {
       return { file: existing.file, reason: `topic similarity ${similarity.toFixed(2)}` };
@@ -323,7 +319,6 @@ function validateNoDuplicateCuratedPost(filePath, prefix) {
   const duplicate = readExistingPosts(prefix).find((existing) => {
     if (existing.file === currentName) return false;
     if (existing.title && existing.title === post.title) return true;
-    if (existing.sourceUrl && post.sourceUrl && existing.sourceUrl === post.sourceUrl) return true;
     return jaccard(currentTokens, existing.tokens) >= similarityThreshold;
   });
   if (duplicate) {
@@ -359,6 +354,8 @@ function jaccard(a, b) {
 }
 
 function developerArticle(post) {
+  const subject = post.subject ?? subjectFromTitle(post.title);
+  const angle = post.angle ?? post.description;
   return `${post.intro}
 
 ## 왜 개발자가 알아야 하나
@@ -369,6 +366,29 @@ ${post.why.join('\n\n')}
 
 ${post.concepts.join('\n\n')}
 
+## 설계할 때 먼저 정할 경계
+
+${subject}를 설계할 때 가장 먼저 정할 것은 “어디까지 같은 규칙으로 볼 것인가”입니다. 요청 하나, 사용자 한 명, 조직 하나, 리전 하나처럼 경계를 무엇으로 잡느냐에 따라 저장해야 할 상태와 실패의 영향 범위가 달라집니다. 정상 경로만 보고 구현하면 경계 밖의 값이 들어왔을 때 임시 예외가 늘어나므로, 입력·상태·권한·시간의 경계를 문서와 테스트에 함께 남겨야 합니다.
+
+두 번째는 소유권입니다. ${subject}와 관련된 판단을 호출자, 서버, 데이터 저장소, 비동기 작업자 가운데 누가 최종적으로 책임지는지 하나씩 적어보는 편이 좋습니다. 여러 구성 요소가 같은 결정을 독립적으로 내리면 재시도나 부분 실패 때 서로 다른 결과를 만들 수 있습니다. 반대로 책임이 한 곳에 모이면 다른 구성 요소는 결과를 추측하지 않고 명시적인 계약을 따를 수 있습니다.
+
+세 번째는 시간축입니다. ${angle}라는 관점은 배포 순간뿐 아니라 지연, 재시도, 롤백, 오래된 클라이언트가 함께 존재하는 기간까지 봐야 의미가 있습니다. 지금은 맞는 값이라도 몇 분 뒤 상태가 바뀔 수 있고, 순서가 뒤집힌 이벤트가 늦게 도착할 수 있습니다. 따라서 만료 조건, 재처리 가능성, 호환 기간을 설계 초기에 결정해야 합니다.
+
+## 실패 시나리오로 점검하기
+
+- **부분 성공:** ${subject} 처리 중 일부 단계만 성공했을 때 이미 반영된 상태를 되돌릴지, 보상 작업으로 이어갈지, 사람이 확인할 대기열로 보낼지 정해야 합니다. 단순히 예외를 던지는 것으로는 외부 시스템에 남은 효과가 사라지지 않습니다.
+- **중복 실행:** 네트워크 타임아웃 뒤 같은 요청이 다시 들어와도 결과가 두 번 만들어지지 않는지 확인해야 합니다. 요청 식별자, 멱등 키, 상태 전이 조건처럼 중복을 알아볼 근거가 필요합니다.
+- **순서 역전:** 오래된 이벤트나 응답이 최신 상태보다 늦게 도착할 때 무엇을 버리고 무엇을 적용할지 정해야 합니다. 버전, 타임스탬프, 단조 증가 번호를 비교하는 규칙이 없으면 정상적인 재시도가 데이터 회귀를 만들 수 있습니다.
+- **의존성 장애:** 데이터베이스, 캐시, 메시지 브로커, 외부 API 중 하나가 느리거나 응답하지 않을 때 ${subject}가 무한 대기하지 않도록 타임아웃과 제한된 재시도, 대체 경로를 함께 설계해야 합니다.
+
+## 관측 가능성과 운영 기준
+
+좋은 구현은 성공 건수만 세지 않습니다. ${subject}에서 거절, 충돌, 재시도, 만료, 보상 처리 같은 상태를 서로 다른 이벤트로 기록해야 합니다. 로그에는 요청 식별자와 결정 이유를 남기고, 지표에는 처리량뿐 아니라 지연 분포와 실패 유형을 남겨야 운영자가 “느리다”를 원인별로 나눌 수 있습니다.
+
+알림은 사용자가 영향을 받기 전 신호와 이미 영향을 받은 신호를 구분해야 합니다. 큐 적체나 재시도 증가처럼 선행하는 지표는 조기 대응에 쓰고, 최종 실패율이나 데이터 불일치처럼 결과를 보여주는 지표는 심각도를 판단하는 데 씁니다. 하나의 임계값만 두면 작은 흔들림에 과민하거나 실제 장애를 늦게 발견하기 쉽습니다.
+
+운영 기준에는 복구 확인도 포함되어야 합니다. 장애 원인을 제거한 뒤 밀린 작업이 줄고 있는지, 실패율이 정상 범위로 돌아왔는지, 임시 우회가 새로운 병목을 만들지 않았는지 확인해야 합니다. ${subject}의 완료 조건은 배포 성공이 아니라 시스템과 사용자 경험이 안정 상태로 돌아온 증거까지입니다.
+
 ## 작은 예시 또는 체크리스트
 
 ${post.example}
@@ -378,6 +398,14 @@ ${post.checklist.map((item) => `- ${item}`).join('\n')}
 ## 실무에서 자주 생기는 오해
 
 ${post.misconceptions.map((item) => `- ${item}`).join('\n\n')}
+
+## 도입 순서
+
+- 먼저 현재 흐름을 한 장으로 그리고 ${subject}와 관련된 상태 변화, 외부 효과, 책임 주체를 표시합니다.
+- 가장 자주 발생하거나 피해가 큰 실패 시나리오 하나를 골라 재현 가능한 테스트로 고정합니다.
+- 정상·거절·재시도·최종 실패를 구분하는 로그와 지표를 추가하고 대시보드에서 실제 값을 확인합니다.
+- 작은 트래픽이나 내부 사용자에게 먼저 적용해 가정과 임계값이 현실과 맞는지 관찰합니다.
+- 롤백과 복구 절차를 연습한 뒤 범위를 넓히고, 운영 결과를 설계 문서와 체크리스트에 다시 반영합니다.
 
 ## 오늘 바로 적용해보기
 
@@ -394,6 +422,8 @@ ${post.takeaway}
 }
 
 function knowledgeArticle(post) {
+  const subject = post.subject ?? subjectFromTitle(post.title);
+  const angle = post.angle ?? post.description;
   return `${post.intro}
 
 ## 한 번에 이해하기
@@ -404,13 +434,52 @@ ${post.explain.join('\n\n')}
 
 ${post.why.join('\n\n')}
 
+## 작동 원리를 세 단계로 보기
+
+첫 단계는 단서의 선택입니다. 사람은 모든 정보를 같은 무게로 처리하지 못하기 때문에 눈에 잘 띄거나 먼저 제시되거나 주변 사람이 반복하는 단서를 우선 사용합니다. ${subject}는 이 선택 과정이 의식적인 판단보다 먼저 일어날 수 있다는 점을 보여줍니다. 그래서 “나는 객관적으로 봤다”는 느낌만으로는 어떤 단서가 빠졌는지 알기 어렵습니다.
+
+두 번째 단계는 해석의 압축입니다. 선택된 단서는 복잡한 상황을 빠르게 설명하는 이야기로 묶입니다. ${angle}라는 설명은 판단 속도를 높이지만, 표본의 크기·반대 사례·시간에 따른 변화가 이야기 밖으로 밀려날 수 있습니다. 빠른 결론이 필요한 상황일수록 사실과 해석을 두 칸으로 나누어 적는 습관이 도움이 됩니다.
+
+세 번째 단계는 행동의 강화입니다. 한 번 내린 판단은 다음에 보는 정보와 선택에도 영향을 줍니다. 같은 선택을 반복하면 그 결과가 처음 판단을 뒷받침하는 증거처럼 보일 수 있고, 다른 선택지에서 얻을 수 있었던 정보는 영영 관찰하지 못합니다. 따라서 ${subject}를 줄이는 핵심은 의지력이 아니라 반대 증거를 확인하는 절차를 미리 만드는 일입니다.
+
+## 상황별로 비교해보기
+
+- **회의와 협업:** 다수의 빠른 동의가 충분한 검토를 뜻하는지, 아니면 첫 발언과 직급이 만든 방향인지 분리해서 봅니다. 익명 의견 수집이나 사전 문서 리뷰는 말의 크기와 근거의 크기를 구분하게 해줍니다.
+- **제품과 서비스:** 클릭률이나 별점처럼 눈에 보이는 지표가 사용자의 장기 만족을 대표하는지 확인합니다. 이탈률, 재방문, 불만 유형처럼 다른 시간축의 지표를 함께 보면 ${subject}가 만든 착시를 줄일 수 있습니다.
+- **뉴스와 정보 소비:** 반복 노출된 주장과 독립적으로 검증된 사실을 구분합니다. 같은 원문을 여러 계정이 인용한 것인지, 서로 다른 자료가 같은 결론을 지지하는지 출처의 계보를 확인해야 합니다.
+- **개인의 선택:** 구매, 학습, 건강, 투자 판단에서 처음 세운 기준이 결과를 어떻게 평가하게 만드는지 돌아봅니다. 결정을 내리기 전에 취소 조건과 다시 검토할 날짜를 적으면 사후 합리화를 줄일 수 있습니다.
+
+## 검증 가능한 기록으로 바꾸기
+
+${subject}를 실제 판단 도구로 쓰려면 결론보다 예측을 먼저 기록하는 편이 좋습니다. “이 선택이 맞다면 2주 안에 어떤 변화가 보여야 하는가”, “틀렸다면 어떤 신호가 먼저 나타나는가”를 적어두면 결과를 본 뒤 이야기를 바꾸는 일을 줄일 수 있습니다. 숫자가 꼭 거창할 필요는 없지만 관찰할 대상과 기간은 분명해야 합니다.
+
+기록은 사실, 해석, 행동을 세 칸으로 나누면 유용합니다. 사실에는 직접 확인한 값과 출처를, 해석에는 그 사실이 의미한다고 생각한 내용을, 행동에는 다음에 할 일을 씁니다. 이 구조는 ${angle}라는 설명이 사실처럼 굳어지는 것을 막고, 다른 사람이 같은 자료에서 다른 해석을 제시할 공간을 만듭니다.
+
+마지막에는 검토 날짜와 중단 조건을 붙입니다. 중요한 선택일수록 영구적인 확신보다 “언제 다시 볼 것인가”가 안전장치가 됩니다. 검토 시점에는 처음 판단을 변호하기보다 예측과 실제 결과의 차이를 확인하고, 빠진 정보와 다음 판단에서 바꿀 절차를 한 줄씩 남기는 것이 좋습니다.
+
 ## 작은 사례
 
 ${post.examples.join('\n\n')}
 
+## 반례와 한계
+
+${subject}라는 이름이 모든 행동을 설명하는 것은 아닙니다. 같은 선택도 정보 부족, 시간 압박, 비용, 경험, 제도적 제약 때문에 나타날 수 있습니다. 개념을 적용할 때는 먼저 다른 설명이 가능한지 확인하고, 관찰한 행동 하나만으로 사람의 성향을 단정하지 않아야 합니다.
+
+또한 빠른 판단이 언제나 나쁜 것도 아닙니다. 반복적으로 경험한 환경에서는 직관이 효율적인 신호가 될 수 있고, 위험이 작고 되돌리기 쉬운 선택에는 정교한 분석 비용이 더 클 수 있습니다. 중요한 것은 모든 결정을 느리게 만드는 것이 아니라, 피해가 크고 되돌리기 어려운 결정에 더 강한 검증 절차를 배치하는 일입니다.
+
+마지막으로 개념을 안다는 사실 자체가 면역을 주지는 않습니다. 오히려 다른 사람의 오류만 쉽게 보이고 자신의 판단 과정은 그대로 둘 수 있습니다. ${subject}를 유용하게 쓰려면 누가 틀렸는지를 찾기보다 어떤 조건과 절차가 같은 실수를 반복하게 만드는지 질문해야 합니다.
+
 ## 오해하기 쉬운 지점
 
 ${post.misconceptions.map((item) => `- ${item}`).join('\n\n')}
+
+## 스스로 점검할 질문
+
+- 지금 결론에서 관찰한 사실과 내가 붙인 해석을 각각 한 문장으로 분리할 수 있는가?
+- 반대 결론을 지지하는 사례나 데이터 하나를 의도적으로 찾아봤는가?
+- 표본의 크기, 선택 방식, 비교 기준이 결론을 뒷받침하기에 충분한가?
+- 이 판단이 틀렸음을 알려줄 신호와 다시 검토할 시점을 미리 정했는가?
+- 같은 상황을 다른 사람의 입장에서 설명하면 어떤 정보가 새롭게 보이는가?
 
 ## 오늘 써먹는 법
 
@@ -424,6 +493,11 @@ ${post.links.map((link) => `- [${link.title}](${link.url})`).join('\n')}
 
 ${post.takeaway}
 `;
+}
+
+function subjectFromTitle(title) {
+  const withoutPrefix = String(title).replace(/^[^:]+:\s*/, '');
+  return withoutPrefix.split(',')[0].trim() || withoutPrefix;
 }
 
 const developerPosts = [
@@ -1178,6 +1252,8 @@ function developerPostFromTopic(topic) {
   const risk = topic.risk ?? '이 기준이 없으면 구현은 동작해도 운영 순간에 비용, 장애, 데이터 불일치가 드러납니다.';
   const payoff = topic.payoff ?? '개발자가 이 개념을 알면 설계 결정의 이유를 더 분명히 설명하고, 장애가 나기 전에 위험을 줄일 수 있습니다.';
   return {
+    subject: topic.subject,
+    angle: topic.angle,
     slug: topic.slug,
     duplicateSimilarityThreshold: topic.duplicateSimilarityThreshold,
     title: `개발자가 알아야 할 지식: ${topic.subject}, ${topic.angle}`,
@@ -1240,6 +1316,8 @@ function knowledgePostFromTopic(topic) {
     '개인 생활에서는 반복되는 판단 실수를 발견하는 데 도움이 됩니다. 왜 같은 선택을 다시 하는지 이름을 붙이면 바꾸기도 쉬워집니다.',
   ];
   return {
+    subject: topic.subject,
+    angle: topic.angle,
     slug: topic.slug,
     duplicateSimilarityThreshold: topic.duplicateSimilarityThreshold,
     title: `오늘의 지식: ${topic.subject}, ${topic.angle}`,
@@ -2336,30 +2414,53 @@ mkdirSync(postDir, { recursive: true });
 
 if (isHarnessMode()) {
   const workflowsToCheck = workflowName === 'all' ? Object.entries(workflows) : [[workflowName, workflow]];
+  const projectionDays = Number(argValue('--projection-days', '1'));
   const results = workflowsToCheck.map(([name, config]) => {
-    const existing = validExistingForDate(config.prefix, date);
-    const report = selectTopicReport(config.prefix, config.posts, name, date);
-    if (!existing && !report.candidate) {
-      throw new Error(
-        `${config.prefix} harness failed: no usable topic after ${report.totalCandidates} candidates. ` +
-          `Rejected ${report.rejected.length}.`,
-      );
-    }
-    if (report.candidate) {
-      const candidateContent = `${frontmatter(report.candidate, date, name)}${config.article(report.candidate)}`;
+    const projected = readExistingPosts(config.prefix);
+    const selections = [];
+    for (let offset = 0; offset < projectionDays; offset += 1) {
+      const projectedDate = addDays(date, offset);
+      const report = selectTopicReport(config.prefix, config.posts, name, projectedDate, projected);
+      if (!report.candidate) {
+        throw new Error(
+          `${config.prefix} harness failed on ${projectedDate}: no usable topic after ${report.totalCandidates} candidates. ` +
+            `Rejected ${report.rejected.length}.`,
+        );
+      }
+      const candidateContent = `${frontmatter(report.candidate, projectedDate, name)}${config.article(report.candidate)}`;
       assertNoTemplateArtifacts(candidateContent, report.candidate.slug);
+      const quality = validateCuratedQuality(candidateContent, name);
+      projected.push(projectedPost(report.candidate, config.prefix, projectedDate));
+      selections.push({ date: projectedDate, slug: report.candidate.slug, quality });
     }
     return {
       workflow: name,
-      date,
-      existing,
-      selected: existing ?? report.candidate.slug,
-      rejected: report.rejected.length,
-      totalCandidates: report.totalCandidates,
+      startDate: date,
+      projectionDays,
+      first: selections[0],
+      last: selections.at(-1),
     };
   });
   console.log(JSON.stringify({ ok: true, results }, null, 2));
   process.exit(0);
+}
+
+function addDays(value, offset) {
+  const dateValue = new Date(`${value}T00:00:00Z`);
+  dateValue.setUTCDate(dateValue.getUTCDate() + offset);
+  return dateValue.toISOString().slice(0, 10);
+}
+
+function projectedPost(post, prefix, dateValue) {
+  return {
+    file: `${prefix}-${dateValue}-${post.slug}.md`,
+    title: post.title,
+    description: post.description,
+    sourceTitle: post.sourceTitle,
+    sourceUrl: post.sourceUrl,
+    slug: post.slug,
+    tokens: topicTokens(`${post.title} ${post.description} ${post.sourceTitle}`),
+  };
 }
 
 if (!hasFlag('--skip-pull')) {
@@ -2374,6 +2475,7 @@ if (!filename) {
   filename = `${workflow.prefix}-${date}-${post.slug}.md`;
   const content = `${frontmatter(post, date, workflowName)}${workflow.article(post)}`;
   assertNoTemplateArtifacts(content, filename);
+  validateCuratedQuality(content, workflowName);
   writeFileSync(join(postDir, filename), content);
   created = true;
 }
