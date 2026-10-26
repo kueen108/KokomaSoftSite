@@ -9,6 +9,13 @@ const postDir = join(repoRoot, 'src/content/medium-digest');
 const outputDir = join(repoRoot, 'output');
 const logPath = join(outputDir, 'curated-knowledge-digest.log');
 
+const KNOWLEDGE_DIVERSITY = {
+  topicCooldownDays: 45,
+  recentCategoryWindow: 14,
+  maxCategoryInWindow: 3,
+  minCategoriesInWindow: 6,
+};
+
 function todayInSeoul() {
   const parts = new Intl.DateTimeFormat('en-CA', {
     timeZone: 'Asia/Seoul',
@@ -80,6 +87,12 @@ function stripFrontmatter(content) {
 
 function frontmatter(post, date, workflow) {
   const tagPrefix = workflow === 'developer' ? '개발자가 알아야 할 지식' : '오늘의 지식';
+  const knowledgeMetadata = workflow === 'knowledge'
+    ? [
+        `coreTopic: ${yamlString(knowledgeCoreTopic(post))}`,
+        `topicCategory: ${yamlString(knowledgeCategory(post))}`,
+      ]
+    : [];
   return [
     '---',
     `title: ${yamlString(post.title)}`,
@@ -89,6 +102,7 @@ function frontmatter(post, date, workflow) {
     `sourceTitle: ${yamlString(post.sourceTitle)}`,
     `sourceUrl: ${yamlString(post.sourceUrl)}`,
     `sourceAuthor: ${yamlString(post.sourceAuthor)}`,
+    ...knowledgeMetadata,
     ...(Number.isFinite(post.duplicateSimilarityThreshold)
       ? [`duplicateSimilarityThreshold: ${post.duplicateSimilarityThreshold}`]
       : []),
@@ -129,19 +143,12 @@ function assertNoTemplateArtifacts(content, filename) {
 }
 
 function selectTopic(prefix, posts, workflowName, date, existingPosts = readExistingPosts(prefix)) {
-  const candidates = [
-    ...posts,
-    ...fallbackPostsForWorkflow(workflowName),
-    ...generatedPostsForWorkflow(workflowName),
-    ...proceduralPostsForWorkflow(workflowName, date),
-    ...emergencyProceduralPostsForWorkflow(workflowName, date),
-  ];
-  const candidate = candidates.find((post) => !isDuplicateTopic({ ...post, body: articleBodyForWorkflow(workflowName, post) }, existingPosts));
-  if (!candidate) {
+  const report = selectTopicReport(prefix, posts, workflowName, date, existingPosts);
+  if (!report.candidate) {
     const used = existingPosts.map((post) => post.slug ?? post.title).filter(Boolean).join(', ');
     throw new Error(`no usable ${prefix} topic could be generated. Used: ${used}`);
   }
-  return candidate;
+  return report.candidate;
 }
 
 function selectTopicReport(prefix, posts, workflowName, date, existingPosts = readExistingPosts(prefix)) {
@@ -153,13 +160,22 @@ function selectTopicReport(prefix, posts, workflowName, date, existingPosts = re
     ...emergencyProceduralPostsForWorkflow(workflowName, date),
   ];
   const rejected = [];
-  for (const post of candidates) {
+  const eligible = [];
+  for (const [index, post] of candidates.entries()) {
     const body = articleBodyForWorkflow(workflowName, post);
     const duplicate = duplicateTopicReason({ ...post, body }, existingPosts);
-    if (!duplicate) {
-      return { candidate: post, rejected, totalCandidates: candidates.length };
+    const diversity = workflowName === 'knowledge'
+      ? knowledgeDiversityReason(post, date, existingPosts)
+      : null;
+    if (!duplicate && !diversity) {
+      eligible.push({ post, index, score: knowledgeDiversityScore(post, existingPosts, workflowName) });
+      continue;
     }
-    rejected.push({ slug: post.slug, duplicate });
+    rejected.push({ slug: post.slug, duplicate, diversity });
+  }
+  if (eligible.length > 0) {
+    eligible.sort((left, right) => left.score - right.score || left.index - right.index);
+    return { candidate: eligible[0].post, rejected, totalCandidates: candidates.length };
   }
   return { candidate: null, rejected, totalCandidates: candidates.length };
 }
@@ -248,6 +264,93 @@ function expandProceduralTopic(topic, angle, focus, workflowName, date) {
   };
 }
 
+function knowledgeCoreTopic(post) {
+  if (post.coreTopic) return post.coreTopic;
+  if (post.subject) return post.subject;
+  const title = String(post.title ?? '');
+  const match = title.match(/^오늘의 지식:\s*([^,]+)/);
+  return match?.[1]?.trim() || post.slug || title;
+}
+
+function knowledgeCategory(post) {
+  if (post.topicCategory) return post.topicCategory;
+  if (post.category) return post.category;
+  const tags = Array.isArray(post.tags) ? post.tags : parseTags(post.tags);
+  const categoryRules = [
+    ['철학', ['Philosophy', 'Ethics']],
+    ['과학', ['Science', 'Physics', 'Biology', 'Nature']],
+    ['역사', ['History', 'Archaeology']],
+    ['경제', ['Economics', 'Finance', 'Markets']],
+    ['예술·디자인', ['Art', 'Design', 'Culture', 'Music']],
+    ['언어·소통', ['Language', 'Linguistics', 'Communication']],
+    ['사회', ['Society', 'Politics', 'Media', 'Law']],
+    ['시스템', ['Systems', 'Systems Thinking', 'Complexity', 'Strategy']],
+    ['기술', ['Technology', 'Computing', 'Data']],
+    ['심리·판단', ['Psychology', 'Behavior', 'Decision Making', 'Thinking']],
+  ];
+  return categoryRules.find(([, signals]) => signals.some((signal) => tags.includes(signal)))?.[0] ?? '교양';
+}
+
+function parseTags(value) {
+  if (Array.isArray(value)) return value;
+  return String(value ?? '')
+    .replace(/^\[|\]$/g, '')
+    .split(',')
+    .map((tag) => tag.trim().replace(/^['"]|['"]$/g, ''))
+    .filter(Boolean);
+}
+
+function publishedDateFromFilename(name, prefix) {
+  return name.match(new RegExp(`^${prefix}-(\\d{4}-\\d{2}-\\d{2})-`))?.[1] ?? null;
+}
+
+function daysBetween(left, right) {
+  const leftDate = new Date(`${left}T00:00:00Z`);
+  const rightDate = new Date(`${right}T00:00:00Z`);
+  return Math.floor((rightDate - leftDate) / 86400000);
+}
+
+function recentPublished(existingPosts, limit = Infinity) {
+  return [...existingPosts]
+    .filter((post) => post.publishedDate)
+    .sort((left, right) => left.publishedDate.localeCompare(right.publishedDate))
+    .slice(-limit);
+}
+
+function knowledgeDiversityReason(post, date, existingPosts) {
+  const coreTopic = knowledgeCoreTopic(post);
+  const category = knowledgeCategory(post);
+  const history = recentPublished(existingPosts);
+  const lastSameTopic = [...history].reverse().find((item) => item.coreTopic === coreTopic);
+  if (lastSameTopic) {
+    const elapsedDays = daysBetween(lastSameTopic.publishedDate, date);
+    if (elapsedDays >= 0 && elapsedDays < KNOWLEDGE_DIVERSITY.topicCooldownDays) {
+      return `core topic cooldown (${coreTopic}, ${elapsedDays}/${KNOWLEDGE_DIVERSITY.topicCooldownDays} days)`;
+    }
+  }
+
+  const lastPublished = history.at(-1);
+  if (lastPublished?.topicCategory === category) {
+    return `same category streak (${category})`;
+  }
+
+  const recent = history.slice(-(KNOWLEDGE_DIVERSITY.recentCategoryWindow - 1));
+  const categoryCount = recent.filter((item) => item.topicCategory === category).length;
+  if (categoryCount >= KNOWLEDGE_DIVERSITY.maxCategoryInWindow) {
+    return `category window cap (${category}, ${categoryCount}/${KNOWLEDGE_DIVERSITY.maxCategoryInWindow})`;
+  }
+  return null;
+}
+
+function knowledgeDiversityScore(post, existingPosts, workflowName) {
+  if (workflowName !== 'knowledge') return 0;
+  const category = knowledgeCategory(post);
+  const recent = recentPublished(existingPosts, KNOWLEDGE_DIVERSITY.recentCategoryWindow - 1);
+  const categoryCount = recent.filter((item) => item.topicCategory === category).length;
+  const everUsed = existingPosts.some((item) => item.coreTopic === knowledgeCoreTopic(post));
+  return categoryCount * 1000 + (everUsed ? 100 : 0);
+}
+
 function readExistingPosts(prefix) {
   if (!existsSync(postDir)) return [];
   const tracked = trackedPostNames();
@@ -263,9 +366,15 @@ function readExistingPosts(prefix) {
         sourceTitle: data.sourceTitle,
         sourceUrl: data.sourceUrl,
         slug: slugFromFilename(name, prefix),
+        publishedDate: publishedDateFromFilename(name, prefix),
+        coreTopic: prefix === 'knowledge' ? (data.coreTopic || knowledgeCoreTopic(data)) : null,
+        topicCategory: prefix === 'knowledge'
+          ? (data.topicCategory || knowledgeCategory({ ...data, tags: parseTags(data.tags) }))
+          : null,
         tokens: topicTokens(`${data.title} ${data.description} ${data.sourceTitle}`),
       };
-    });
+    })
+    .sort((left, right) => String(left.publishedDate).localeCompare(String(right.publishedDate)));
 }
 
 function trackedPostNames() {
@@ -1314,9 +1423,11 @@ function knowledgePostFromTopic(topic) {
     `회의에서 ${topic.subject}의 관점으로 보면, 겉으로 드러난 의견보다 어떤 기준이 사람들의 선택을 이끄는지 더 잘 보입니다.`,
     '제품이나 서비스에서도 비슷합니다. 사용자의 말 하나보다 행동이 만들어진 맥락을 같이 보면 더 나은 결정을 할 수 있습니다.',
     '개인 생활에서는 반복되는 판단 실수를 발견하는 데 도움이 됩니다. 왜 같은 선택을 다시 하는지 이름을 붙이면 바꾸기도 쉬워집니다.',
+    `같은 사건을 하루 뒤 다시 기록하고 다른 사람의 관점과 비교해보면 ${topic.subject}가 만든 첫 해석이 얼마나 강했는지 확인할 수 있습니다. 중요한 것은 즉시 정답을 고르는 일이 아니라, 판단을 바꿀 증거와 재검토 시점을 미리 남겨 다음 선택의 품질을 높이는 것입니다.`,
   ];
   return {
     subject: topic.subject,
+    category: topic.category,
     angle: topic.angle,
     slug: topic.slug,
     duplicateSimilarityThreshold: topic.duplicateSimilarityThreshold,
@@ -2172,26 +2283,55 @@ const proceduralDeveloperAngles = [
 ];
 
 const proceduralKnowledgeTopics = [
-  { slug: 'normalcy-bias', subject: '정상성 편향', sourceTitle: 'Encyclopaedia Britannica: cognitive bias', sourceUrl: 'https://www.britannica.com/science/cognitive-bias', sourceAuthor: 'Encyclopaedia Britannica', tags: ['Psychology', 'Risk', 'Decision Making'] },
-  { slug: 'status-quo-bias', subject: '현상 유지 편향', sourceTitle: 'The Decision Lab: Status Quo Bias', sourceUrl: 'https://thedecisionlab.com/biases/status-quo-bias', sourceAuthor: 'The Decision Lab', tags: ['Psychology', 'Decision Making', 'Behavior'] },
-  { slug: 'framing-effect', subject: '프레이밍 효과', sourceTitle: 'The Decision Lab: Framing Effect', sourceUrl: 'https://thedecisionlab.com/biases/framing-effect', sourceAuthor: 'The Decision Lab', tags: ['Psychology', 'Communication', 'Decision Making'] },
-  { slug: 'hindsight-bias', subject: '사후 확신 편향', sourceTitle: 'APA Dictionary: hindsight bias', sourceUrl: 'https://dictionary.apa.org/hindsight-bias', sourceAuthor: 'American Psychological Association', tags: ['Psychology', 'Thinking', 'Decision Making'] },
-  { slug: 'recency-bias', subject: '최근성 편향', sourceTitle: 'The Decision Lab: Recency Bias', sourceUrl: 'https://thedecisionlab.com/biases/recency-bias', sourceAuthor: 'The Decision Lab', tags: ['Psychology', 'Memory', 'Decision Making'] },
-  { slug: 'selection-bias', subject: '선택 편향', sourceTitle: 'Encyclopaedia Britannica: selection bias', sourceUrl: 'https://www.britannica.com/science/selection-bias', sourceAuthor: 'Encyclopaedia Britannica', tags: ['Statistics', 'Research', 'Thinking'] },
-  { slug: 'base-rate-neglect', subject: '기저율 무시', sourceTitle: 'The Decision Lab: Base Rate Fallacy', sourceUrl: 'https://thedecisionlab.com/biases/base-rate-fallacy', sourceAuthor: 'The Decision Lab', tags: ['Statistics', 'Psychology', 'Decision Making'] },
-  { slug: 'false-consensus-effect', subject: '허위 합의 효과', sourceTitle: 'APA Dictionary: false-consensus effect', sourceUrl: 'https://dictionary.apa.org/false-consensus-effect', sourceAuthor: 'American Psychological Association', tags: ['Psychology', 'Society', 'Communication'] },
-  { slug: 'halo-effect', subject: '후광 효과', sourceTitle: 'APA Dictionary: halo effect', sourceUrl: 'https://dictionary.apa.org/halo-effect', sourceAuthor: 'American Psychological Association', tags: ['Psychology', 'Judgment', 'Behavior'] },
-  { slug: 'fundamental-attribution-error', subject: '기본적 귀인 오류', sourceTitle: 'Britannica: attribution theory', sourceUrl: 'https://www.britannica.com/science/attribution-theory', sourceAuthor: 'Encyclopaedia Britannica', tags: ['Psychology', 'Society', 'Thinking'] },
-  { slug: 'social-proof', subject: '사회적 증거', sourceTitle: 'Nielsen Norman Group: Social Proof', sourceUrl: 'https://www.nngroup.com/articles/social-proof/', sourceAuthor: 'Nielsen Norman Group', tags: ['Behavior', 'Design', 'Decision Making'] },
-  { slug: 'choice-overload', subject: '선택 과부하', sourceTitle: 'The Decision Lab: Choice Overload', sourceUrl: 'https://thedecisionlab.com/biases/choice-overload-bias', sourceAuthor: 'The Decision Lab', tags: ['Psychology', 'Productivity', 'Decision Making'] },
-  { slug: 'peak-end-rule', subject: '피크엔드 법칙', sourceTitle: 'The Decision Lab: Peak-End Rule', sourceUrl: 'https://thedecisionlab.com/biases/peak-end-rule', sourceAuthor: 'The Decision Lab', tags: ['Psychology', 'Experience', 'Memory'] },
-  { slug: 'availability-cascade', subject: '가용성 폭포', sourceTitle: 'Wikipedia: Availability cascade', sourceUrl: 'https://en.wikipedia.org/wiki/Availability_cascade', sourceAuthor: 'Wikipedia contributors', tags: ['Media', 'Society', 'Risk'] },
-  { slug: 'second-order-effects', subject: '2차 효과', sourceTitle: 'Farnam Street: Second-Order Thinking', sourceUrl: 'https://fs.blog/second-order-thinking/', sourceAuthor: 'Farnam Street', tags: ['Thinking', 'Strategy', 'Decision Making'] },
-  { slug: 'unknown-unknowns', subject: '알려지지 않은 미지', sourceTitle: 'Wikipedia: There are unknown unknowns', sourceUrl: 'https://en.wikipedia.org/wiki/There_are_unknown_unknowns', sourceAuthor: 'Wikipedia contributors', tags: ['Risk', 'Thinking', 'Uncertainty'] },
-  { slug: 'signal-to-noise', subject: '신호와 잡음', sourceTitle: 'Encyclopaedia Britannica: signal-to-noise ratio', sourceUrl: 'https://www.britannica.com/science/signal-to-noise-ratio', sourceAuthor: 'Encyclopaedia Britannica', tags: ['Statistics', 'Thinking', 'Data'] },
-  { slug: 'feedback-loops', subject: '피드백 루프', sourceTitle: 'Encyclopaedia Britannica: feedback control system', sourceUrl: 'https://www.britannica.com/technology/feedback-control-system', sourceAuthor: 'Encyclopaedia Britannica', tags: ['Systems', 'Thinking', 'Behavior'] },
-  { slug: 'path-dependence', subject: '경로 의존성', sourceTitle: 'Britannica: path dependence', sourceUrl: 'https://www.britannica.com/topic/path-dependence', sourceAuthor: 'Encyclopaedia Britannica', tags: ['Economics', 'History', 'Decision Making'] },
-  { slug: 'negative-space', subject: '여백의 가치', sourceTitle: 'Britannica: design', sourceUrl: 'https://www.britannica.com/art/design', sourceAuthor: 'Encyclopaedia Britannica', tags: ['Design', 'Thinking', 'Culture'] },
+  { slug: 'normalcy-bias', subject: '정상성 편향', category: '심리·판단', sourceTitle: 'Encyclopaedia Britannica: cognitive bias', sourceUrl: 'https://www.britannica.com/science/cognitive-bias', sourceAuthor: 'Encyclopaedia Britannica', tags: ['Psychology', 'Risk', 'Decision Making'] },
+  { slug: 'status-quo-bias', subject: '현상 유지 편향', category: '심리·판단', sourceTitle: 'The Decision Lab: Status Quo Bias', sourceUrl: 'https://thedecisionlab.com/biases/status-quo-bias', sourceAuthor: 'The Decision Lab', tags: ['Psychology', 'Decision Making', 'Behavior'] },
+  { slug: 'framing-effect', subject: '프레이밍 효과', category: '언어·소통', sourceTitle: 'The Decision Lab: Framing Effect', sourceUrl: 'https://thedecisionlab.com/biases/framing-effect', sourceAuthor: 'The Decision Lab', tags: ['Psychology', 'Communication', 'Decision Making'] },
+  { slug: 'hindsight-bias', subject: '사후 확신 편향', category: '심리·판단', sourceTitle: 'APA Dictionary: hindsight bias', sourceUrl: 'https://dictionary.apa.org/hindsight-bias', sourceAuthor: 'American Psychological Association', tags: ['Psychology', 'Thinking', 'Decision Making'] },
+  { slug: 'recency-bias', subject: '최근성 편향', category: '심리·판단', sourceTitle: 'The Decision Lab: Recency Bias', sourceUrl: 'https://thedecisionlab.com/biases/recency-bias', sourceAuthor: 'The Decision Lab', tags: ['Psychology', 'Memory', 'Decision Making'] },
+  { slug: 'selection-bias', subject: '선택 편향', category: '과학', sourceTitle: 'Encyclopaedia Britannica: selection bias', sourceUrl: 'https://www.britannica.com/science/selection-bias', sourceAuthor: 'Encyclopaedia Britannica', tags: ['Statistics', 'Research', 'Thinking'] },
+  { slug: 'base-rate-neglect', subject: '기저율 무시', category: '과학', sourceTitle: 'The Decision Lab: Base Rate Fallacy', sourceUrl: 'https://thedecisionlab.com/biases/base-rate-fallacy', sourceAuthor: 'The Decision Lab', tags: ['Statistics', 'Psychology', 'Decision Making'] },
+  { slug: 'false-consensus-effect', subject: '허위 합의 효과', category: '사회', sourceTitle: 'APA Dictionary: false-consensus effect', sourceUrl: 'https://dictionary.apa.org/false-consensus-effect', sourceAuthor: 'American Psychological Association', tags: ['Psychology', 'Society', 'Communication'] },
+  { slug: 'halo-effect', subject: '후광 효과', category: '심리·판단', sourceTitle: 'APA Dictionary: halo effect', sourceUrl: 'https://dictionary.apa.org/halo-effect', sourceAuthor: 'American Psychological Association', tags: ['Psychology', 'Judgment', 'Behavior'] },
+  { slug: 'fundamental-attribution-error', subject: '기본적 귀인 오류', category: '심리·판단', sourceTitle: 'Britannica: attribution theory', sourceUrl: 'https://www.britannica.com/science/attribution-theory', sourceAuthor: 'Encyclopaedia Britannica', tags: ['Psychology', 'Society', 'Thinking'] },
+  { slug: 'social-proof', subject: '사회적 증거', category: '사회', sourceTitle: 'Nielsen Norman Group: Social Proof', sourceUrl: 'https://www.nngroup.com/articles/social-proof/', sourceAuthor: 'Nielsen Norman Group', tags: ['Behavior', 'Design', 'Decision Making'] },
+  { slug: 'choice-overload', subject: '선택 과부하', category: '심리·판단', sourceTitle: 'The Decision Lab: Choice Overload', sourceUrl: 'https://thedecisionlab.com/biases/choice-overload-bias', sourceAuthor: 'The Decision Lab', tags: ['Psychology', 'Productivity', 'Decision Making'] },
+  { slug: 'peak-end-rule', subject: '피크엔드 법칙', category: '심리·판단', sourceTitle: 'The Decision Lab: Peak-End Rule', sourceUrl: 'https://thedecisionlab.com/biases/peak-end-rule', sourceAuthor: 'The Decision Lab', tags: ['Psychology', 'Experience', 'Memory'] },
+  { slug: 'availability-cascade', subject: '가용성 폭포', category: '사회', sourceTitle: 'Wikipedia: Availability cascade', sourceUrl: 'https://en.wikipedia.org/wiki/Availability_cascade', sourceAuthor: 'Wikipedia contributors', tags: ['Media', 'Society', 'Risk'] },
+  { slug: 'second-order-effects', subject: '2차 효과', category: '철학', sourceTitle: 'Farnam Street: Second-Order Thinking', sourceUrl: 'https://fs.blog/second-order-thinking/', sourceAuthor: 'Farnam Street', tags: ['Thinking', 'Strategy', 'Decision Making'] },
+  { slug: 'unknown-unknowns', subject: '알려지지 않은 미지', category: '철학', sourceTitle: 'Wikipedia: There are unknown unknowns', sourceUrl: 'https://en.wikipedia.org/wiki/There_are_unknown_unknowns', sourceAuthor: 'Wikipedia contributors', tags: ['Risk', 'Thinking', 'Uncertainty'] },
+  { slug: 'signal-to-noise', subject: '신호와 잡음', category: '과학', sourceTitle: 'Encyclopaedia Britannica: signal-to-noise ratio', sourceUrl: 'https://www.britannica.com/science/signal-to-noise-ratio', sourceAuthor: 'Encyclopaedia Britannica', tags: ['Statistics', 'Thinking', 'Data'] },
+  { slug: 'feedback-loops', subject: '피드백 루프', category: '시스템', sourceTitle: 'Encyclopaedia Britannica: feedback control system', sourceUrl: 'https://www.britannica.com/technology/feedback-control-system', sourceAuthor: 'Encyclopaedia Britannica', tags: ['Systems', 'Thinking', 'Behavior'] },
+  { slug: 'path-dependence', subject: '경로 의존성', category: '역사', sourceTitle: 'Britannica: path dependence', sourceUrl: 'https://www.britannica.com/topic/path-dependence', sourceAuthor: 'Encyclopaedia Britannica', tags: ['Economics', 'History', 'Decision Making'] },
+  { slug: 'negative-space', subject: '여백의 가치', category: '예술·디자인', sourceTitle: 'Britannica: design', sourceUrl: 'https://www.britannica.com/art/design', sourceAuthor: 'Encyclopaedia Britannica', tags: ['Design', 'Thinking', 'Culture'] },
+  { slug: 'bayes-theorem', subject: '베이즈 정리', category: '과학', sourceTitle: 'Britannica: Bayes theorem', sourceUrl: 'https://www.britannica.com/topic/Bayes-theorem', sourceAuthor: 'Encyclopaedia Britannica', tags: ['Statistics', 'Science', 'Thinking'] },
+  { slug: 'lindy-effect', subject: '린디 효과', category: '역사', sourceTitle: 'Wikipedia: Lindy effect', sourceUrl: 'https://en.wikipedia.org/wiki/Lindy_effect', sourceAuthor: 'Wikipedia contributors', tags: ['History', 'Culture', 'Thinking'] },
+  { slug: 'tragedy-of-commons', subject: '공유지의 비극', category: '경제', sourceTitle: 'Britannica: tragedy of the commons', sourceUrl: 'https://www.britannica.com/science/tragedy-of-the-commons', sourceAuthor: 'Encyclopaedia Britannica', tags: ['Economics', 'Society', 'Environment'] },
+  { slug: 'prisoners-dilemma', subject: '죄수의 딜레마', category: '경제', sourceTitle: "Britannica: prisoner's dilemma", sourceUrl: 'https://www.britannica.com/topic/prisoners-dilemma', sourceAuthor: 'Encyclopaedia Britannica', tags: ['Economics', 'Strategy', 'Society'] },
+  { slug: 'comparative-advantage', subject: '비교우위', category: '경제', sourceTitle: 'Britannica: comparative advantage', sourceUrl: 'https://www.britannica.com/money/comparative-advantage', sourceAuthor: 'Encyclopaedia Britannica', tags: ['Economics', 'Trade', 'Society'] },
+  { slug: 'opportunity-cost', subject: '기회비용', category: '경제', sourceTitle: 'Britannica: opportunity cost', sourceUrl: 'https://www.britannica.com/money/opportunity-cost', sourceAuthor: 'Encyclopaedia Britannica', tags: ['Economics', 'Decision Making', 'Finance'] },
+  { slug: 'moral-luck', subject: '도덕적 운', category: '철학', sourceTitle: 'Stanford Encyclopedia of Philosophy: Moral Luck', sourceUrl: 'https://plato.stanford.edu/entries/moral-luck/', sourceAuthor: 'Stanford Encyclopedia of Philosophy', tags: ['Philosophy', 'Ethics', 'Thinking'] },
+  { slug: 'ship-of-theseus', subject: '테세우스의 배', category: '철학', sourceTitle: 'Britannica: ship of Theseus', sourceUrl: 'https://www.britannica.com/topic/ship-of-Theseus-philosophy', sourceAuthor: 'Encyclopaedia Britannica', tags: ['Philosophy', 'Identity', 'Thinking'] },
+  { slug: 'occams-razor', subject: '오컴의 면도날', category: '철학', sourceTitle: "Britannica: Ockham's razor", sourceUrl: 'https://www.britannica.com/topic/Occams-razor', sourceAuthor: 'Encyclopaedia Britannica', tags: ['Philosophy', 'Science', 'Thinking'] },
+  { slug: 'map-territory', subject: '지도와 영토', category: '철학', sourceTitle: 'Wikipedia: Map-territory relation', sourceUrl: 'https://en.wikipedia.org/wiki/Map%E2%80%93territory_relation', sourceAuthor: 'Wikipedia contributors', tags: ['Philosophy', 'Language', 'Thinking'] },
+  { slug: 'semiotics', subject: '기호학', category: '언어·소통', sourceTitle: 'Britannica: semiotics', sourceUrl: 'https://www.britannica.com/science/semiotics', sourceAuthor: 'Encyclopaedia Britannica', tags: ['Language', 'Communication', 'Culture'] },
+  { slug: 'linguistic-relativity', subject: '언어 상대성', category: '언어·소통', sourceTitle: 'Britannica: Sapir-Whorf hypothesis', sourceUrl: 'https://www.britannica.com/science/Sapir-Whorf-hypothesis', sourceAuthor: 'Encyclopaedia Britannica', tags: ['Language', 'Linguistics', 'Culture'] },
+  { slug: 'grice-maxims', subject: '그라이스의 대화 격률', category: '언어·소통', sourceTitle: 'Stanford Encyclopedia of Philosophy: Implicature', sourceUrl: 'https://plato.stanford.edu/entries/implicature/', sourceAuthor: 'Stanford Encyclopedia of Philosophy', tags: ['Language', 'Communication', 'Philosophy'] },
+  { slug: 'etymology', subject: '어원', category: '언어·소통', sourceTitle: 'Britannica: etymology', sourceUrl: 'https://www.britannica.com/topic/etymology', sourceAuthor: 'Encyclopaedia Britannica', tags: ['Language', 'History', 'Culture'] },
+  { slug: 'golden-ratio', subject: '황금비', category: '예술·디자인', sourceTitle: 'Britannica: golden ratio', sourceUrl: 'https://www.britannica.com/science/golden-ratio', sourceAuthor: 'Encyclopaedia Britannica', tags: ['Art', 'Design', 'Mathematics'] },
+  { slug: 'wabi-sabi', subject: '와비사비', category: '예술·디자인', sourceTitle: 'Britannica: Japanese aesthetics', sourceUrl: 'https://www.britannica.com/art/Japanese-art', sourceAuthor: 'Encyclopaedia Britannica', tags: ['Art', 'Design', 'Culture'] },
+  { slug: 'chiaroscuro', subject: '키아로스쿠로', category: '예술·디자인', sourceTitle: 'Britannica: chiaroscuro', sourceUrl: 'https://www.britannica.com/art/chiaroscuro', sourceAuthor: 'Encyclopaedia Britannica', tags: ['Art', 'Design', 'History'] },
+  { slug: 'leitmotif', subject: '라이트모티프', category: '예술·디자인', sourceTitle: 'Britannica: leitmotif', sourceUrl: 'https://www.britannica.com/art/leitmotif', sourceAuthor: 'Encyclopaedia Britannica', tags: ['Music', 'Art', 'Culture'] },
+  { slug: 'urban-heat-island', subject: '도시 열섬', category: '자연·환경', sourceTitle: 'NASA: Urban Heat Islands', sourceUrl: 'https://earthobservatory.nasa.gov/features/GreenRoof/greenroof2.php', sourceAuthor: 'NASA Earth Observatory', tags: ['Nature', 'Environment', 'Cities'] },
+  { slug: 'keystone-species', subject: '핵심종', category: '자연·환경', sourceTitle: 'Britannica: keystone species', sourceUrl: 'https://www.britannica.com/science/keystone-species', sourceAuthor: 'Encyclopaedia Britannica', tags: ['Nature', 'Biology', 'Ecology'] },
+  { slug: 'mycorrhiza', subject: '균근 네트워크', category: '자연·환경', sourceTitle: 'Britannica: mycorrhiza', sourceUrl: 'https://www.britannica.com/science/mycorrhiza', sourceAuthor: 'Encyclopaedia Britannica', tags: ['Nature', 'Biology', 'Ecology'] },
+  { slug: 'plate-tectonics', subject: '판 구조론', category: '과학', sourceTitle: 'Britannica: plate tectonics', sourceUrl: 'https://www.britannica.com/science/plate-tectonics', sourceAuthor: 'Encyclopaedia Britannica', tags: ['Science', 'Earth', 'Nature'] },
+  { slug: 'fermi-paradox', subject: '페르미 역설', category: '과학', sourceTitle: 'Britannica: Fermi paradox', sourceUrl: 'https://www.britannica.com/story/the-fermi-paradox-where-are-all-the-aliens', sourceAuthor: 'Encyclopaedia Britannica', tags: ['Science', 'Space', 'Thinking'] },
+  { slug: 'printing-press', subject: '인쇄 혁명', category: '역사', sourceTitle: 'Britannica: history of printing', sourceUrl: 'https://www.britannica.com/topic/printing-publishing', sourceAuthor: 'Encyclopaedia Britannica', tags: ['History', 'Technology', 'Culture'] },
+  { slug: 'columbian-exchange', subject: '콜럼버스 교환', category: '역사', sourceTitle: 'Britannica: Columbian Exchange', sourceUrl: 'https://www.britannica.com/event/Columbian-exchange', sourceAuthor: 'Encyclopaedia Britannica', tags: ['History', 'Nature', 'Society'] },
+  { slug: 'hanseatic-league', subject: '한자동맹', category: '역사', sourceTitle: 'Britannica: Hanseatic League', sourceUrl: 'https://www.britannica.com/topic/Hanseatic-League', sourceAuthor: 'Encyclopaedia Britannica', tags: ['History', 'Trade', 'Cities'] },
+  { slug: 'public-goods', subject: '공공재', category: '경제', sourceTitle: 'Britannica: public good', sourceUrl: 'https://www.britannica.com/money/public-good-economics', sourceAuthor: 'Encyclopaedia Britannica', tags: ['Economics', 'Society', 'Policy'] },
+  { slug: 'network-effect', subject: '네트워크 효과', category: '기술', sourceTitle: 'Britannica: network effect', sourceUrl: 'https://www.britannica.com/money/network-effect', sourceAuthor: 'Encyclopaedia Britannica', tags: ['Technology', 'Economics', 'Society'] },
+  { slug: 'conways-law', subject: '콘웨이의 법칙', category: '시스템', sourceTitle: "Martin Fowler: Conway's Law", sourceUrl: 'https://martinfowler.com/bliki/ConwaysLaw.html', sourceAuthor: 'Martin Fowler', tags: ['Systems', 'Technology', 'Organizations'] },
 ];
 
 const proceduralKnowledgeAngles = [
@@ -2429,16 +2569,29 @@ if (isHarnessMode()) {
       }
       const candidateContent = `${frontmatter(report.candidate, projectedDate, name)}${config.article(report.candidate)}`;
       assertNoTemplateArtifacts(candidateContent, report.candidate.slug);
-      const quality = validateCuratedQuality(candidateContent, name);
+      let quality;
+      try {
+        quality = validateCuratedQuality(candidateContent, name);
+      } catch (error) {
+        throw new Error(`${config.prefix} harness failed on ${projectedDate} for ${report.candidate.slug}: ${error.message}`);
+      }
       projected.push(projectedPost(report.candidate, config.prefix, projectedDate));
-      selections.push({ date: projectedDate, slug: report.candidate.slug, quality });
+      selections.push({
+        date: projectedDate,
+        slug: report.candidate.slug,
+        coreTopic: name === 'knowledge' ? knowledgeCoreTopic(report.candidate) : null,
+        topicCategory: name === 'knowledge' ? knowledgeCategory(report.candidate) : null,
+        quality,
+      });
     }
+    const diversity = name === 'knowledge' ? validateKnowledgeProjectionDiversity(selections) : null;
     return {
       workflow: name,
       startDate: date,
       projectionDays,
       first: selections[0],
       last: selections.at(-1),
+      diversity,
     };
   });
   console.log(JSON.stringify({ ok: true, results }, null, 2));
@@ -2459,7 +2612,58 @@ function projectedPost(post, prefix, dateValue) {
     sourceTitle: post.sourceTitle,
     sourceUrl: post.sourceUrl,
     slug: post.slug,
+    publishedDate: dateValue,
+    coreTopic: prefix === 'knowledge' ? knowledgeCoreTopic(post) : null,
+    topicCategory: prefix === 'knowledge' ? knowledgeCategory(post) : null,
     tokens: topicTokens(`${post.title} ${post.description} ${post.sourceTitle}`),
+  };
+}
+
+function validateKnowledgeProjectionDiversity(selections) {
+  const errors = [];
+  for (let index = 0; index < selections.length; index += 1) {
+    const current = selections[index];
+    const previous = selections[index - 1];
+    if (previous?.topicCategory === current.topicCategory) {
+      errors.push(`same category on ${previous.date} and ${current.date}: ${current.topicCategory}`);
+    }
+    for (let priorIndex = 0; priorIndex < index; priorIndex += 1) {
+      const prior = selections[priorIndex];
+      if (prior.coreTopic !== current.coreTopic) continue;
+      const elapsedDays = daysBetween(prior.date, current.date);
+      if (elapsedDays < KNOWLEDGE_DIVERSITY.topicCooldownDays) {
+        errors.push(`topic cooldown violated for ${current.coreTopic}: ${elapsedDays} days`);
+      }
+    }
+  }
+
+  let minWindowCategories = Infinity;
+  let maxWindowCategoryCount = 0;
+  for (let index = KNOWLEDGE_DIVERSITY.recentCategoryWindow - 1; index < selections.length; index += 1) {
+    const window = selections.slice(index - KNOWLEDGE_DIVERSITY.recentCategoryWindow + 1, index + 1);
+    const categories = new Map();
+    for (const item of window) {
+      categories.set(item.topicCategory, (categories.get(item.topicCategory) ?? 0) + 1);
+    }
+    minWindowCategories = Math.min(minWindowCategories, categories.size);
+    maxWindowCategoryCount = Math.max(maxWindowCategoryCount, ...categories.values());
+    if (categories.size < KNOWLEDGE_DIVERSITY.minCategoriesInWindow) {
+      errors.push(`rolling window ending ${window.at(-1).date} has only ${categories.size} categories`);
+    }
+    if (Math.max(...categories.values()) > KNOWLEDGE_DIVERSITY.maxCategoryInWindow) {
+      errors.push(`rolling window ending ${window.at(-1).date} exceeds category cap`);
+    }
+  }
+
+  if (errors.length > 0) {
+    throw new Error(`knowledge diversity harness failed: ${errors.slice(0, 8).join('; ')}`);
+  }
+  return {
+    topicCooldownDays: KNOWLEDGE_DIVERSITY.topicCooldownDays,
+    projectedUniqueTopics: new Set(selections.map((item) => item.coreTopic)).size,
+    projectedUniqueCategories: new Set(selections.map((item) => item.topicCategory)).size,
+    minCategoriesPer14: Number.isFinite(minWindowCategories) ? minWindowCategories : null,
+    maxSameCategoryPer14: maxWindowCategoryCount || null,
   };
 }
 
